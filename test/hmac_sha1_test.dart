@@ -6,7 +6,7 @@
 library hmac_sha1_test;
 
 import "package:crypto/crypto.dart";
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 
 part 'hmac_sha1_test_vectors.dart';
 
@@ -22,6 +22,6 @@ void _testStandardVectors(inputs, keys, macs) {
     var hmac = new HMAC(new SHA1(), keys[i]);
     hmac.add(inputs[i]);
     var d = hmac.close();
-    expect(CryptoUtils.bytesToHex(d).startsWith(macs[i]), isTrue);
+    expect(CryptoUtils.bytesToHex(d), startsWith(macs[i]));
   }
 }

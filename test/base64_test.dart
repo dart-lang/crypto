@@ -8,7 +8,7 @@ library base64_test;
 import 'dart:math';
 
 import "package:crypto/crypto.dart";
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 
 void main() {
   test('encoder', _testEncoder);
@@ -104,7 +104,7 @@ void _testDecoderForMalformedInput() {
 void _testUrlSafeEncodeDecode() {
   List<int> decUrlSafe = CryptoUtils.base64StringToBytes('-_A=');
   List<int> dec = CryptoUtils.base64StringToBytes('+/A=');
-  expect(decUrlSafe, dec);
+  expect(decUrlSafe, orderedEquals(dec));
   expect(CryptoUtils.bytesToBase64(dec, urlSafe: true), '-_A=');
   expect(CryptoUtils.bytesToBase64(dec), '+/A=');
 }
@@ -118,7 +118,7 @@ void _testEncodeDecodeLists() {
       }
       var enc = CryptoUtils.bytesToBase64(x);
       var dec = CryptoUtils.base64StringToBytes(enc);
-      expect(dec, x);
+      expect(dec, orderedEquals(x));
     }
   }
 }

@@ -6,7 +6,7 @@
 library sha1_test;
 
 import "package:crypto/crypto.dart";
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 
 part 'sha1_long_test_vectors.dart';
 part 'sha1_short_test_vectors.dart';

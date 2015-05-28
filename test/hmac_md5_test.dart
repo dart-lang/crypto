@@ -6,7 +6,7 @@
 library hmac_md5_test;
 
 import "package:crypto/crypto.dart";
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 
 void main() {
   test('standard vectors', () {
@@ -20,7 +20,7 @@ void _testStandardVectors(inputs, keys, string_macs, macs) {
     var h = new HMAC(new MD5(), keys[i]);
     h.add(inputs[i]);
     var d = h.close();
-    expect(CryptoUtils.bytesToHex(d).startsWith(string_macs[i]), isTrue);
+    expect(CryptoUtils.bytesToHex(d), startsWith(string_macs[i]));
     expect(h.verify(macs[i]), isTrue);
     expect(h.verify(macs[(i + 1) % macs.length]), isFalse);
     expect(() => h.verify([]), throws);

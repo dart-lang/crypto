@@ -5,7 +5,7 @@
 // Library tag to allow Dartium to run the tests.
 library sha256_test;
 
-import "package:unittest/unittest.dart";
+import "package:test/test.dart";
 import "package:crypto/crypto.dart";
 
 part 'sha256_long_test_vectors.dart';
