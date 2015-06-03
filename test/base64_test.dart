@@ -19,6 +19,8 @@ void main() {
   test('url safe encode-decode', _testUrlSafeEncodeDecode);
   test('consistent safe/unsafe character decoding',
        _testConsistentSafeUnsafeDecode);
+  test('percent-encoded padding character encode-decode',
+       _testPaddingCharacter);
   test('streaming encoder', _testStreamingEncoder);
   test('streaming decoder', _testStreamingDecoder);
   test('streaming decoder for malformed input',
@@ -29,6 +31,8 @@ void main() {
        _testStreamingDecoderForDecompositions);
   test('consistent safe/unsafe character streaming decoding',
        _testConsistentSafeUnsafeStreamDecode);
+  test('streaming for encoded padding character',
+       _testStreamingForEncodedPadding);
   test('old api', _testOldApi);
   test('url safe streaming encoder/decoder', _testUrlSafeStreaming);
   test('performance', _testPerformance);
@@ -41,6 +45,9 @@ const _INPUTS =
     const [ '', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar'];
 const _RESULTS =
     const [ '', 'Zg==', 'Zm8=', 'Zm9v', 'Zm9vYg==', 'Zm9vYmE=', 'Zm9vYmFy'];
+
+const _PADDING_INPUT = const [2, 8];
+
 var _STREAMING_ENCODER_INPUT =
     [[102, 102], [111, 102],
      [111, 111, 102, 111, 111, 98, 102, 111,
@@ -148,6 +155,12 @@ void _testDecoder() {
   expect(new String.fromCharCodes(longLineResultNoBreak), _LONG_LINE);
 }
 
+void _testPaddingCharacter() {
+  var encoded = BASE64.encode(_PADDING_INPUT, encodePaddingCharacter: true);
+  expect(encoded, 'Agg%3D');
+  expect(BASE64.decode(encoded), _PADDING_INPUT);
+}
+
 Future _testStreamingEncoder() async {
   expect(
       await new Stream.fromIterable(_STREAMING_ENCODER_INPUT)
@@ -235,6 +248,15 @@ Future _testConsistentSafeUnsafeStreamDecode() {
                    .transform(BASE64.decoder)
                    .toList(),
          throwsFormatException);
+}
+
+Future _testStreamingForEncodedPadding() async {
+  List<String> withEncodedPadding = ['AA%', '3D', '%', '3', 'DEFGZ'];
+  List<int> decoded = BASE64.decode('AA==EFGZ');
+  var streamedResult = await new Stream.fromIterable(withEncodedPadding)
+      .transform(BASE64.decoder).expand((x) => x).toList();
+
+  expect(streamedResult, decoded);
 }
 
 void _testUrlSafeEncodeDecode() {
