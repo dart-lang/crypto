@@ -6,6 +6,7 @@
 library base64_test;
 
 import 'dart:math';
+import 'dart:async';
 
 import "package:crypto/crypto.dart";
 import "package:test/test.dart";
@@ -16,7 +17,23 @@ void main() {
   test('decoder for malformed input', _testDecoderForMalformedInput);
   test('encode decode lists', _testEncodeDecodeLists);
   test('url safe encode-decode', _testUrlSafeEncodeDecode);
+  test('consistent safe/unsafe character decoding',
+       _testConsistentSafeUnsafeDecode);
+  test('streaming encoder', _testStreamingEncoder);
+  test('streaming decoder', _testStreamingDecoder);
+  test('streaming decoder for malformed input',
+       _testStreamingDecoderForMalformedInput);
+  test('streaming encoder for different decompositions of a list of bytes',
+       _testStreamingEncoderForDecompositions);
+  test('streaming decoder for different decompositions of a string',
+       _testStreamingDecoderForDecompositions);
+  test('consistent safe/unsafe character streaming decoding',
+       _testConsistentSafeUnsafeStreamDecode);
+  test('old api', _testOldApi);
+  test('url safe streaming encoder/decoder', _testUrlSafeStreaming);
   test('performance', _testPerformance);
+
+
 }
 
 // Data from http://tools.ietf.org/html/rfc4648.
@@ -24,6 +41,45 @@ const _INPUTS =
     const [ '', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar'];
 const _RESULTS =
     const [ '', 'Zg==', 'Zm8=', 'Zm9v', 'Zm9vYg==', 'Zm9vYmE=', 'Zm9vYmFy'];
+var _STREAMING_ENCODER_INPUT =
+    [[102, 102], [111, 102],
+     [111, 111, 102, 111, 111, 98, 102, 111,
+      111, 98, 97, 102, 111, 111, 98, 97, 114]];
+
+const _STREAMING_ENCODED = 'ZmZvZm9vZm9vYmZvb2JhZm9vYmFy';
+const _STREAMING_DECODER_INPUT =
+    const ['YmFz', 'ZTY', '0I', 'GRlY29kZXI='];
+const _STREAMING_DECODED =
+    const [98, 97, 115, 101, 54, 52, 32, 100, 101, 99, 111, 100, 101, 114];
+const _STREAMING_DECODER_INPUT_FOR_ZEROES =
+    const ['AAAA', 'AAA=', 'AA==', ''];
+var _STREAMING_DECODED_ZEROES = [0, 0, 0, 0, 0, 0];
+
+var _DECOMPOSITIONS_FOR_DECODING = [
+    ["A", "", "BCD"], ["A", "BCD", "", ""], ["A", "B", "", "", "CD", ""],
+    ["", "A", "BC", "", "D"], ["", "AB", "C", "", "", "D"], ["AB", "CD", ""],
+    ["", "ABC", "", "D"], ["", "ABC", "D", ""], ["", "", "ABCD", ""],
+    ["A", "B", "C", "D"], ["", "A", "B", "C", "D", ""],
+    ["", "A", "B", "", "", "C", "", "D", ""]];
+
+const _DECOMPOSITION_DECODED = const [0, 16, 131];
+
+var _DECOMPOSITIONS_FOR_ENCODING = [
+    [[196, 16], [], [158], [196]],
+    [[196, 16], [158, 196], [], []],
+    [[196], [], [16], [], [], [158], [], [196]],
+    [[196], [], [16], [158, 196], [], []],
+    [[], [196], [], [], [16, 158], [], [196]],
+    [[], [196], [16, 158, 196], []],
+    [[196, 16, 158], [], [], [196]],
+    [[196, 16, 158], [], [196], []],
+    [[196, 16, 158, 196], [], [], []]];
+
+const _DECOMPOSITION_ENCODED = 'xBCexA==';
+
+const _INCONSISTENT_SAFE_RESULT = 'A+_x';
+
+const _INCONSISTENT_SAFE_STREAMING_RESULT = const ['A+AAA', '_x='];
 
 // Test data with only zeroes.
 var inputsWithZeroes = [[0, 0, 0], [0, 0], [0], []];
@@ -61,52 +117,132 @@ const _LONG_LINE_RESULT_NO_BREAK =
 
 void _testEncoder() {
   for (var i = 0; i < _INPUTS.length; i++) {
-    expect(CryptoUtils.bytesToBase64(_INPUTS[i].codeUnits), _RESULTS[i]);
+    expect(BASE64.encode(_INPUTS[i].codeUnits), _RESULTS[i]);
   }
   for (var i = 0; i < inputsWithZeroes.length; i++) {
-    expect(CryptoUtils.bytesToBase64(inputsWithZeroes[i]),
-        _RESULTS_WITH_ZEROS[i]);
+    expect(BASE64.encode(inputsWithZeroes[i]),
+           _RESULTS_WITH_ZEROS[i]);
   }
-  expect(
-      CryptoUtils.bytesToBase64(_LONG_LINE.codeUnits, addLineSeparator : true),
-      _LONG_LINE_RESULT);
-  expect(CryptoUtils.bytesToBase64(_LONG_LINE.codeUnits),
-      _LONG_LINE_RESULT_NO_BREAK);
+  expect(BASE64.encode(_LONG_LINE.codeUnits, addLineSeparator : true),
+         _LONG_LINE_RESULT);
+  expect(BASE64.encode(_LONG_LINE.codeUnits),
+         _LONG_LINE_RESULT_NO_BREAK);
 }
 
 void _testDecoder() {
   for (var i = 0; i < _RESULTS.length; i++) {
     expect(
-        new String.fromCharCodes(CryptoUtils.base64StringToBytes(_RESULTS[i])),
+        new String.fromCharCodes(BASE64.decode(_RESULTS[i])),
         _INPUTS[i]);
   }
+
   for (var i = 0; i < _RESULTS_WITH_ZEROS.length; i++) {
-    expect(CryptoUtils.base64StringToBytes(_RESULTS_WITH_ZEROS[i]),
+    expect(BASE64.decode(_RESULTS_WITH_ZEROS[i]),
         inputsWithZeroes[i]);
   }
-  var longLineDecoded = CryptoUtils.base64StringToBytes(_LONG_LINE_RESULT);
+
+  var longLineDecoded = BASE64.decode(_LONG_LINE_RESULT);
   expect(new String.fromCharCodes(longLineDecoded), _LONG_LINE);
-  var longLineResultNoBreak =
-      CryptoUtils.base64StringToBytes(_LONG_LINE_RESULT);
+
+  var longLineResultNoBreak = BASE64.decode(_LONG_LINE_RESULT);
   expect(new String.fromCharCodes(longLineResultNoBreak), _LONG_LINE);
+}
+
+Future _testStreamingEncoder() async {
+  expect(
+      await new Stream.fromIterable(_STREAMING_ENCODER_INPUT)
+                      .transform(BASE64.encoder)
+                      .join(),
+      _STREAMING_ENCODED);
+}
+
+Future _testStreamingDecoder() async {
+  expect(
+      await new Stream.fromIterable(_STREAMING_DECODER_INPUT)
+                      .transform(BASE64.decoder)
+                      .expand((l) => l)
+                      .toList(),
+      _STREAMING_DECODED);
+
+  expect(
+      await new Stream.fromIterable(_STREAMING_DECODER_INPUT_FOR_ZEROES)
+                      .transform(BASE64.decoder)
+                      .expand((l) => l)
+                      .toList(),
+      _STREAMING_DECODED_ZEROES);
+}
+
+Future _testStreamingDecoderForMalformedInput() async {
+  expect(new Stream.fromIterable(['ABz'])
+                   .transform(BASE64.decoder)
+                   .toList(),
+         throwsFormatException);
+
+  expect(new Stream.fromIterable(['AB', 'Lx', 'z', 'xx'])
+                   .transform(BASE64.decoder)
+                   .toList(),
+         throwsFormatException);
+}
+
+Future _testStreamingEncoderForDecompositions() async {
+  for(var decomposition in _DECOMPOSITIONS_FOR_ENCODING) {
+    expect(
+        await new Stream.fromIterable(decomposition)
+                        .transform(BASE64.encoder)
+                        .join(),
+        _DECOMPOSITION_ENCODED);
+  }
+}
+
+Future _testStreamingDecoderForDecompositions() async {
+  for(var decomposition in _DECOMPOSITIONS_FOR_DECODING) {
+    expect(
+        await new Stream.fromIterable(decomposition)
+                        .transform(BASE64.decoder)
+                        .expand((x) => x)
+                        .toList(),
+        _DECOMPOSITION_DECODED);
+  }
 }
 
 void _testDecoderForMalformedInput() {
   expect(() {
-    CryptoUtils.base64StringToBytes('AB~');
+    BASE64.decode('AB~');
   }, throwsFormatException);
 
   expect(() {
-    CryptoUtils.base64StringToBytes('A');
+    BASE64.decode('A');
   }, throwsFormatException);
 }
 
+Future _testUrlSafeStreaming() async {
+  String encUrlSafe = '-_A=';
+  List<List<int>> dec = [BASE64.decode('+/A=')];
+  var streamedResult = await new Stream.fromIterable(dec)
+      .transform(new Base64Encoder(urlSafe: true)).join();
+
+  expect(streamedResult, encUrlSafe);
+}
+
+void _testConsistentSafeUnsafeDecode() {
+  expect(() {
+    BASE64.decode(_INCONSISTENT_SAFE_RESULT);
+  }, throwsFormatException);
+}
+
+Future _testConsistentSafeUnsafeStreamDecode() {
+  expect(new Stream.fromIterable(_INCONSISTENT_SAFE_STREAMING_RESULT)
+                   .transform(BASE64.decoder)
+                   .toList(),
+         throwsFormatException);
+}
+
 void _testUrlSafeEncodeDecode() {
-  List<int> decUrlSafe = CryptoUtils.base64StringToBytes('-_A=');
-  List<int> dec = CryptoUtils.base64StringToBytes('+/A=');
+  List<int> decUrlSafe = BASE64.decode('-_A=');
+  List<int> dec = BASE64.decode('+/A=');
   expect(decUrlSafe, orderedEquals(dec));
-  expect(CryptoUtils.bytesToBase64(dec, urlSafe: true), '-_A=');
-  expect(CryptoUtils.bytesToBase64(dec), '+/A=');
+  expect(BASE64.encode(dec, urlSafe: true), '-_A=');
+  expect(BASE64.encode(dec), '+/A=');
 }
 
 void _testEncodeDecodeLists() {
@@ -116,8 +252,8 @@ void _testEncodeDecodeLists() {
       for (int k = 0; k < i; k++) {
         x[k] = j;
       }
-      var enc = CryptoUtils.bytesToBase64(x);
-      var dec = CryptoUtils.base64StringToBytes(enc);
+      var enc = BASE64.encode(x);
+      var dec = BASE64.decode(enc);
       expect(dec, orderedEquals(x));
     }
   }
@@ -130,6 +266,13 @@ void _fillRandom(List<int> l) {
   }
 }
 
+void _testOldApi() {
+  for (int i = 0; i < _INPUTS.length; i++) {
+    expect(CryptoUtils.bytesToBase64(_INPUTS[i].codeUnits), _RESULTS[i]);
+    expect(CryptoUtils.base64StringToBytes(_RESULTS[i]), _INPUTS[i].codeUnits);
+  }
+}
+
 void _testPerformance() {
     var l = new List<int>(1024);
     var iters = 5000;
@@ -137,17 +280,17 @@ void _testPerformance() {
     String enc;
     var w = new Stopwatch()..start();
     for( int i = 0; i < iters; ++i ) {
-      enc = CryptoUtils.bytesToBase64(l);
+      enc = BASE64.encode(l);
     }
     int ms = w.elapsedMilliseconds;
     int perSec = (iters * l.length) * 1000 ~/ ms;
     // print("Encode 1024 bytes for $iters times: $ms msec. $perSec b/s");
     w..reset();
     for( int i = 0; i < iters; ++i ) {
-      CryptoUtils.base64StringToBytes(enc);
+      BASE64.decode(enc);
     }
     ms = w.elapsedMilliseconds;
     perSec = (iters * l.length) * 1000 ~/ ms;
-    // print('''Decode into ${l.length} bytes for $iters
+    // ('''Decode into ${l.length} bytes for $iters
     //     times: $ms msec. $perSec b/s''');
 }
