@@ -17,8 +17,6 @@ void main() {
   test('decoder for malformed input', _testDecoderForMalformedInput);
   test('encode decode lists', _testEncodeDecodeLists);
   test('url safe encode-decode', _testUrlSafeEncodeDecode);
-  test('consistent safe/unsafe character decoding',
-       _testConsistentSafeUnsafeDecode);
   test('percent-encoded padding character encode-decode',
        _testPaddingCharacter);
   test('streaming encoder', _testStreamingEncoder);
@@ -29,8 +27,6 @@ void main() {
        _testStreamingEncoderForDecompositions);
   test('streaming decoder for different decompositions of a string',
        _testStreamingDecoderForDecompositions);
-  test('consistent safe/unsafe character streaming decoding',
-       _testConsistentSafeUnsafeStreamDecode);
   test('streaming for encoded padding character',
        _testStreamingForEncodedPadding);
   test('old api', _testOldApi);
@@ -83,10 +79,6 @@ var _DECOMPOSITIONS_FOR_ENCODING = [
     [[196, 16, 158, 196], [], [], []]];
 
 const _DECOMPOSITION_ENCODED = 'xBCexA==';
-
-const _INCONSISTENT_SAFE_RESULT = 'A+_x';
-
-const _INCONSISTENT_SAFE_STREAMING_RESULT = const ['A+AAA', '_x='];
 
 // Test data with only zeroes.
 var inputsWithZeroes = [[0, 0, 0], [0, 0], [0], []];
@@ -235,19 +227,6 @@ Future _testUrlSafeStreaming() async {
       .transform(new Base64Encoder(urlSafe: true)).join();
 
   expect(streamedResult, encUrlSafe);
-}
-
-void _testConsistentSafeUnsafeDecode() {
-  expect(() {
-    BASE64.decode(_INCONSISTENT_SAFE_RESULT);
-  }, throwsFormatException);
-}
-
-Future _testConsistentSafeUnsafeStreamDecode() {
-  expect(new Stream.fromIterable(_INCONSISTENT_SAFE_STREAMING_RESULT)
-                   .transform(BASE64.decoder)
-                   .toList(),
-         throwsFormatException);
 }
 
 Future _testStreamingForEncodedPadding() async {

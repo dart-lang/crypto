@@ -30,9 +30,6 @@ const String _encodeTableUrlSafe =
 const String _encodeTable =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-const List<String> _URL_SAFE_CHARACTERS = const ['+', '/'];
-const List<String> _URL_UNSAFE_CHARACTERS = const ['-', '_'];
-
 const int _LINE_LENGTH = 76;
 const int _CR = 13;  // '\r'
 const int _LF = 10;  // '\n'
@@ -284,9 +281,6 @@ class Base64Decoder extends Converter<String, List<int>> {
       return new List<int>(0);
     }
 
-    bool expectedSafe = false;
-    bool expectedUnsafe = false;
-
     int normalLength = 0;
     int i = 0;
     // Count '\r', '\n' and illegal characters, check if
@@ -306,20 +300,6 @@ class Base64Decoder extends Converter<String, List<int>> {
         } else {
           throw new FormatException('Invalid character', input, i);
         }
-      } else if (input[i] == _URL_UNSAFE_CHARACTERS[0] ||
-                 input[i] == _URL_UNSAFE_CHARACTERS[1]) {
-
-        if (expectedSafe) {
-          throw new FormatException('Unsafe character in URL-safe string',
-                                    input, i);
-        }
-        expectedUnsafe = true;
-      } else if (input[i] == _URL_SAFE_CHARACTERS[0] ||
-                 input[i] == _URL_SAFE_CHARACTERS[1]) {
-        if (expectedUnsafe) {
-          throw new FormatException('Invalid character', input, i);
-        }
-        expectedSafe = true;
       }
       if (c >= 0) normalLength++;
       i++;
@@ -384,83 +364,33 @@ class _Base64DecoderSink extends ChunkedConversionSink<String> {
 
   final Base64Decoder _decoder = new Base64Decoder();
   final ChunkedConversionSink<List<int>> _outSink;
-  String _buffer = "";
-  bool _isSafe = false;
-  bool _isUnsafe = false;
-  int _expectPaddingCount = 3;
+  String _unconverted = "";
 
   _Base64DecoderSink(this._outSink);
 
   void add(String chunk) {
     if (chunk.isEmpty) return;
-
-    int nextBufferLength = (chunk.length + _buffer.length) % 4;
-
-    if (chunk.length >= _expectPaddingCount &&
-        chunk.substring(0, _expectPaddingCount) ==
-          _ENCODED_PAD.substring(3 - _expectPaddingCount, 3)) {
-      chunk = _PAD + chunk.substring(_expectPaddingCount);
-      _expectPaddingCount = 3;
-    } else if(chunk.length < _expectPaddingCount &&
-              chunk == _ENCODED_PAD.substring(
-                         3 - _expectPaddingCount,
-                         3 - _expectPaddingCount + chunk.length)) {
-      _expectPaddingCount -= chunk.length;
-      chunk = "";
+    if (_unconverted.isNotEmpty) {
+      chunk = _unconverted + chunk;
     }
-
-    if (chunk.length > 1 &&
-        chunk[chunk.length - 2] == _ENCODED_PAD[0] &&
-        chunk[chunk.length - 1] == _ENCODED_PAD[1]) {
-      _expectPaddingCount = 1;
-      chunk = chunk.substring(0, chunk.length - 2);
-    } else if (!chunk.isEmpty && chunk[chunk.length - 1] == _ENCODED_PAD[0]) {
-      _expectPaddingCount = 2;
-      chunk = chunk.substring(0, chunk.length - 1);
-    }
-
     chunk = chunk.replaceAll(_ENCODED_PAD, _PAD);
-
-    if (chunk.length + _buffer.length >= 4) {
-      int remainder = chunk.length - nextBufferLength;
-      String decodable = _buffer + chunk.substring(0, remainder);
-      _buffer = chunk.substring(remainder);
-
-      for (int i = 0;i < decodable.length; i++) {
-        if (decodable[i] == _URL_UNSAFE_CHARACTERS[0] ||
-            decodable[i] == _URL_UNSAFE_CHARACTERS[1]) {
-          if (_isSafe) {
-            throw new FormatException('Unsafe character in URL-safe string',
-                                       decodable, i);
-          }
-          _isUnsafe = true;
-        } else if (decodable[i] == _URL_SAFE_CHARACTERS[0] ||
-                   decodable[i] == _URL_SAFE_CHARACTERS[1]) {
-          if (_isUnsafe) {
-            throw new FormatException('Invalid character', decodable, i);
-          }
-          _isSafe = true;
-        }
-      }
-
-      _outSink.add(_decoder.convert(decodable));
-    } else {
-      _buffer += chunk;
+    int decodableLength = chunk.length;
+     // If chunk ends in "%" or "%3", it may be a partial encoded pad.
+     // If chunk is smaller than 4 characters, don't bother checking.
+    if (chunk.length > 3 &&
+      chunk.contains(_ENCODED_PAD[0], chunk.length - 2)) {
+      decodableLength = chunk.lastIndexOf(_ENCODED_PAD[0]);
+    }
+    decodableLength -= decodableLength % 4;
+    _unconverted = chunk.substring(decodableLength);
+    if (decodableLength > 0) {
+      _outSink.add(_decoder.convert(chunk.substring(0, decodableLength)));
     }
   }
 
   void close() {
-    if (_expectPaddingCount == 0 &&
-        _buffer.length == 3) {
-      _outSink.add(_buffer + _PAD);
-    } else if (_expectPaddingCount < 3 &&
-               _buffer.length + 3 - _expectPaddingCount == 4) {
-      _outSink.add(_buffer + _ENCODED_PAD.substring(0, 3 - _expectPaddingCount));
-    } else if (_expectPaddingCount != 3 || !_buffer.isEmpty) {
-      throw new FormatException(
-        "Size of Base 64 input must be a multiple of 4",
-        _buffer + _PAD.substring(0, 3 - _expectPaddingCount),
-        _buffer.length + 3 - _expectPaddingCount);
+    if (_unconverted.isNotEmpty) {
+      _outSink.add(_decoder.convert(_unconverted));
     }
     _outSink.close();
   }
