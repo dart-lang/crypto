@@ -278,7 +278,7 @@ class Base64Decoder extends Converter<String, List<int>> {
   List<int> convert(String input) {
     int length = input.length;
     if (length == 0) {
-      return new List<int>(0);
+      return new Uint8List<int>(0);
     }
 
     int normalLength = 0;
@@ -329,7 +329,7 @@ class Base64Decoder extends Converter<String, List<int>> {
       i--;
     }
     int outputLength = ((normalLength * 6) >> 3) - padLength;
-    List<int> out = new List<int>(outputLength);
+    List<int> out = new Uint8List<int>(outputLength);
 
     for (int i = 0, o = 0; o < outputLength; ) {
       // Accumulate 4 valid 6 bit Base 64 characters into an int.
