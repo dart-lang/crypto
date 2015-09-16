@@ -11,7 +11,9 @@ class SHA1 extends _HashBase {
   final Uint32List _w;
 
   // Construct a SHA1 hasher object.
-  SHA1() : _w = new Uint32List(80), super(16, 5, true) {
+  SHA1()
+      : _w = new Uint32List(80),
+        super(16, 5, true) {
     _h[0] = 0x67452301;
     _h[1] = 0xEFCDAB89;
     _h[2] = 0x98BADCFE;

@@ -14,11 +14,9 @@ abstract class _CryptoUtils {
   }
 
   static String bytesToBase64(List<int> bytes,
-                              [bool urlSafe = false,
-                               bool addLineSeparator = false]) {
+      [bool urlSafe = false, bool addLineSeparator = false]) {
     return BASE64.encode(bytes,
-                         urlSafe: urlSafe,
-                         addLineSeparator: addLineSeparator);
+        urlSafe: urlSafe, addLineSeparator: addLineSeparator);
   }
 
   static List<int> base64StringToBytes(String input) {

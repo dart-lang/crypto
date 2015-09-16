@@ -31,9 +31,8 @@ abstract class _HashBase implements Hash {
   List<int> _pendingData;
   bool _digestCalled = false;
 
-  _HashBase(int chunkSizeInWords,
-            int digestSizeInWords,
-            bool this._bigEndianWords)
+  _HashBase(
+      int chunkSizeInWords, int digestSizeInWords, bool this._bigEndianWords)
       : _pendingData = [],
         _currentChunk = new Uint32List(chunkSizeInWords),
         _h = new Uint32List(digestSizeInWords),

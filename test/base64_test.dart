@@ -17,66 +17,82 @@ void main() {
   test('decoder for malformed input', _testDecoderForMalformedInput);
   test('encode decode lists', _testEncodeDecodeLists);
   test('url safe encode-decode', _testUrlSafeEncodeDecode);
-  test('percent-encoded padding character encode-decode',
-       _testPaddingCharacter);
+  test(
+      'percent-encoded padding character encode-decode', _testPaddingCharacter);
   test('streaming encoder', _testStreamingEncoder);
   test('streaming decoder', _testStreamingDecoder);
   test('streaming decoder for malformed input',
-       _testStreamingDecoderForMalformedInput);
+      _testStreamingDecoderForMalformedInput);
   test('streaming encoder for different decompositions of a list of bytes',
-       _testStreamingEncoderForDecompositions);
+      _testStreamingEncoderForDecompositions);
   test('streaming decoder for different decompositions of a string',
-       _testStreamingDecoderForDecompositions);
+      _testStreamingDecoderForDecompositions);
   test('streaming for encoded padding character',
-       _testStreamingForEncodedPadding);
+      _testStreamingForEncodedPadding);
   test('old api', _testOldApi);
   test('url safe streaming encoder/decoder', _testUrlSafeStreaming);
   test('performance', _testPerformance);
-
-
 }
 
 // Data from http://tools.ietf.org/html/rfc4648.
-const _INPUTS =
-    const [ '', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar'];
-const _RESULTS =
-    const [ '', 'Zg==', 'Zm8=', 'Zm9v', 'Zm9vYg==', 'Zm9vYmE=', 'Zm9vYmFy'];
+const _INPUTS = const ['', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar'];
+const _RESULTS = const [
+  '',
+  'Zg==',
+  'Zm8=',
+  'Zm9v',
+  'Zm9vYg==',
+  'Zm9vYmE=',
+  'Zm9vYmFy'
+];
 
 const _PADDING_INPUT = const [2, 8];
 
-var _STREAMING_ENCODER_INPUT =
-    [[102, 102], [111, 102],
-     [111, 111, 102, 111, 111, 98, 102, 111,
-      111, 98, 97, 102, 111, 111, 98, 97, 114]];
+var _STREAMING_ENCODER_INPUT = [
+  [102, 102],
+  [111, 102],
+  [
+    111, 111, 102, 111, 111, 98, 102, 111, 111, 98, 97, 102, 111, 111, 98, 97,
+    114
+  ]
+];
 
 const _STREAMING_ENCODED = 'ZmZvZm9vZm9vYmZvb2JhZm9vYmFy';
-const _STREAMING_DECODER_INPUT =
-    const ['YmFz', 'ZTY', '0I', 'GRlY29kZXI='];
-const _STREAMING_DECODED =
-    const [98, 97, 115, 101, 54, 52, 32, 100, 101, 99, 111, 100, 101, 114];
-const _STREAMING_DECODER_INPUT_FOR_ZEROES =
-    const ['AAAA', 'AAA=', 'AA==', ''];
+const _STREAMING_DECODER_INPUT = const ['YmFz', 'ZTY', '0I', 'GRlY29kZXI='];
+const _STREAMING_DECODED = const [
+  98, 97, 115, 101, 54, 52, 32, 100, 101, 99, 111, 100, 101, 114
+];
+const _STREAMING_DECODER_INPUT_FOR_ZEROES = const ['AAAA', 'AAA=', 'AA==', ''];
 var _STREAMING_DECODED_ZEROES = [0, 0, 0, 0, 0, 0];
 
 var _DECOMPOSITIONS_FOR_DECODING = [
-    ["A", "", "BCD"], ["A", "BCD", "", ""], ["A", "B", "", "", "CD", ""],
-    ["", "A", "BC", "", "D"], ["", "AB", "C", "", "", "D"], ["AB", "CD", ""],
-    ["", "ABC", "", "D"], ["", "ABC", "D", ""], ["", "", "ABCD", ""],
-    ["A", "B", "C", "D"], ["", "A", "B", "C", "D", ""],
-    ["", "A", "B", "", "", "C", "", "D", ""]];
+  ["A", "", "BCD"],
+  ["A", "BCD", "", ""],
+  ["A", "B", "", "", "CD", ""],
+  ["", "A", "BC", "", "D"],
+  ["", "AB", "C", "", "", "D"],
+  ["AB", "CD", ""],
+  ["", "ABC", "", "D"],
+  ["", "ABC", "D", ""],
+  ["", "", "ABCD", ""],
+  ["A", "B", "C", "D"],
+  ["", "A", "B", "C", "D", ""],
+  ["", "A", "B", "", "", "C", "", "D", ""]
+];
 
 const _DECOMPOSITION_DECODED = const [0, 16, 131];
 
 var _DECOMPOSITIONS_FOR_ENCODING = [
-    [[196, 16], [], [158], [196]],
-    [[196, 16], [158, 196], [], []],
-    [[196], [], [16], [], [], [158], [], [196]],
-    [[196], [], [16], [158, 196], [], []],
-    [[], [196], [], [], [16, 158], [], [196]],
-    [[], [196], [16, 158, 196], []],
-    [[196, 16, 158], [], [], [196]],
-    [[196, 16, 158], [], [196], []],
-    [[196, 16, 158, 196], [], [], []]];
+  [[196, 16], [], [158], [196]],
+  [[196, 16], [158, 196], [], []],
+  [[196], [], [16], [], [], [158], [], [196]],
+  [[196], [], [16], [158, 196], [], []],
+  [[], [196], [], [], [16, 158], [], [196]],
+  [[], [196], [16, 158, 196], []],
+  [[196, 16, 158], [], [], [196]],
+  [[196, 16, 158], [], [196], []],
+  [[196, 16, 158, 196], [], [], []]
+];
 
 const _DECOMPOSITION_ENCODED = 'xBCexA==';
 
@@ -90,8 +106,7 @@ const _LONG_LINE =
     "perseverance of delight in the continued and indefatigable generation "
     "of knowledge, exceeds the short vehemence of any carnal pleasure.";
 
-const _LONG_LINE_RESULT =
-    "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
+const _LONG_LINE_RESULT = "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
     "x5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\r\n"
     "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlci"
     "BhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg\r\n"
@@ -102,8 +117,7 @@ const _LONG_LINE_RESULT =
     "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm"
     "5hbCBwbGVhc3VyZS4=";
 
-const _LONG_LINE_RESULT_NO_BREAK =
-    "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
+const _LONG_LINE_RESULT_NO_BREAK = "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
     "x5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz"
     "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlci"
     "BhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg"
@@ -119,25 +133,20 @@ void _testEncoder() {
     expect(BASE64.encode(_INPUTS[i].codeUnits), _RESULTS[i]);
   }
   for (var i = 0; i < inputsWithZeroes.length; i++) {
-    expect(BASE64.encode(inputsWithZeroes[i]),
-           _RESULTS_WITH_ZEROS[i]);
+    expect(BASE64.encode(inputsWithZeroes[i]), _RESULTS_WITH_ZEROS[i]);
   }
-  expect(BASE64.encode(_LONG_LINE.codeUnits, addLineSeparator : true),
-         _LONG_LINE_RESULT);
-  expect(BASE64.encode(_LONG_LINE.codeUnits),
-         _LONG_LINE_RESULT_NO_BREAK);
+  expect(BASE64.encode(_LONG_LINE.codeUnits, addLineSeparator: true),
+      _LONG_LINE_RESULT);
+  expect(BASE64.encode(_LONG_LINE.codeUnits), _LONG_LINE_RESULT_NO_BREAK);
 }
 
 void _testDecoder() {
   for (var i = 0; i < _RESULTS.length; i++) {
-    expect(
-        new String.fromCharCodes(BASE64.decode(_RESULTS[i])),
-        _INPUTS[i]);
+    expect(new String.fromCharCodes(BASE64.decode(_RESULTS[i])), _INPUTS[i]);
   }
 
   for (var i = 0; i < _RESULTS_WITH_ZEROS.length; i++) {
-    expect(BASE64.decode(_RESULTS_WITH_ZEROS[i]),
-        inputsWithZeroes[i]);
+    expect(BASE64.decode(_RESULTS_WITH_ZEROS[i]), inputsWithZeroes[i]);
   }
 
   var longLineDecoded = BASE64.decode(_LONG_LINE_RESULT);
@@ -156,56 +165,55 @@ void _testPaddingCharacter() {
 Future _testStreamingEncoder() async {
   expect(
       await new Stream.fromIterable(_STREAMING_ENCODER_INPUT)
-                      .transform(BASE64.encoder)
-                      .join(),
+          .transform(BASE64.encoder)
+          .join(),
       _STREAMING_ENCODED);
 }
 
 Future _testStreamingDecoder() async {
   expect(
       await new Stream.fromIterable(_STREAMING_DECODER_INPUT)
-                      .transform(BASE64.decoder)
-                      .expand((l) => l)
-                      .toList(),
+          .transform(BASE64.decoder)
+          .expand((l) => l)
+          .toList(),
       _STREAMING_DECODED);
 
   expect(
       await new Stream.fromIterable(_STREAMING_DECODER_INPUT_FOR_ZEROES)
-                      .transform(BASE64.decoder)
-                      .expand((l) => l)
-                      .toList(),
+          .transform(BASE64.decoder)
+          .expand((l) => l)
+          .toList(),
       _STREAMING_DECODED_ZEROES);
 }
 
 Future _testStreamingDecoderForMalformedInput() async {
-  expect(new Stream.fromIterable(['ABz'])
-                   .transform(BASE64.decoder)
-                   .toList(),
-         throwsFormatException);
+  expect(new Stream.fromIterable(['ABz']).transform(BASE64.decoder).toList(),
+      throwsFormatException);
 
-  expect(new Stream.fromIterable(['AB', 'Lx', 'z', 'xx'])
-                   .transform(BASE64.decoder)
-                   .toList(),
-         throwsFormatException);
+  expect(
+      new Stream.fromIterable(['AB', 'Lx', 'z', 'xx'])
+          .transform(BASE64.decoder)
+          .toList(),
+      throwsFormatException);
 }
 
 Future _testStreamingEncoderForDecompositions() async {
-  for(var decomposition in _DECOMPOSITIONS_FOR_ENCODING) {
+  for (var decomposition in _DECOMPOSITIONS_FOR_ENCODING) {
     expect(
         await new Stream.fromIterable(decomposition)
-                        .transform(BASE64.encoder)
-                        .join(),
+            .transform(BASE64.encoder)
+            .join(),
         _DECOMPOSITION_ENCODED);
   }
 }
 
 Future _testStreamingDecoderForDecompositions() async {
-  for(var decomposition in _DECOMPOSITIONS_FOR_DECODING) {
+  for (var decomposition in _DECOMPOSITIONS_FOR_DECODING) {
     expect(
         await new Stream.fromIterable(decomposition)
-                        .transform(BASE64.decoder)
-                        .expand((x) => x)
-                        .toList(),
+            .transform(BASE64.decoder)
+            .expand((x) => x)
+            .toList(),
         _DECOMPOSITION_DECODED);
   }
 }
@@ -224,7 +232,8 @@ Future _testUrlSafeStreaming() async {
   String encUrlSafe = '-_A=';
   List<List<int>> dec = [BASE64.decode('+/A=')];
   var streamedResult = await new Stream.fromIterable(dec)
-      .transform(new Base64Encoder(urlSafe: true)).join();
+      .transform(new Base64Encoder(urlSafe: true))
+      .join();
 
   expect(streamedResult, encUrlSafe);
 }
@@ -233,7 +242,9 @@ Future _testStreamingForEncodedPadding() async {
   List<String> withEncodedPadding = ['AA%', '3D', '%', '3', 'DEFGZ'];
   List<int> decoded = BASE64.decode('AA==EFGZ');
   var streamedResult = await new Stream.fromIterable(withEncodedPadding)
-      .transform(BASE64.decoder).expand((x) => x).toList();
+      .transform(BASE64.decoder)
+      .expand((x) => x)
+      .toList();
 
   expect(streamedResult, decoded);
 }
@@ -275,23 +286,23 @@ void _testOldApi() {
 }
 
 void _testPerformance() {
-    var l = new List<int>(1024);
-    var iters = 5000;
-    _fillRandom(l);
-    String enc;
-    var w = new Stopwatch()..start();
-    for( int i = 0; i < iters; ++i ) {
-      enc = BASE64.encode(l);
-    }
-    int ms = w.elapsedMilliseconds;
-    int perSec = (iters * l.length) * 1000 ~/ ms;
-    // print("Encode 1024 bytes for $iters times: $ms msec. $perSec b/s");
-    w..reset();
-    for( int i = 0; i < iters; ++i ) {
-      BASE64.decode(enc);
-    }
-    ms = w.elapsedMilliseconds;
-    perSec = (iters * l.length) * 1000 ~/ ms;
-    // ('''Decode into ${l.length} bytes for $iters
-    //     times: $ms msec. $perSec b/s''');
+  var l = new List<int>(1024);
+  var iters = 5000;
+  _fillRandom(l);
+  String enc;
+  var w = new Stopwatch()..start();
+  for (int i = 0; i < iters; ++i) {
+    enc = BASE64.encode(l);
+  }
+  int ms = w.elapsedMilliseconds;
+  int perSec = (iters * l.length) * 1000 ~/ ms;
+  // print("Encode 1024 bytes for $iters times: $ms msec. $perSec b/s");
+  w..reset();
+  for (int i = 0; i < iters; ++i) {
+    BASE64.decode(enc);
+  }
+  ms = w.elapsedMilliseconds;
+  perSec = (iters * l.length) * 1000 ~/ ms;
+  // ('''Decode into ${l.length} bytes for $iters
+  //     times: $ms msec. $perSec b/s''');
 }

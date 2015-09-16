@@ -12,8 +12,8 @@ part 'hmac_sha256_test_vectors.dart';
 
 void main() {
   test('standard vectors', () {
-    _testStandardVectors(hmac_sha256_inputs, hmac_sha256_keys,
-        hmac_sha256_macs);
+    _testStandardVectors(
+        hmac_sha256_inputs, hmac_sha256_keys, hmac_sha256_macs);
   });
 }
 

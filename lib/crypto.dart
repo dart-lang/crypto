@@ -87,13 +87,9 @@ class CryptoUtils {
    *
    */
   static String bytesToBase64(List<int> bytes,
-                              {bool urlSafe : false,
-                               bool addLineSeparator : false}) {
-    return _CryptoUtils.bytesToBase64(bytes,
-                                      urlSafe,
-                                      addLineSeparator);
+      {bool urlSafe: false, bool addLineSeparator: false}) {
+    return _CryptoUtils.bytesToBase64(bytes, urlSafe, addLineSeparator);
   }
-
 
   /**
    * Converts a Base 64 encoded String into list of bytes.

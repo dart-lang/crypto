@@ -6,40 +6,40 @@ part of crypto;
 
 const Base64Codec BASE64 = const Base64Codec();
 
-const List<int> _decodeTable =
-      const [ -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2, -2, -1, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, 62, -2, 63,
-              52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2,  0, -2, -2,
-              -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-              15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, 63,
-              -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-              41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-              -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2 ];
+const List<int> _decodeTable = const [
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2, -2, -1, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, 62, -2, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2,  0, -2, -2,
+  -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, 63,
+  -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+  -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
+];
 
 const String _encodeTableUrlSafe =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 const String _encodeTable =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 const int _LINE_LENGTH = 76;
-const int _CR = 13;  // '\r'
-const int _LF = 10;  // '\n'
+const int _CR = 13; // '\r'
+const int _LF = 10; // '\n'
 const List<int> _PAD_BYTES = const [61]; // '='
 const List<int> _ENCODED_PAD_BYTES = const [37, 51, 68]; // '%3D'
 const String _PAD = "=";
 const String _ENCODED_PAD = "%3D";
 
 class Base64Codec extends Codec<List<int>, String> {
-
   final bool _urlSafe;
   final bool _addLineSeparator;
   final bool _encodePaddingCharacter;
@@ -66,9 +66,10 @@ class Base64Codec extends Codec<List<int>, String> {
    * If [encodePaddingCharacter] is `true` `encode` converts `=` to `%3D`.
    * The default value of [encodePaddingCharacter] is `false`.
    */
-  const Base64Codec({bool urlSafe: false,
-                     bool addLineSeparator: false,
-                     bool encodePaddingCharacter: false})
+  const Base64Codec(
+      {bool urlSafe: false,
+      bool addLineSeparator: false,
+      bool encodePaddingCharacter: false})
       : _urlSafe = urlSafe,
         _addLineSeparator = addLineSeparator,
         _encodePaddingCharacter = encodePaddingCharacter;
@@ -76,30 +77,24 @@ class Base64Codec extends Codec<List<int>, String> {
   String get name => "base64";
 
   String encode(List<int> bytes,
-                {bool urlSafe,
-                 bool addLineSeparator,
-                 bool encodePaddingCharacter}) {
+      {bool urlSafe, bool addLineSeparator, bool encodePaddingCharacter}) {
     if (urlSafe == null) urlSafe = _urlSafe;
     if (addLineSeparator == null) addLineSeparator = _addLineSeparator;
     if (encodePaddingCharacter == null) {
       encodePaddingCharacter = _encodePaddingCharacter;
     }
     return new Base64Encoder(
-                   urlSafe: urlSafe,
-                   addLineSeparator: addLineSeparator,
-                   encodePaddingCharacter: encodePaddingCharacter)
-                 .convert(bytes);
-
-
+        urlSafe: urlSafe,
+        addLineSeparator: addLineSeparator,
+        encodePaddingCharacter: encodePaddingCharacter).convert(bytes);
   }
 
-  Base64Encoder get encoder =>
-      new Base64Encoder(urlSafe: _urlSafe,
-                        addLineSeparator: _addLineSeparator,
-                        encodePaddingCharacter: _encodePaddingCharacter);
+  Base64Encoder get encoder => new Base64Encoder(
+      urlSafe: _urlSafe,
+      addLineSeparator: _addLineSeparator,
+      encodePaddingCharacter: _encodePaddingCharacter);
 
   Base64Decoder get decoder => new Base64Decoder();
-
 }
 
 /**
@@ -134,9 +129,10 @@ class Base64Encoder extends Converter<List<int>, String> {
    * If [encodePaddingCharacter] is `true` `encode` converts `=` to `%3D`.
    * The default value of [encodePaddingCharacter] is `false`.
    */
-  const Base64Encoder({bool urlSafe: false,
-                       bool addLineSeparator: false,
-                       bool encodePaddingCharacter: false})
+  const Base64Encoder(
+      {bool urlSafe: false,
+      bool addLineSeparator: false,
+      bool encodePaddingCharacter: false})
       : _urlSafe = urlSafe,
         _addLineSeparator = addLineSeparator,
         _encodePaddingCharacter = encodePaddingCharacter,
@@ -163,7 +159,7 @@ class Base64Encoder extends Converter<List<int>, String> {
     // Size of base output.
     int baseOutputLength = ((length ~/ 3) * 4);
     int remainderOutputLength;
-    if(_encodePaddingCharacter) {
+    if (_encodePaddingCharacter) {
       remainderOutputLength = ((remainderLength > 0) ? 6 : 0);
     } else {
       remainderOutputLength = ((remainderLength > 0) ? 4 : 0);
@@ -180,11 +176,11 @@ class Base64Encoder extends Converter<List<int>, String> {
     int j = 0, i = start, c = 0;
     while (i < chunkLength) {
       int x = ((bytes[i++] << 16) & 0x00FFFFFF) |
-              ((bytes[i++] << 8) & 0x00FFFFFF) |
-                bytes[i++];
+          ((bytes[i++] << 8) & 0x00FFFFFF) |
+          bytes[i++];
       out[j++] = lookup.codeUnitAt(x >> 18);
       out[j++] = lookup.codeUnitAt((x >> 12) & 0x3F);
-      out[j++] = lookup.codeUnitAt((x >> 6)  & 0x3F);
+      out[j++] = lookup.codeUnitAt((x >> 6) & 0x3F);
       out[j++] = lookup.codeUnitAt(x & 0x3F);
       // Add optional line separator for each 76 char output.
       if (_addLineSeparator && ++c == 19 && j < outputLength - 2) {
@@ -226,16 +222,14 @@ class Base64Encoder extends Converter<List<int>, String> {
 }
 
 class _Base64EncoderSink extends ChunkedConversionSink<List<int>> {
-
   final Base64Encoder _encoder;
   final ChunkedConversionSink<String> _outSink;
   final List<int> _buffer = new List<int>();
   int _bufferCount = 0;
 
   _Base64EncoderSink(this._outSink, urlSafe, addLineSeparator)
-      : _encoder = new Base64Encoder(urlSafe: urlSafe,
-                                     addLineSeparator: addLineSeparator);
-
+      : _encoder = new Base64Encoder(
+            urlSafe: urlSafe, addLineSeparator: addLineSeparator);
 
   void add(List<int> chunk) {
     var nextBufferCount = (chunk.length + _bufferCount) % 3;
@@ -243,9 +237,8 @@ class _Base64EncoderSink extends ChunkedConversionSink<List<int>> {
     int decodableLength = _bufferCount + chunk.length - nextBufferCount;
 
     if (_bufferCount + chunk.length > _buffer.length) {
-      _buffer.replaceRange(_bufferCount,
-                           _buffer.length,
-                           chunk.sublist(0, _buffer.length - _bufferCount));
+      _buffer.replaceRange(_bufferCount, _buffer.length,
+          chunk.sublist(0, _buffer.length - _bufferCount));
       _buffer.addAll(chunk.sublist(_buffer.length - _bufferCount));
     } else {
       _buffer.replaceRange(_bufferCount, _bufferCount + chunk.length, chunk);
@@ -269,7 +262,6 @@ class _Base64EncoderSink extends ChunkedConversionSink<List<int>> {
  * unsigned 8-bit integers) according to Base64.
  */
 class Base64Decoder extends Converter<String, List<int>> {
-
   /**
    * Instantiates a new [Base64Decoder]
    */
@@ -306,19 +298,22 @@ class Base64Decoder extends Converter<String, List<int>> {
     }
 
     if (normalLength % 4 != 0) {
-      throw new FormatException('''Size of Base 64 characters in Input
-          must be a multiple of 4''', input, normalLength);
+      throw new FormatException(
+          '''Size of Base 64 characters in Input
+          must be a multiple of 4''',
+          input,
+          normalLength);
     }
 
     // Count pad characters.
     int padLength = 0;
     i = length - 1;
-    while(i >= 0) {
+    while (i >= 0) {
       int currentCodeUnit = input.codeUnitAt(i);
       if (currentCodeUnit == _ENCODED_PAD_BYTES[2] &&
-                i >= 2 &&
-                input.codeUnitAt(i - 1) == _ENCODED_PAD_BYTES[1] &&
-                input.codeUnitAt(i - 2) == _ENCODED_PAD_BYTES[0]) {
+          i >= 2 &&
+          input.codeUnitAt(i - 1) == _ENCODED_PAD_BYTES[1] &&
+          input.codeUnitAt(i - 2) == _ENCODED_PAD_BYTES[0]) {
         padLength++;
         i -= 2;
       } else if (_decodeTable[currentCodeUnit] > 0) {
@@ -331,10 +326,10 @@ class Base64Decoder extends Converter<String, List<int>> {
     int outputLength = ((normalLength * 6) >> 3) - padLength;
     List<int> out = new Uint8List(outputLength);
 
-    for (int i = 0, o = 0; o < outputLength; ) {
+    for (int i = 0, o = 0; o < outputLength;) {
       // Accumulate 4 valid 6 bit Base 64 characters into an int.
       int x = 0;
-      for (int j = 4; j > 0; ) {
+      for (int j = 4; j > 0;) {
         int c = _decodeTable[input.codeUnitAt(i++)];
         if (c >= 0) {
           x = ((x << 6) & 0x00FFFFFF) | c;
@@ -359,9 +354,7 @@ class Base64Decoder extends Converter<String, List<int>> {
   }
 }
 
-
 class _Base64DecoderSink extends ChunkedConversionSink<String> {
-
   final Base64Decoder _decoder = new Base64Decoder();
   final ChunkedConversionSink<List<int>> _outSink;
   String _unconverted = "";
@@ -375,10 +368,9 @@ class _Base64DecoderSink extends ChunkedConversionSink<String> {
     }
     chunk = chunk.replaceAll(_ENCODED_PAD, _PAD);
     int decodableLength = chunk.length;
-     // If chunk ends in "%" or "%3", it may be a partial encoded pad.
-     // If chunk is smaller than 4 characters, don't bother checking.
-    if (chunk.length > 3 &&
-      chunk.contains(_ENCODED_PAD[0], chunk.length - 2)) {
+    // If chunk ends in "%" or "%3", it may be a partial encoded pad.
+    // If chunk is smaller than 4 characters, don't bother checking.
+    if (chunk.length > 3 && chunk.contains(_ENCODED_PAD[0], chunk.length - 2)) {
       decodableLength = chunk.lastIndexOf(_ENCODED_PAD[0]);
     }
     decodableLength -= decodableLength % 4;
@@ -395,5 +387,3 @@ class _Base64DecoderSink extends ChunkedConversionSink<String> {
     _outSink.close();
   }
 }
-
-

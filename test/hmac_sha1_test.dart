@@ -10,7 +10,6 @@ import "package:test/test.dart";
 
 part 'hmac_sha1_test_vectors.dart';
 
-
 void main() {
   test('standard vectors', () {
     _testStandardVectors(hmac_sha1_inputs, hmac_sha1_keys, hmac_sha1_macs);
