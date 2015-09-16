@@ -2,7 +2,13 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-part of crypto;
+library crypto.md5;
+
+import 'dart:typed_data';
+
+import 'hash.dart';
+import 'hash_base.dart';
+import 'utils.dart';
 
 /**
  * MD5 hash function implementation.
@@ -10,17 +16,23 @@ part of crypto;
  * WARNING: MD5 has known collisions and should only be used when
  * required for backwards compatibility.
  */
-class MD5 extends _HashBase {
-  MD5() : super(16, 4, false) {
-    _h[0] = 0x67452301;
-    _h[1] = 0xefcdab89;
-    _h[2] = 0x98badcfe;
-    _h[3] = 0x10325476;
+abstract class MD5 implements Hash {
+  factory MD5() = _MD5;
+
+  MD5 newInstance();
+}
+
+class _MD5 extends HashBase implements MD5 {
+  _MD5() : super(16, 4, false) {
+    h[0] = 0x67452301;
+    h[1] = 0xefcdab89;
+    h[2] = 0x98badcfe;
+    h[3] = 0x10325476;
   }
 
   // Returns a new instance of this Hash.
   MD5 newInstance() {
-    return new MD5();
+    return new _MD5();
   }
 
   static const _k = const [
@@ -46,43 +58,43 @@ class MD5 extends _HashBase {
 
   // Compute one iteration of the MD5 algorithm with a chunk of
   // 16 32-bit pieces.
-  void _updateHash(Uint32List m) {
+  void updateHash(Uint32List m) {
     assert(m.length == 16);
 
-    var a = _h[0];
-    var b = _h[1];
-    var c = _h[2];
-    var d = _h[3];
+    var a = h[0];
+    var b = h[1];
+    var c = h[2];
+    var d = h[3];
 
     var t0;
     var t1;
 
     for (var i = 0; i < 64; i++) {
       if (i < 16) {
-        t0 = (b & c) | ((~b & _MASK_32) & d);
+        t0 = (b & c) | ((~b & MASK_32) & d);
         t1 = i;
       } else if (i < 32) {
-        t0 = (d & b) | ((~d & _MASK_32) & c);
+        t0 = (d & b) | ((~d & MASK_32) & c);
         t1 = ((5 * i) + 1) % 16;
       } else if (i < 48) {
         t0 = b ^ c ^ d;
         t1 = ((3 * i) + 5) % 16;
       } else {
-        t0 = c ^ (b | (~d & _MASK_32));
+        t0 = c ^ (b | (~d & MASK_32));
         t1 = (7 * i) % 16;
       }
 
       var temp = d;
       d = c;
       c = b;
-      b = _add32(
-          b, _rotl32(_add32(_add32(a, t0), _add32(_k[i], m[t1])), _r[i]));
+      b = add32(
+          b, rotl32(add32(add32(a, t0), add32(_k[i], m[t1])), _r[i]));
       a = temp;
     }
 
-    _h[0] = _add32(a, _h[0]);
-    _h[1] = _add32(b, _h[1]);
-    _h[2] = _add32(c, _h[2]);
-    _h[3] = _add32(d, _h[3]);
+    h[0] = add32(a, h[0]);
+    h[1] = add32(b, h[1]);
+    h[2] = add32(c, h[2]);
+    h[3] = add32(d, h[3]);
   }
 }

@@ -2,33 +2,45 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-part of crypto;
+library crypto.sha256;
+
+import 'dart:typed_data';
+
+import 'hash.dart';
+import 'hash_base.dart';
+import 'utils.dart';
 
 /**
  * SHA256 hash function implementation.
  */
-class SHA256 extends _HashBase {
+abstract class SHA256 implements Hash {
+  factory SHA256() = _SHA256;
+
+  SHA256 newInstance();
+}
+
+class _SHA256 extends HashBase implements SHA256 {
   final Uint32List _w;
 
   // Construct a SHA256 hasher object.
-  SHA256()
+  _SHA256()
       : _w = new Uint32List(64),
         super(16, 8, true) {
     // Initial value of the hash parts. First 32 bits of the fractional parts
     // of the square roots of the first 8 prime numbers.
-    _h[0] = 0x6a09e667;
-    _h[1] = 0xbb67ae85;
-    _h[2] = 0x3c6ef372;
-    _h[3] = 0xa54ff53a;
-    _h[4] = 0x510e527f;
-    _h[5] = 0x9b05688c;
-    _h[6] = 0x1f83d9ab;
-    _h[7] = 0x5be0cd19;
+    h[0] = 0x6a09e667;
+    h[1] = 0xbb67ae85;
+    h[2] = 0x3c6ef372;
+    h[3] = 0xa54ff53a;
+    h[4] = 0x510e527f;
+    h[5] = 0x9b05688c;
+    h[6] = 0x1f83d9ab;
+    h[7] = 0x5be0cd19;
   }
 
   // Returns a new instance of this Hash.
   SHA256 newInstance() {
-    return new SHA256();
+    return new _SHA256();
   }
 
   // Table of round constants. First 32 bits of the fractional
@@ -50,8 +62,8 @@ class SHA256 extends _HashBase {
   ];
 
   // Helper functions as defined in http://tools.ietf.org/html/rfc6234
-  _rotr32(n, x) => (x >> n) | ((x << (32 - n)) & _MASK_32);
-  _ch(x, y, z) => (x & y) ^ ((~x & _MASK_32) & z);
+  _rotr32(n, x) => (x >> n) | ((x << (32 - n)) & MASK_32);
+  _ch(x, y, z) => (x & y) ^ ((~x & MASK_32) & z);
   _maj(x, y, z) => (x & y) ^ (x & z) ^ (y & z);
   _bsig0(x) => _rotr32(2, x) ^ _rotr32(13, x) ^ _rotr32(22, x);
   _bsig1(x) => _rotr32(6, x) ^ _rotr32(11, x) ^ _rotr32(25, x);
@@ -60,7 +72,7 @@ class SHA256 extends _HashBase {
 
   // Compute one iteration of the SHA256 algorithm with a chunk of
   // 16 32-bit pieces.
-  void _updateHash(Uint32List M) {
+  void updateHash(Uint32List M) {
     assert(M.length == 16);
 
     // Prepare message schedule.
@@ -69,42 +81,42 @@ class SHA256 extends _HashBase {
       _w[i] = M[i];
     }
     for (; i < 64; i++) {
-      _w[i] = _add32(_add32(_ssig1(_w[i - 2]), _w[i - 7]),
-          _add32(_ssig0(_w[i - 15]), _w[i - 16]));
+      _w[i] = add32(add32(_ssig1(_w[i - 2]), _w[i - 7]),
+          add32(_ssig0(_w[i - 15]), _w[i - 16]));
     }
 
     // Shuffle around the bits.
-    var a = _h[0];
-    var b = _h[1];
-    var c = _h[2];
-    var d = _h[3];
-    var e = _h[4];
-    var f = _h[5];
-    var g = _h[6];
-    var h = _h[7];
+    var a = h[0];
+    var b = h[1];
+    var c = h[2];
+    var d = h[3];
+    var e = h[4];
+    var f = h[5];
+    var g = h[6];
+    var j = h[7];
 
     for (var t = 0; t < 64; t++) {
-      var t1 = _add32(
-          _add32(h, _bsig1(e)), _add32(_ch(e, f, g), _add32(_K[t], _w[t])));
-      var t2 = _add32(_bsig0(a), _maj(a, b, c));
-      h = g;
+      var t1 = add32(
+          add32(j, _bsig1(e)), add32(_ch(e, f, g), add32(_K[t], _w[t])));
+      var t2 = add32(_bsig0(a), _maj(a, b, c));
+      j = g;
       g = f;
       f = e;
-      e = _add32(d, t1);
+      e = add32(d, t1);
       d = c;
       c = b;
       b = a;
-      a = _add32(t1, t2);
+      a = add32(t1, t2);
     }
 
     // Update hash values after iteration.
-    _h[0] = _add32(a, _h[0]);
-    _h[1] = _add32(b, _h[1]);
-    _h[2] = _add32(c, _h[2]);
-    _h[3] = _add32(d, _h[3]);
-    _h[4] = _add32(e, _h[4]);
-    _h[5] = _add32(f, _h[5]);
-    _h[6] = _add32(g, _h[6]);
-    _h[7] = _add32(h, _h[7]);
+    h[0] = add32(a, h[0]);
+    h[1] = add32(b, h[1]);
+    h[2] = add32(c, h[2]);
+    h[3] = add32(d, h[3]);
+    h[4] = add32(e, h[4]);
+    h[5] = add32(f, h[5]);
+    h[6] = add32(g, h[6]);
+    h[7] = add32(j, h[7]);
   }
 }
