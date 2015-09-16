@@ -9,6 +9,16 @@ A set of cryptographic functions implemented in pure Dart.
 * Converting a list of bytes into a base64-encoded string.
 * Converting a Base 64 encoded String into list of bytes.
 
+## Test status
+
+See http://build.chromium.org/p/client.dart.packages/console
+
+The individual builders are at:
+
+http://build.chromium.org/p/client.dart.packages/builders/packages-windows-crypto
+http://build.chromium.org/p/client.dart.packages/builders/packages-linux-crypto
+http://build.chromium.org/p/client.dart.packages/builders/packages-mac-crypto
+
 ## Disclaimer
 
 Support for this library is given as _best effort_.
