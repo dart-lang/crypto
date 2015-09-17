@@ -7,6 +7,7 @@ library sha256_test;
 
 import "package:test/test.dart";
 import "package:crypto/crypto.dart";
+import 'very_long_input.dart';
 
 part 'sha256_long_test_vectors.dart';
 part 'sha256_short_test_vectors.dart';
@@ -19,6 +20,10 @@ void main() {
       () => _testStandardVectors(sha256_long_inputs, sha256_long_mds));
   test('short inputs',
       () => _testStandardVectors(sha256_short_inputs, sha256_short_mds));
+  test('input bit length greater than 32 bits', () {
+    veryLongInput(new SHA256(), 1000000000,
+        'bc17f06f9d9b5f6f79ca189a1772b1a3a38d6e40c45bec50f9c4f28144efddca');
+  });
 }
 
 void _testExpectedValues() {

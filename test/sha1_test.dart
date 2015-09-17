@@ -7,6 +7,7 @@ library sha1_test;
 
 import "package:crypto/crypto.dart";
 import "package:test/test.dart";
+import 'very_long_input.dart';
 
 part 'sha1_long_test_vectors.dart';
 part 'sha1_short_test_vectors.dart';
@@ -20,6 +21,10 @@ void main() {
   });
   test('short inputs', () {
     _testStandardVectors(sha1_short_inputs, sha1_short_mds);
+  });
+  test('input bit length greater than 32 bits', () {
+    veryLongInput(
+        new SHA1(), 1000000000, '1dd775261d7abab0b66910acc1d827a2c3799eaf');
   });
 }
 
