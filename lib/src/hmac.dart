@@ -6,35 +6,48 @@ library crypto.hmac;
 
 import 'hash.dart';
 
-/**
- * Hash-based Message Authentication Code support.
- *
- * The [add] method is used to add data to the message. The [digest] and
- * [close] methods are used to extract the message authentication code.
- */
-// TODO(floitsch): make Hash implement Sink, EventSink or similar.
+/// An implementation of [keyed-hash method authentication codes][rfc].
+///
+/// [rfc]: https://tools.ietf.org/html/rfc2104
+///
+/// HMAC allows messages to be cryptographically authenticated using any
+/// iterated cryptographic hash function.
+///
+/// The message's data is added using [add]. Once it's been fully added, the
+/// [digest] and [close] methods can be used to extract the message
+/// authentication digest.
+///
+/// If an expected authentication digest is available, the [verify] method may
+/// also be used to ensure that the message actually corresponds to that digest.
+// TODO(floitsch): make HMAC implement Sink, EventSink or similar.
 class HMAC {
+  /// The bytes from the message so far.
   final List<int> _message;
+
+  /// The hash function used to compute the authentication digest.
   Hash _hash;
+
+  /// The secret key shared by the sender and the receiver.
   List<int> _key;
+
+  /// Whether this is closed.
   bool _isClosed = false;
 
-  /**
-   * Create an [HMAC] object from a [Hash] and a key.
-   */
+  /// Create an [HMAC] object from a [Hash] and a binary key.
+  ///
+  /// The key should be a secret shared between the sender and receiver of the
+  /// message.
   HMAC(Hash this._hash, List<int> this._key) : _message = [];
 
-  /**
-   * Add a list of bytes to the message.
-   */
+  /// Adds a list of bytes to the message.
+  ///
+  /// If [this] has already been closed, throws a [StateError].
   void add(List<int> data) {
     if (_isClosed) throw new StateError("HMAC is closed");
     _message.addAll(data);
   }
 
-  /**
-   * Extract the message digest as a list of bytes without closing [this].
-   */
+  /// Returns the digest of the message so far, as a list of bytes.
   List<int> get digest {
     var blockSize = _hash.blockSize;
 
@@ -79,25 +92,22 @@ class HMAC {
     return _hash.close();
   }
 
-  /**
-   * Perform the actual computation and extract the message digest
-   * as a list of bytes.
-   */
+  /// Closes [this] and returns the digest of the message as a list of bytes.
+  ///
+  /// Once closed, [add] may no longer be called.
   List<int> close() {
     _isClosed = true;
     return digest;
   }
 
-  /**
-   * Verify that the HMAC computed for the data so far matches the
-   * given message digest.
-   *
-   * This method should be used instead of memcmp-style comparisons
-   * to avoid leaking information via timing.
-   *
-   * Throws an exception if the given digest does not have the same
-   * size as the digest computed by this HMAC instance.
-   */
+  /// Returns whether the digest computed for the data so far matches the given
+  /// [digest].
+  ///
+  /// This method should be used instead of iterative comparisons to avoid
+  /// leaking information via timing.
+  ///
+  /// Throws an [ArgumentError] if the given digest does not have the same size
+  /// as the digest computed by [this].
   bool verify(List<int> digest) {
     var computedDigest = this.digest;
     if (digest.length != computedDigest.length) {

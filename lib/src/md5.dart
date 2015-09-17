@@ -10,18 +10,22 @@ import 'hash.dart';
 import 'hash_base.dart';
 import 'utils.dart';
 
-/**
- * MD5 hash function implementation.
- *
- * WARNING: MD5 has known collisions and should only be used when
- * required for backwards compatibility.
- */
+/// An implementation of the [MD5][rfc] hash function.
+///
+/// [rfc]: https://tools.ietf.org/html/rfc1321
+///
+/// **Warning**: MD5 has known collisions and should only be used when required
+/// for backwards compatibility.
 abstract class MD5 implements Hash {
   factory MD5() = _MD5;
 
   MD5 newInstance();
 }
 
+/// The concrete implementation of [MD5].
+///
+/// This is separate so that it can extend [HashBase] without leaking additional
+/// public memebers.
 class _MD5 extends HashBase implements MD5 {
   _MD5() : super(16, 4, false) {
     h[0] = 0x67452301;
@@ -30,11 +34,12 @@ class _MD5 extends HashBase implements MD5 {
     h[3] = 0x10325476;
   }
 
-  // Returns a new instance of this Hash.
   MD5 newInstance() {
     return new _MD5();
   }
 
+  /// Data from a non-linear mathematical function that functions as
+  /// reproducible noise.
   static const _k = const [
     0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a,
     0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -49,6 +54,7 @@ class _MD5 extends HashBase implements MD5 {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
   ];
 
+  /// Per-round shift amounts.
   static const _r = const [
     07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14,
     20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,
@@ -56,8 +62,6 @@ class _MD5 extends HashBase implements MD5 {
     10, 15, 21, 06, 10, 15, 21
   ];
 
-  // Compute one iteration of the MD5 algorithm with a chunk of
-  // 16 32-bit pieces.
   void updateHash(Uint32List m) {
     assert(m.length == 16);
 

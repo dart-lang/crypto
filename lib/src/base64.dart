@@ -7,8 +7,15 @@ library crypto.base64;
 import 'dart:convert';
 import 'dart:typed_data';
 
+/// An instance of the default implementation of [Base64Codec].
+///
+/// This provides convenient access to most common Base64 use-cases.
 const Base64Codec BASE64 = const Base64Codec();
 
+/// A mapping from ASCII character codes to their corresponding Base64 values.
+///
+/// Characters with a value of -2 are invalid. Characters with a value of -1
+/// should be ignored. The padding character, "=", is represented as 0.
 const List<int> _decodeTable = const [
   -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2, -2, -1, -2, -2,
   -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
@@ -28,47 +35,64 @@ const List<int> _decodeTable = const [
   -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
 ];
 
+/// A String representing a mapping from numbers between 0 and 63, inclusive, to
+/// their corresponding encoded character.
+///
+/// This is the table for URL-safe encodings.
 const String _encodeTableUrlSafe =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
+/// A String representing a mapping from numbers between 0 and 63, inclusive, to
+/// their corresponding encoded character.
+///
+/// This is the table for URL-unsafe encodings.
 const String _encodeTable =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+/// The line length for Base64 strings with line separators.
 const int _LINE_LENGTH = 76;
+
+/// A carriage return.
 const int _CR = 13; // '\r'
+
+/// A line feed.
 const int _LF = 10; // '\n'
+
+/// The byte sequence representing non-URL-encoded padding.
 const List<int> _PAD_BYTES = const [61]; // '='
+
+/// The byte sequence representing URL-encoded padding.
 const List<int> _ENCODED_PAD_BYTES = const [37, 51, 68]; // '%3D'
+
+/// The string representing non-URL-encoded padding.
 const String _PAD = "=";
+
+/// The string representing URL-encoded padding.
 const String _ENCODED_PAD = "%3D";
 
+/// A codec that converts between binary data and [Base64][rfc]-encoded strings.
+///
+/// [rfc]: https://tools.ietf.org/html/rfc4648
 class Base64Codec extends Codec<List<int>, String> {
   final bool _urlSafe;
   final bool _addLineSeparator;
   final bool _encodePaddingCharacter;
 
-  /**
-   * Instantiates a new [Base64Codec].
-   *
-   * The optional [urlSafe] argument specifies if [encoder] and [encode]
-   * should generate a string, that is safe to use in an URL.
-   *
-   * If [urlSafe] is `true` (and not overriden at the method invocation)
-   * the [encoder] and [encode] use '-' instead of '+' and '_' instead of '/'.
-   *
-   * The default value of [urlSafe] is `false`.
-   *
-   * The optional [addLineSeparator] argument specifies if the [encoder] and
-   * [encode] should add line separators.
-   *
-   * If `addLineSeparator` is `true` [encode] adds an
-   * optional line separator (CR + LF) for each 76 char output.
-   *
-   * The default value of [addLineSeparator] if `false`.
-   *
-   * If [encodePaddingCharacter] is `true` `encode` converts `=` to `%3D`.
-   * The default value of [encodePaddingCharacter] is `false`.
-   */
+  /// Creates a new [Base64Codec].
+  ///
+  /// The default [BASE64] codec will be good enough for most cases. A new codec
+  /// only needs to be instantiated when you want to do multiple conversions
+  /// with the same configuration.
+  ///
+  /// If [urlSafe] is `true`, a URL-safe alphabet will be used when encoding.
+  /// Specifically, the characters `-` and `_` will be used instead of `+` and
+  /// `/`.
+  ///
+  /// If [addLineSeparator] is `true`, `\r\n` line separators will be added
+  /// every 76 characters when encoding.
+  ///
+  /// If [encodePaddingCharacter] is `true`, the padding character `=` will be
+  /// written as `%3D` when encoding.
   const Base64Codec(
       {bool urlSafe: false,
       bool addLineSeparator: false,
@@ -79,6 +103,20 @@ class Base64Codec extends Codec<List<int>, String> {
 
   String get name => "base64";
 
+  /// Encodes [bytes] into a Base64 string.
+  ///
+  /// If [urlSafe] is `true`, a URL-safe alphabet will be used when encoding.
+  /// Specifically, the characters `-` and `_` will be used instead of `+` and
+  /// `/`.
+  ///
+  /// If [addLineSeparator] is `true`, `\r\n` line separators will be added
+  /// every 76 characters when encoding.
+  ///
+  /// If [encodePaddingCharacter] is `true`, the padding character `=` will be
+  /// written as `%3D` when encoding.
+  ///
+  /// Any flags passed to this method take precedence over the flags passed to
+  /// the codec itself.
   String encode(List<int> bytes,
       {bool urlSafe, bool addLineSeparator, bool encodePaddingCharacter}) {
     if (urlSafe == null) urlSafe = _urlSafe;
@@ -100,38 +138,36 @@ class Base64Codec extends Codec<List<int>, String> {
   Base64Decoder get decoder => new Base64Decoder();
 }
 
-/**
- * This class encodes byte strings (lists of unsigned
- * 8-bit integers) to strings according to Base64.
- */
+/// An encoder that converts sequences of bytes to strings using [Base64][rfc].
+///
+/// [rfc]: https://tools.ietf.org/html/rfc4648
 class Base64Encoder extends Converter<List<int>, String> {
+  /// Whether this encoder generates URL-safe strings.
   final bool _urlSafe;
+
+  /// Whether this encoder adds line breaks to the output.
   final bool _addLineSeparator;
+
+  /// Whether this encoder URL-encodes trailing padding characters.
   final bool _encodePaddingCharacter;
+
+  /// The sequence of bytes to use as a padding character.
   final List<int> _pad;
 
-  /**
-   * Instantiates a new [Base64Encoder].
-   *
-   * The optional [urlSafe] argument specifies if [convert]
-   * should generate a string, that is safe to use in an URL.
-   *
-   * If it is `true` the [convert] use
-   * '-' instead of '+' and '_' instead of '/'.
-   *
-   * The default value of [urlSafe] is `false`.
-   *
-   * The optional [addLineSeparator] argument specifies if [convert]
-   * should add line separators.
-   *
-   * If it is `true` [convert] adds an optional line separator(CR + LF)
-   * for each 76 char output.
-   *
-   * The default value of [addLineSeparator] if `false`.
-   *
-   * If [encodePaddingCharacter] is `true` `encode` converts `=` to `%3D`.
-   * The default value of [encodePaddingCharacter] is `false`.
-   */
+  /// Creates a new [Base64Encoder].
+  ///
+  /// The default [BASE64.encoder] will be good enough for most cases. A new
+  /// codec only needs to be instantiated when you want to do multiple
+  /// conversions with the same configuration.
+  ///
+  /// If [urlSafe] is `true`, a URL-safe alphabet will be used. Specifically,
+  /// the characters `-` and `_` will be used instead of `+` and `/`.
+  ///
+  /// If [addLineSeparator] is `true`, `\r\n` line separators will be added
+  /// every 76 characters.
+  ///
+  /// If [encodePaddingCharacter] is `true`, the padding character `=` will be
+  /// written as `%3D`.
   const Base64Encoder(
       {bool urlSafe: false,
       bool addLineSeparator: false,
@@ -141,12 +177,10 @@ class Base64Encoder extends Converter<List<int>, String> {
         _encodePaddingCharacter = encodePaddingCharacter,
         _pad = encodePaddingCharacter == true ? _ENCODED_PAD_BYTES : _PAD_BYTES;
 
-  /**
-   * Converts [bytes] to its Base64 representation as a string.
-   *
-   * if [start] and [end] are provided, only the sublist
-   * `bytes.sublist(start, end)` is converted.
-   */
+  /// Converts [bytes] to Base64.
+  ///
+  /// If [start] and [end] are provided, only the sublist `bytes.sublist(start,
+  /// end)` is converted.
   String convert(List<int> bytes, [int start = 0, int end]) {
     int bytes_length = bytes.length;
     RangeError.checkValidRange(start, end, bytes_length);
@@ -224,10 +258,21 @@ class Base64Encoder extends Converter<List<int>, String> {
   }
 }
 
+/// A [ChunkedConversionSink] for encoding chunks of data to Base64.
 class _Base64EncoderSink extends ChunkedConversionSink<List<int>> {
+  /// The encoder used to encode each chunk.
   final Base64Encoder _encoder;
+
+  /// The underlying sink to which to emit the encoded strings.
   final ChunkedConversionSink<String> _outSink;
+
+  /// The buffer of as-yet-unconverted bytes.
+  ///
+  /// This is used to ensure that we don't generate interstitial padding
+  /// characters.
   final List<int> _buffer = new List<int>();
+
+  /// The length of [_buffer]; that is, the number of unconverted bytes.
   int _bufferCount = 0;
 
   _Base64EncoderSink(this._outSink, urlSafe, addLineSeparator)
@@ -260,14 +305,10 @@ class _Base64EncoderSink extends ChunkedConversionSink<List<int>> {
   }
 }
 
-/**
- * This class decodes strings to lists of bytes(lists of
- * unsigned 8-bit integers) according to Base64.
- */
+/// An encoder that converts [Base64][rfc] strings to sequences of bytes.
+///
+/// [rfc]: https://tools.ietf.org/html/rfc4648
 class Base64Decoder extends Converter<String, List<int>> {
-  /**
-   * Instantiates a new [Base64Decoder]
-   */
   const Base64Decoder();
 
   List<int> convert(String input) {
@@ -357,9 +398,18 @@ class Base64Decoder extends Converter<String, List<int>> {
   }
 }
 
+/// A [ChunkedConversionSink] for decoding chunks of Base64 strings to data.
 class _Base64DecoderSink extends ChunkedConversionSink<String> {
+  /// The encoder used to decode each chunk.
   final Base64Decoder _decoder = new Base64Decoder();
+
+  /// The underlying sink to which to emit the decoded strings.
   final ChunkedConversionSink<List<int>> _outSink;
+
+  /// The as-yet-unconverted text.
+  ///
+  /// This is used to handle a chunk stopping partway in the middle of a
+  /// URL-encoded `=` character.
   String _unconverted = "";
 
   _Base64DecoderSink(this._outSink);

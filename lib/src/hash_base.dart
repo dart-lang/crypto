@@ -10,18 +10,44 @@ import 'dart:typed_data';
 import 'hash.dart';
 import 'utils.dart';
 
-// Base class encapsulating common behavior for cryptographic hash
-// functions.
+/// A base class for [Hash] implementations.
+///
+/// Subclasses should override [updateHash], and define it to update [h] with
+/// the results of the hash function.
 abstract class HashBase implements Hash {
+  /// The size (in 32-bit words) of the chunks of input data that the hash
+  /// function consumes at once.
   final int _chunkSizeInWords;
+
+  /// The size (in 32-bit words) of the digest that the hash function emits.
   final int _digestSizeInWords;
+
+  /// Whether the hash function operates on big-endian words.
   final bool _bigEndianWords;
+
+  /// The words in the current chunk.
   final Uint32List _currentChunk;
+
+  /// The words in the current digest.
+  ///
+  /// The size of this buffer is given by the `digestSizeInWords` constructor
+  /// parameter.
   final Uint32List h;
+
+  /// The length of the input data so far, in bytes.
   int _lengthInBytes = 0;
+
+  /// Data that has yet to be processed by the hash function.
   List<int> _pendingData;
+
+  /// Whether [close] has been called.
   bool _digestCalled = false;
 
+  /// Creates a new hash.
+  ///
+  /// [chunkSizeInWords] represents the size of the input chunks processed by
+  /// the algorithm. [digestSizeInWords] represents the size of the algorithm's
+  /// output digest. Both are in terms of 32-bit words.
   HashBase(
       int chunkSizeInWords, int digestSizeInWords, bool this._bigEndianWords)
       : _pendingData = [],
@@ -30,7 +56,6 @@ abstract class HashBase implements Hash {
         _chunkSizeInWords = chunkSizeInWords,
         _digestSizeInWords = digestSizeInWords;
 
-  // Update the hasher with more data.
   void add(List<int> data) {
     if (_digestCalled) {
       throw new StateError(
@@ -41,7 +66,6 @@ abstract class HashBase implements Hash {
     _iterate();
   }
 
-  // Finish the hash computation and return the digest string.
   List<int> close() {
     if (_digestCalled) {
       return _resultAsBytes();
@@ -53,15 +77,19 @@ abstract class HashBase implements Hash {
     return _resultAsBytes();
   }
 
-  // Returns the block size of the hash in bytes.
   int get blockSize {
     return _chunkSizeInWords * BYTES_PER_WORD;
   }
 
-  // One round of the hash computation.
+  /// Runs a single iteration of the hash computation, updating [h] with the
+  /// result.
+  ///
+  /// [m] is the current chunk, whose size is given by the `chunkSizeInWords`
+  /// parameter passed to the constructor.
   void updateHash(Uint32List m);
 
-  // Compute the final result as a list of bytes from the hash words.
+  /// Computes the final result of the hash as a list of bytes from the hash
+  /// words.
   List<int> _resultAsBytes() {
     var result = [];
     for (var i = 0; i < h.length; i++) {
@@ -70,7 +98,9 @@ abstract class HashBase implements Hash {
     return result;
   }
 
-  // Converts a list of bytes to a chunk of 32-bit words.
+  /// Converts a list of bytes to a chunk of 32-bit words.
+  ///
+  /// Stores the result in [_currentChunk].
   void _bytesToChunk(List<int> data, int dataIndex) {
     assert((data.length - dataIndex) >= (_chunkSizeInWords * BYTES_PER_WORD));
 
@@ -88,7 +118,7 @@ abstract class HashBase implements Hash {
     }
   }
 
-  // Convert a 32-bit word to four bytes.
+  /// Converts a 32-bit word to four bytes.
   List<int> _wordToBytes(int word) {
     List bytes = new List<int>(BYTES_PER_WORD);
     bytes[0] = (word >> (_bigEndianWords ? 24 : 0)) & MASK_8;
@@ -98,8 +128,8 @@ abstract class HashBase implements Hash {
     return bytes;
   }
 
-  // Iterate through data updating the hash computation for each
-  // chunk.
+  /// Iterates through [_pendingData], updating the hash computation for each
+  /// chunk.
   void _iterate() {
     var len = _pendingData.length;
     var chunkSizeInBytes = _chunkSizeInWords * BYTES_PER_WORD;
@@ -113,13 +143,15 @@ abstract class HashBase implements Hash {
     }
   }
 
-  // Finalize the data. Add a 1 bit to the end of the message. Expand with
-  // 0 bits and add the length of the message.
+  /// Finalizes [_pendingData].
+  ///
+  /// This adds a 1 bit to the end of the message, and expands it with 0 bits to
+  /// pad it out.
   void _finalizeData() {
     _pendingData.add(0x80);
     var contentsLength = _lengthInBytes + 9;
     var chunkSizeInBytes = _chunkSizeInWords * BYTES_PER_WORD;
-    var finalizedLength = roundUp(contentsLength, chunkSizeInBytes);
+    var finalizedLength = _roundUp(contentsLength, chunkSizeInBytes);
     var zeroPadding = finalizedLength - contentsLength;
     for (var i = 0; i < zeroPadding; i++) {
       _pendingData.add(0);
@@ -138,4 +170,7 @@ abstract class HashBase implements Hash {
       _pendingData.addAll(_wordToBytes((lengthInBits >> 32) & MASK_32));
     }
   }
+
+  /// Rounds [val] to the nearest multiple of [n].
+  int _roundUp(val, n) => (val + n - 1) & -n;
 }

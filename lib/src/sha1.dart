@@ -10,19 +10,26 @@ import 'hash.dart';
 import 'hash_base.dart';
 import 'utils.dart';
 
-/**
- * SHA1 hash function implementation.
- */
+/// An implementation of the [SHA-1][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc3174
 abstract class SHA1 implements Hash {
   factory SHA1() = _SHA1;
 
   SHA1 newInstance();
 }
 
+/// The concrete implementation of [SHA1].
+///
+/// This is separate so that it can extend [HashBase] without leaking additional
+/// public memebers.
 class _SHA1 extends HashBase implements SHA1 {
+  /// The sixteen words from the original chunk, extended to 80 words.
+  ///
+  /// This is an instance variable to avoid re-allocating, but its data isn't
+  /// used across invocations of [updateHash].
   final Uint32List _w;
 
-  // Construct a SHA1 hasher object.
   _SHA1()
       : _w = new Uint32List(80),
         super(16, 5, true) {
@@ -33,13 +40,10 @@ class _SHA1 extends HashBase implements SHA1 {
     h[4] = 0xC3D2E1F0;
   }
 
-  // Returns a new instance of this Hash.
   SHA1 newInstance() {
     return new _SHA1();
   }
 
-  // Compute one iteration of the SHA1 algorithm with a chunk of
-  // 16 32-bit pieces.
   void updateHash(Uint32List m) {
     assert(m.length == 16);
 

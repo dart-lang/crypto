@@ -10,19 +10,26 @@ import 'hash.dart';
 import 'hash_base.dart';
 import 'utils.dart';
 
-/**
- * SHA256 hash function implementation.
- */
+/// An implementation of the [SHA-256][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc6234
 abstract class SHA256 implements Hash {
   factory SHA256() = _SHA256;
 
   SHA256 newInstance();
 }
 
+/// The concrete implementation of [SHA256].
+///
+/// This is separate so that it can extend [HashBase] without leaking additional
+/// public memebers.
 class _SHA256 extends HashBase implements SHA256 {
+  /// The sixteen words from the original chunk, extended to 64 words.
+  ///
+  /// This is an instance variable to avoid re-allocating, but its data isn't
+  /// used across invocations of [updateHash].
   final Uint32List _w;
 
-  // Construct a SHA256 hasher object.
   _SHA256()
       : _w = new Uint32List(64),
         super(16, 8, true) {
@@ -38,13 +45,11 @@ class _SHA256 extends HashBase implements SHA256 {
     h[7] = 0x5be0cd19;
   }
 
-  // Returns a new instance of this Hash.
   SHA256 newInstance() {
     return new _SHA256();
   }
 
-  // Table of round constants. First 32 bits of the fractional
-  // parts of the cube roots of the first 64 prime numbers.
+  /// Data from a non-linear function that functions as reproducible noise.
   static const List<int> _K = const [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
     0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
@@ -61,7 +66,9 @@ class _SHA256 extends HashBase implements SHA256 {
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
   ];
 
-  // Helper functions as defined in http://tools.ietf.org/html/rfc6234
+  // The following helper functions are taken directly from
+  // http://tools.ietf.org/html/rfc6234.
+
   _rotr32(n, x) => (x >> n) | ((x << (32 - n)) & MASK_32);
   _ch(x, y, z) => (x & y) ^ ((~x & MASK_32) & z);
   _maj(x, y, z) => (x & y) ^ (x & z) ^ (y & z);
@@ -70,8 +77,6 @@ class _SHA256 extends HashBase implements SHA256 {
   _ssig0(x) => _rotr32(7, x) ^ _rotr32(18, x) ^ (x >> 3);
   _ssig1(x) => _rotr32(17, x) ^ _rotr32(19, x) ^ (x >> 10);
 
-  // Compute one iteration of the SHA256 algorithm with a chunk of
-  // 16 32-bit pieces.
   void updateHash(Uint32List M) {
     assert(M.length == 16);
 
