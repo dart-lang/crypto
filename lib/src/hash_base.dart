@@ -125,13 +125,17 @@ abstract class HashBase implements Hash {
       _pendingData.add(0);
     }
     var lengthInBits = _lengthInBytes * BITS_PER_BYTE;
-    assert(lengthInBits < math.pow(2, 32));
+    const MAX_UINT64 = 0xFFFFFFFFFFFFFFFF;
+    if (lengthInBits > MAX_UINT64) {
+      throw new UnsupportedError(
+          "Hash undefined for message bit lengths larger than 64 bits");
+    }
     if (_bigEndianWords) {
-      _pendingData.addAll(_wordToBytes(0));
+      _pendingData.addAll(_wordToBytes((lengthInBits >> 32) & MASK_32));
       _pendingData.addAll(_wordToBytes(lengthInBits & MASK_32));
     } else {
       _pendingData.addAll(_wordToBytes(lengthInBits & MASK_32));
-      _pendingData.addAll(_wordToBytes(0));
+      _pendingData.addAll(_wordToBytes((lengthInBits >> 32) & MASK_32));
     }
   }
 }
