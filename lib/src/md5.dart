@@ -22,83 +22,88 @@ abstract class MD5 implements Hash {
   MD5 newInstance();
 }
 
+/// Data from a non-linear mathematical function that functions as
+/// reproducible noise.
+const _noise = const [
+  0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a,
+  0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
+  0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821, 0xf61e2562, 0xc040b340,
+  0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+  0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8,
+  0x676f02d9, 0x8d2a4c8a, 0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
+  0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70, 0x289b7ec6, 0xeaa127fa,
+  0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+  0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92,
+  0xffeff47d, 0x85845dd1, 0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
+  0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
+];
+
+/// Per-round shift amounts.
+const _shiftAmounts = const [
+  07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14,
+  20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,
+  16, 23, 04, 11, 16, 23, 04, 11, 16, 23, 06, 10, 15, 21, 06, 10, 15, 21, 06,
+  10, 15, 21, 06, 10, 15, 21
+];
+
 /// The concrete implementation of [MD5].
 ///
 /// This is separate so that it can extend [HashBase] without leaking additional
 /// public memebers.
 class _MD5 extends HashBase implements MD5 {
-  _MD5() : super(16, 4, false) {
-    h[0] = 0x67452301;
-    h[1] = 0xefcdab89;
-    h[2] = 0x98badcfe;
-    h[3] = 0x10325476;
+  final digest = new Uint32List(4);
+
+  _MD5() : super(16, endian: Endianness.LITTLE_ENDIAN) {
+    digest[0] = 0x67452301;
+    digest[1] = 0xefcdab89;
+    digest[2] = 0x98badcfe;
+    digest[3] = 0x10325476;
   }
 
-  MD5 newInstance() {
-    return new _MD5();
-  }
+  MD5 newInstance() => new _MD5();
 
-  /// Data from a non-linear mathematical function that functions as
-  /// reproducible noise.
-  static const _k = const [
-    0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a,
-    0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
-    0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821, 0xf61e2562, 0xc040b340,
-    0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
-    0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8,
-    0x676f02d9, 0x8d2a4c8a, 0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
-    0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70, 0x289b7ec6, 0xeaa127fa,
-    0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
-    0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92,
-    0xffeff47d, 0x85845dd1, 0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
-    0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
-  ];
+  void updateHash(Uint32List chunk) {
+    assert(chunk.length == 16);
 
-  /// Per-round shift amounts.
-  static const _r = const [
-    07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14,
-    20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,
-    16, 23, 04, 11, 16, 23, 04, 11, 16, 23, 06, 10, 15, 21, 06, 10, 15, 21, 06,
-    10, 15, 21, 06, 10, 15, 21
-  ];
+    var a = digest[0];
+    var b = digest[1];
+    var c = digest[2];
+    var d = digest[3];
 
-  void updateHash(Uint32List m) {
-    assert(m.length == 16);
-
-    var a = h[0];
-    var b = h[1];
-    var c = h[2];
-    var d = h[3];
-
-    var t0;
-    var t1;
+    var e;
+    var f;
 
     for (var i = 0; i < 64; i++) {
       if (i < 16) {
-        t0 = (b & c) | ((~b & MASK_32) & d);
-        t1 = i;
+        e = (b & c) | ((~b & mask32) & d);
+        f = i;
       } else if (i < 32) {
-        t0 = (d & b) | ((~d & MASK_32) & c);
-        t1 = ((5 * i) + 1) % 16;
+        e = (d & b) | ((~d & mask32) & c);
+        f = ((5 * i) + 1) % 16;
       } else if (i < 48) {
-        t0 = b ^ c ^ d;
-        t1 = ((3 * i) + 5) % 16;
+        e = b ^ c ^ d;
+        f = ((3 * i) + 5) % 16;
       } else {
-        t0 = c ^ (b | (~d & MASK_32));
-        t1 = (7 * i) % 16;
+        e = c ^ (b | (~d & mask32));
+        f = (7 * i) % 16;
       }
 
       var temp = d;
       d = c;
       c = b;
       b = add32(
-          b, rotl32(add32(add32(a, t0), add32(_k[i], m[t1])), _r[i]));
+          b,
+          rotl32(
+              add32(
+                  add32(a, e),
+                  add32(_noise[i], chunk[f])),
+              _shiftAmounts[i]));
       a = temp;
     }
 
-    h[0] = add32(a, h[0]);
-    h[1] = add32(b, h[1]);
-    h[2] = add32(c, h[2]);
-    h[3] = add32(d, h[3]);
+    digest[0] = add32(a, digest[0]);
+    digest[1] = add32(b, digest[1]);
+    digest[2] = add32(c, digest[2]);
+    digest[3] = add32(d, digest[3]);
   }
 }

@@ -31,10 +31,9 @@ abstract class CryptoUtils {
   /// If [urlSafe] is true, the resulting string will be URL- and filename-
   /// safe.
   static String bytesToBase64(List<int> bytes,
-      {bool urlSafe: false, bool addLineSeparator: false}) {
-    return BASE64.encode(bytes,
-        urlSafe: urlSafe, addLineSeparator: addLineSeparator);
-  }
+          {bool urlSafe: false, bool addLineSeparator: false}) =>
+      BASE64.encode(bytes,
+          urlSafe: urlSafe, addLineSeparator: addLineSeparator);
 
   /// Converts a [Base64-encoded][rfc] String into list of bytes.
   ///
@@ -44,7 +43,5 @@ abstract class CryptoUtils {
   /// -unsafe Base 64 encoded strings.
   ///
   /// Throws a [FormatException] if [input] contains invalid characters.
-  static List<int> base64StringToBytes(String input) {
-    return BASE64.decode(input);
-  }
+  static List<int> base64StringToBytes(String input) => BASE64.decode(input);
 }

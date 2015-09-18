@@ -4,6 +4,10 @@
 
 library crypto.hmac;
 
+import 'dart:typed_data';
+
+import 'package:typed_data/typed_data.dart';
+
 import 'hash.dart';
 
 /// An implementation of [keyed-hash method authentication codes][rfc].
@@ -22,22 +26,35 @@ import 'hash.dart';
 // TODO(floitsch): make HMAC implement Sink, EventSink or similar.
 class HMAC {
   /// The bytes from the message so far.
-  final List<int> _message;
+  final _message = new Uint8Buffer();
 
   /// The hash function used to compute the authentication digest.
   Hash _hash;
 
   /// The secret key shared by the sender and the receiver.
-  List<int> _key;
+  final Uint8List _key;
 
-  /// Whether this is closed.
+  /// Whether [close] has been called.
   bool _isClosed = false;
 
   /// Create an [HMAC] object from a [Hash] and a binary key.
   ///
   /// The key should be a secret shared between the sender and receiver of the
   /// message.
-  HMAC(Hash this._hash, List<int> this._key) : _message = [];
+  HMAC(Hash hash, List<int> key)
+      : _hash = hash,
+        _key = new Uint8List(hash.blockSize) {
+    // Hash the key if it's longer than the block size of the hash.
+    if (key.length > _hash.blockSize) {
+      _hash = _hash.newInstance();
+      _hash.add(key);
+      key = _hash.close();
+    }
+
+    // If [key] is shorter than the block size, the rest of [_key] will be
+    // 0-padded.
+    _key.setRange(0, key.length, key);
+  }
 
   /// Adds a list of bytes to the message.
   ///
@@ -49,28 +66,9 @@ class HMAC {
 
   /// Returns the digest of the message so far, as a list of bytes.
   List<int> get digest {
-    var blockSize = _hash.blockSize;
-
-    // Hash the key if it is longer than the block size of the hash.
-    if (_key.length > blockSize) {
-      _hash = _hash.newInstance();
-      _hash.add(_key);
-      _key = _hash.close();
-    }
-
-    // Zero-pad the key until its size is equal to the block size of the hash.
-    if (_key.length < blockSize) {
-      var newKey = new List(blockSize);
-      newKey.setRange(0, _key.length, _key);
-      for (var i = _key.length; i < blockSize; i++) {
-        newKey[i] = 0;
-      }
-      _key = newKey;
-    }
-
     // Compute inner padding.
-    var padding = new List(blockSize);
-    for (var i = 0; i < blockSize; i++) {
+    var padding = new Uint8List(_key.length);
+    for (var i = 0; i < padding.length; i++) {
       padding[i] = 0x36 ^ _key[i];
     }
 
@@ -78,17 +76,17 @@ class HMAC {
     _hash = _hash.newInstance();
     _hash.add(padding);
     _hash.add(_message);
-    var innerHash = _hash.close();
+    var innerDigest = _hash.close();
 
     // Compute outer padding.
-    for (var i = 0; i < blockSize; i++) {
+    for (var i = 0; i < padding.length; i++) {
       padding[i] = 0x5c ^ _key[i];
     }
 
     // Outer hash computation which is the result.
     _hash = _hash.newInstance();
     _hash.add(padding);
-    _hash.add(innerHash);
+    _hash.add(innerDigest);
     return _hash.close();
   }
 
@@ -115,7 +113,8 @@ class HMAC {
           'Invalid digest size: ${digest.length} in HMAC.verify. '
           'Expected: ${_hash.blockSize}.');
     }
-    int result = 0;
+
+    var result = 0;
     for (var i = 0; i < digest.length; i++) {
       result |= digest[i] ^ computedDigest[i];
     }

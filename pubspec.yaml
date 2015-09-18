@@ -4,6 +4,9 @@ author: Dart Team <misc@dartlang.org>
 description: Library of cryptographic functions.
 homepage: https://www.github.com/dart-lang/crypto
 environment:
-  sdk: '>=1.0.0 <2.0.0'
+  sdk: '>=1.8.0 <2.0.0'
+dependencies:
+  charcode: '^1.1.0'
+  typed_data: '^1.0.0'
 dev_dependencies:
   test: '>=0.12.0 <0.13.0'

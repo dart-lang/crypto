@@ -4,25 +4,25 @@
 
 library crypto.utils;
 
-/// A bitmask that limits an integer to 8 bits.
-const MASK_8 = 0xff;
-
 /// A bitmask that limits an integer to 32 bits.
-const MASK_32 = 0xffffffff;
+const mask32 = 0xFFFFFFFF;
+
+/// The highest value representable by a 64-bit unsigned integer.
+const maxUint64 = 0xFFFFFFFFFFFFFFFF;
 
 /// The number of bits in a byte.
-const BITS_PER_BYTE = 8;
+const bitsPerByte = 8;
 
 /// The number of bytes in a 32-bit word.
-const BYTES_PER_WORD = 4;
+const bytesPerWord = 4;
 
 /// Adds [x] and [y] with 32-bit overflow semantics.
-int add32(x, y) => (x + y) & MASK_32;
+int add32(int x, int y) => (x + y) & mask32;
 
 /// Bitwise rotates [val] to the left by [shift], obeying 32-bit overflow
 /// semantics.
 int rotl32(int val, int shift) {
-  var mod_shift = shift & 31;
-  return ((val << mod_shift) & MASK_32) |
-      ((val & MASK_32) >> (32 - mod_shift));
+  var modShift = shift & 31;
+  return ((val << modShift) & mask32) |
+      ((val & mask32) >> (32 - modShift));
 }
