@@ -2,307 +2,307 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Library tag to allow the test to run on Dartium.
-library base64_test;
-
-import 'dart:math';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 
+import "package:charcode/ascii.dart";
 import "package:crypto/crypto.dart";
 import "package:test/test.dart";
 
 void main() {
-  test('encoder', _testEncoder);
-  test('decoder', _testDecoder);
-  test('decoder for malformed input', _testDecoderForMalformedInput);
-  test('encode decode lists', _testEncodeDecodeLists);
-  test('url safe encode-decode', _testUrlSafeEncodeDecode);
-  test(
-      'percent-encoded padding character encode-decode', _testPaddingCharacter);
-  test('streaming encoder', _testStreamingEncoder);
-  test('streaming decoder', _testStreamingDecoder);
-  test('streaming decoder for malformed input',
-      _testStreamingDecoderForMalformedInput);
-  test('streaming encoder for different decompositions of a list of bytes',
-      _testStreamingEncoderForDecompositions);
-  test('streaming decoder for different decompositions of a string',
-      _testStreamingDecoderForDecompositions);
-  test('streaming for encoded padding character',
-      _testStreamingForEncodedPadding);
-  test('old api', _testOldApi);
-  test('url safe streaming encoder/decoder', _testUrlSafeStreaming);
-  test('performance', _testPerformance);
-}
+  group("encoder", () {
+    test("for simple inputs", () {
+      expect(BASE64.encode([]), equals(''));
+      expect(BASE64.encode([$f]), equals('Zg=='));
+      expect(BASE64.encode([$f, $o]), equals('Zm8='));
+      expect(BASE64.encode([$f, $o, $o]), equals('Zm9v'));
+      expect(BASE64.encode([$f, $o, $o, $b]), equals('Zm9vYg=='));
+      expect(BASE64.encode([$f, $o, $o, $b, $a]), equals('Zm9vYmE='));
+      expect(BASE64.encode([$f, $o, $o, $b, $a, $r]), equals('Zm9vYmFy'));
+    });
 
-// Data from http://tools.ietf.org/html/rfc4648.
-const _INPUTS = const ['', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar'];
-const _RESULTS = const [
-  '',
-  'Zg==',
-  'Zm8=',
-  'Zm9v',
-  'Zm9vYg==',
-  'Zm9vYmE=',
-  'Zm9vYmFy'
-];
+    test("for inputs with zeroes", () {
+      expect(BASE64.encode([0]), equals('AA=='));
+      expect(BASE64.encode([0, 0]), equals('AAA='));
+      expect(BASE64.encode([0, 0, 0]), equals('AAAA'));
+      expect(BASE64.encode([0, 0, 0, 0]), equals('AAAAAA=='));
+    });
 
-const _PADDING_INPUT = const [2, 8];
+    test("for a large input with line separators", () {
+      expect(
+          BASE64.encode(
+              UTF8.encode(
+                  "Man is distinguished, not only by his reason, but by this "
+                  "singular passion from other animals, which is a lust of the "
+                  "mind, that by a perseverance of delight in the continued "
+                  "and indefatigable generation of knowledge, exceeds the "
+                  "short vehemence of any carnal pleasure."),
+              addLineSeparator: true),
+          equals(
+              "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1"
+                  "dCBieSB0aGlz\r\n"
+              "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBh"
+                  "IGx1c3Qgb2Yg\r\n"
+              "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0"
+                  "aGUgY29udGlu\r\n"
+              "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBl"
+                  "eGNlZWRzIHRo\r\n"
+              "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4="));
+    });
 
-var _STREAMING_ENCODER_INPUT = [
-  [102, 102],
-  [111, 102],
-  [
-    111, 111, 102, 111, 111, 98, 102, 111, 111, 98, 97, 102, 111, 111, 98, 97,
-    114
-  ]
-];
+    test("for a large input without line separators", () {
+      expect(
+          BASE64.encode(
+              UTF8.encode(
+                  "Man is distinguished, not only by his reason, but by this "
+                  "singular passion from other animals, which is a lust of the "
+                  "mind, that by a perseverance of delight in the continued "
+                  "and indefatigable generation of knowledge, exceeds the "
+                  "short vehemence of any carnal pleasure.")),
+          equals(
+              "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1"
+              "dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3"
+              "aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFu"
+              "Y2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxl"
+              "IGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhl"
+              "bWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4="));
+    });
 
-const _STREAMING_ENCODED = 'ZmZvZm9vZm9vYmZvb2JhZm9vYmFy';
-const _STREAMING_DECODER_INPUT = const ['YmFz', 'ZTY', '0I', 'GRlY29kZXI='];
-const _STREAMING_DECODED = const [
-  98, 97, 115, 101, 54, 52, 32, 100, 101, 99, 111, 100, 101, 114
-];
-const _STREAMING_DECODER_INPUT_FOR_ZEROES = const ['AAAA', 'AAA=', 'AA==', ''];
-var _STREAMING_DECODED_ZEROES = [0, 0, 0, 0, 0, 0];
+    test("for chunked input", () {
+      expect(_encodeChunked([
+        [102, 102],
+        [111, 102],
+        [
+          111, 111, 102, 111, 111, 98, 102, 111, 111, 98, 97, 102, 111, 111,
+          98, 97, 114
+        ]
+      ]), equals("ZmZvZm9vZm9vYmZvb2JhZm9vYmFy"));
 
-var _DECOMPOSITIONS_FOR_DECODING = [
-  ["A", "", "BCD"],
-  ["A", "BCD", "", ""],
-  ["A", "B", "", "", "CD", ""],
-  ["", "A", "BC", "", "D"],
-  ["", "AB", "C", "", "", "D"],
-  ["AB", "CD", ""],
-  ["", "ABC", "", "D"],
-  ["", "ABC", "D", ""],
-  ["", "", "ABCD", ""],
-  ["A", "B", "C", "D"],
-  ["", "A", "B", "C", "D", ""],
-  ["", "A", "B", "", "", "C", "", "D", ""]
-];
+      expect(_encodeChunked([[196, 16], [], [158], [196]]), equals("xBCexA=="));
+      expect(_encodeChunked([[196, 16], [158, 196], [], []]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[196], [], [16], [], [], [158], [], [196]]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[196], [], [16], [158, 196], [], []]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[], [196], [], [], [16, 158], [], [196]]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[], [196], [16, 158, 196], []]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[196, 16, 158], [], [], [196]]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[196, 16, 158], [], [196], []]),
+          equals("xBCexA=="));
+      expect(_encodeChunked([[196, 16, 158, 196], [], [], []]),
+          equals("xBCexA=="));
+    });
 
-const _DECOMPOSITION_DECODED = const [0, 16, 131];
+    test('with a URL-safe alphabet', () {
+      expect(BASE64.encode(BASE64.decode('+/A='), urlSafe: true),
+          equals('-_A='));
+    });
 
-var _DECOMPOSITIONS_FOR_ENCODING = [
-  [[196, 16], [], [158], [196]],
-  [[196, 16], [158, 196], [], []],
-  [[196], [], [16], [], [], [158], [], [196]],
-  [[196], [], [16], [158, 196], [], []],
-  [[], [196], [], [], [16, 158], [], [196]],
-  [[], [196], [16, 158, 196], []],
-  [[196, 16, 158], [], [], [196]],
-  [[196, 16, 158], [], [196], []],
-  [[196, 16, 158, 196], [], [], []]
-];
+    test('with a percent-encoded padding character', () {
+      expect(BASE64.encode([2, 8], encodePaddingCharacter: true),
+          equals('Agg%3D'));
+    });
 
-const _DECOMPOSITION_ENCODED = 'xBCexA==';
+    test('with the old API', () {
+      expect(CryptoUtils.bytesToBase64([]), equals(''));
+      expect(CryptoUtils.bytesToBase64([$f]), equals('Zg=='));
+      expect(CryptoUtils.bytesToBase64([$f, $o]), equals('Zm8='));
+      expect(CryptoUtils.bytesToBase64([$f, $o, $o]), equals('Zm9v'));
+      expect(CryptoUtils.bytesToBase64([$f, $o, $o, $b]), equals('Zm9vYg=='));
+      expect(CryptoUtils.bytesToBase64([$f, $o, $o, $b, $a]),
+          equals('Zm9vYmE='));
+      expect(CryptoUtils.bytesToBase64([$f, $o, $o, $b, $a, $r]),
+          equals('Zm9vYmFy'));
+    });
+  });
 
-// Test data with only zeroes.
-var inputsWithZeroes = [[0, 0, 0], [0, 0], [0], []];
-const _RESULTS_WITH_ZEROS = const ['AAAA', 'AAA=', 'AA==', ''];
+  group("decoder", () {
+    test("for simple inputs", () {
+      expect(BASE64.decode(''), equals([]));
+      expect(BASE64.decode('Zg=='), equals([$f]));
+      expect(BASE64.decode('Zm8='), equals([$f, $o]));
+      expect(BASE64.decode('Zm9v'), equals([$f, $o, $o]));
+      expect(BASE64.decode('Zm9vYg=='), equals([$f, $o, $o, $b]));
+      expect(BASE64.decode('Zm9vYmE='), equals([$f, $o, $o, $b, $a]));
+      expect(BASE64.decode('Zm9vYmFy'), equals([$f, $o, $o, $b, $a, $r]));
+    });
 
-const _LONG_LINE =
-    "Man is distinguished, not only by his reason, but by this singular "
-    "passion from other animals, which is a lust of the mind, that by a "
-    "perseverance of delight in the continued and indefatigable generation "
-    "of knowledge, exceeds the short vehemence of any carnal pleasure.";
+    test("for inputs with zeroes", () {
+      expect(BASE64.decode('AA=='), equals([0]));
+      expect(BASE64.decode('AAA='), equals([0, 0]));
+      expect(BASE64.decode('AAAA'), equals([0, 0, 0]));
+      expect(BASE64.decode('AAAAAA=='), equals([0, 0, 0, 0]));
+    });
 
-const _LONG_LINE_RESULT = "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
-    "x5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\r\n"
-    "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlci"
-    "BhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg\r\n"
-    "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcm"
-    "FuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu\r\n"
-    "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYX"
-    "Rpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\r\n"
-    "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm"
-    "5hbCBwbGVhc3VyZS4=";
+    test("for a large input with line separators", () {
+      expect(
+          BASE64.decode(
+              "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1"
+                  "dCBieSB0aGlz\r\n"
+              "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBh"
+                  "IGx1c3Qgb2Yg\r\n"
+              "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0"
+                  "aGUgY29udGlu\r\n"
+              "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBl"
+                  "eGNlZWRzIHRo\r\n"
+              "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4="),
+          equals(UTF8.encode(
+              "Man is distinguished, not only by his reason, but by this "
+              "singular passion from other animals, which is a lust of the "
+              "mind, that by a perseverance of delight in the continued and "
+              "indefatigable generation of knowledge, exceeds the short "
+              "vehemence of any carnal pleasure.")));
+    });
 
-const _LONG_LINE_RESULT_NO_BREAK = "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbm"
-    "x5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz"
-    "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlci"
-    "BhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg"
-    "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcm"
-    "FuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu"
-    "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYX"
-    "Rpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo"
-    "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm"
-    "5hbCBwbGVhc3VyZS4=";
+    test("for a large input without line separators", () {
+      expect(
+          BASE64.decode(
+              "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1"
+              "dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3"
+              "aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFu"
+              "Y2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxl"
+              "IGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhl"
+              "bWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4="),
+          equals(UTF8.encode(
+              "Man is distinguished, not only by his reason, but by this "
+              "singular passion from other animals, which is a lust of the "
+              "mind, that by a perseverance of delight in the continued and "
+              "indefatigable generation of knowledge, exceeds the short "
+              "vehemence of any carnal pleasure.")));
+    });
 
-void _testEncoder() {
-  for (var i = 0; i < _INPUTS.length; i++) {
-    expect(BASE64.encode(_INPUTS[i].codeUnits), _RESULTS[i]);
-  }
-  for (var i = 0; i < inputsWithZeroes.length; i++) {
-    expect(BASE64.encode(inputsWithZeroes[i]), _RESULTS_WITH_ZEROS[i]);
-  }
-  expect(BASE64.encode(_LONG_LINE.codeUnits, addLineSeparator: true),
-      _LONG_LINE_RESULT);
-  expect(BASE64.encode(_LONG_LINE.codeUnits), _LONG_LINE_RESULT_NO_BREAK);
-}
+    test("for chunked input", () {
+      expect(_decodeChunked(['YmFz', 'ZTY', '0I', 'GRlY29kZXI=']), equals([
+        98, 97, 115, 101, 54, 52, 32, 100, 101, 99, 111, 100, 101, 114
+      ]));
+    });
 
-void _testDecoder() {
-  for (var i = 0; i < _RESULTS.length; i++) {
-    expect(new String.fromCharCodes(BASE64.decode(_RESULTS[i])), _INPUTS[i]);
-  }
+    test("for chunked input containing zeroes", () {
+      expect(_decodeChunked(['AAAA', 'AAA=', 'AA==', '']),
+          equals([0, 0, 0, 0, 0, 0]));
 
-  for (var i = 0; i < _RESULTS_WITH_ZEROS.length; i++) {
-    expect(BASE64.decode(_RESULTS_WITH_ZEROS[i]), inputsWithZeroes[i]);
-  }
+      expect(_decodeChunked(["A", "", "BCD"]), equals([0, 16, 131]));
+      expect(_decodeChunked(["A", "BCD", "", ""]), equals([0, 16, 131]));
+      expect(_decodeChunked(["A", "B", "", "", "CD", ""]),
+          equals([0, 16, 131]));
+      expect(_decodeChunked(["", "A", "BC", "", "D"]), equals([0, 16, 131]));
+      expect(_decodeChunked(["", "AB", "C", "", "", "D"]),
+          equals([0, 16, 131]));
+      expect(_decodeChunked(["AB", "CD", ""]), equals([0, 16, 131]));
+      expect(_decodeChunked(["", "ABC", "", "D"]), equals([0, 16, 131]));
+      expect(_decodeChunked(["", "ABC", "D", ""]), equals([0, 16, 131]));
+      expect(_decodeChunked(["", "", "ABCD", ""]), equals([0, 16, 131]));
+      expect(_decodeChunked(["A", "B", "C", "D"]), equals([0, 16, 131]));
+      expect(_decodeChunked(["", "A", "B", "C", "D", ""]),
+          equals([0, 16, 131]));
+      expect(_decodeChunked(["", "A", "B", "", "", "C", "", "D", ""]),
+          equals([0, 16, 131]));
+    });
 
-  var longLineDecoded = BASE64.decode(_LONG_LINE_RESULT);
-  expect(new String.fromCharCodes(longLineDecoded), _LONG_LINE);
+    test("for chunked input with encoded padding", () {
+      expect(_decodeChunked(['AA%', '3D', '%', '3', 'DEFGZ']),
+          equals(BASE64.decode('AA==EFGZ')));
+    });
 
-  var longLineResultNoBreak = BASE64.decode(_LONG_LINE_RESULT);
-  expect(new String.fromCharCodes(longLineResultNoBreak), _LONG_LINE);
-}
+    test('with a URL-safe alphabet', () {
+      expect(BASE64.decode('-_A='), equals(BASE64.decode('+/A=')));
+    });
 
-void _testPaddingCharacter() {
-  var encoded = BASE64.encode(_PADDING_INPUT, encodePaddingCharacter: true);
-  expect(encoded, 'Agg%3D');
-  expect(BASE64.decode(encoded), _PADDING_INPUT);
-}
+    test('with a percent-encoded padding character', () {
+      expect(BASE64.decode('Agg%3D'), equals([2, 8]));
+    });
 
-Future _testStreamingEncoder() async {
-  expect(
-      await new Stream.fromIterable(_STREAMING_ENCODER_INPUT)
-          .transform(BASE64.encoder)
-          .join(),
-      _STREAMING_ENCODED);
-}
+    test("with the old API", () {
+      expect(CryptoUtils.base64StringToBytes(''), equals([]));
+      expect(CryptoUtils.base64StringToBytes('Zg=='), equals([$f]));
+      expect(CryptoUtils.base64StringToBytes('Zm8='), equals([$f, $o]));
+      expect(CryptoUtils.base64StringToBytes('Zm9v'), equals([$f, $o, $o]));
+      expect(CryptoUtils.base64StringToBytes('Zm9vYg=='),
+          equals([$f, $o, $o, $b]));
+      expect(CryptoUtils.base64StringToBytes('Zm9vYmE='),
+          equals([$f, $o, $o, $b, $a]));
+      expect(CryptoUtils.base64StringToBytes('Zm9vYmFy'),
+          equals([$f, $o, $o, $b, $a, $r]));
+    });
 
-Future _testStreamingDecoder() async {
-  expect(
-      await new Stream.fromIterable(_STREAMING_DECODER_INPUT)
-          .transform(BASE64.decoder)
-          .expand((l) => l)
-          .toList(),
-      _STREAMING_DECODED);
+    group("rejects", () {
+      test("input of the wrong length", () {
+        expect(() => BASE64.decode('A'), throwsFormatException);
+        expect(() => BASE64.decode('AB'), throwsFormatException);
+        expect(() => BASE64.decode('ABz'), throwsFormatException);
+        expect(() => BASE64.decode('ABzdE'), throwsFormatException);
+        expect(() => BASE64.decode('ABzdEf'), throwsFormatException);
+        expect(() => BASE64.decode('ABzdEfg'), throwsFormatException);
+      });
 
-  expect(
-      await new Stream.fromIterable(_STREAMING_DECODER_INPUT_FOR_ZEROES)
-          .transform(BASE64.decoder)
-          .expand((l) => l)
-          .toList(),
-      _STREAMING_DECODED_ZEROES);
-}
+      test("input with invalid characters", () {
+        expect(() => BASE64.decode('AB~'), throwsFormatException);
+      });
 
-Future _testStreamingDecoderForMalformedInput() async {
-  expect(new Stream.fromIterable(['ABz']).transform(BASE64.decoder).toList(),
-      throwsFormatException);
+      test("chunked input of the wrong length", () {
+        expect(() => _decodeChunked(['ABz']), throwsFormatException);
+        expect(() => _decodeChunked(['AB', 'Lx', 'z', 'xx']),
+            throwsFormatException);
+      });
 
-  expect(
-      new Stream.fromIterable(['AB', 'Lx', 'z', 'xx'])
-          .transform(BASE64.decoder)
-          .toList(),
-      throwsFormatException);
-}
+      test("input with the wrong padding", () {
+        expect(() => BASE64.decode('A=='), throwsFormatException);
+        expect(() => BASE64.decode('AB='), throwsFormatException);
+        expect(() => BASE64.decode('ABz=='), throwsFormatException);
+        expect(() => BASE64.decode('ABzdE='), throwsFormatException);
+      });
 
-Future _testStreamingEncoderForDecompositions() async {
-  for (var decomposition in _DECOMPOSITIONS_FOR_ENCODING) {
-    expect(
-        await new Stream.fromIterable(decomposition)
-            .transform(BASE64.encoder)
-            .join(),
-        _DECOMPOSITION_ENCODED);
-  }
-}
+      test("input with the wrong encoded padding", () {
+        expect(() => BASE64.decode('A%3D%3D'), throwsFormatException);
+        expect(() => BASE64.decode('AB%3D'), throwsFormatException);
+        expect(() => BASE64.decode('ABz%3D%3D'), throwsFormatException);
+        expect(() => BASE64.decode('ABzdE%3D'), throwsFormatException);
+      });
+    });
+  });
 
-Future _testStreamingDecoderForDecompositions() async {
-  for (var decomposition in _DECOMPOSITIONS_FOR_DECODING) {
-    expect(
-        await new Stream.fromIterable(decomposition)
-            .transform(BASE64.decoder)
-            .expand((x) => x)
-            .toList(),
-        _DECOMPOSITION_DECODED);
-  }
-}
-
-void _testDecoderForMalformedInput() {
-  expect(() {
-    BASE64.decode('AB~');
-  }, throwsFormatException);
-
-  expect(() {
-    BASE64.decode('A');
-  }, throwsFormatException);
-}
-
-Future _testUrlSafeStreaming() async {
-  String encUrlSafe = '-_A=';
-  List<List<int>> dec = [BASE64.decode('+/A=')];
-  var streamedResult = await new Stream.fromIterable(dec)
-      .transform(new Base64Encoder(urlSafe: true))
-      .join();
-
-  expect(streamedResult, encUrlSafe);
-}
-
-Future _testStreamingForEncodedPadding() async {
-  List<String> withEncodedPadding = ['AA%', '3D', '%', '3', 'DEFGZ'];
-  List<int> decoded = BASE64.decode('AA==EFGZ');
-  var streamedResult = await new Stream.fromIterable(withEncodedPadding)
-      .transform(BASE64.decoder)
-      .expand((x) => x)
-      .toList();
-
-  expect(streamedResult, decoded);
-}
-
-void _testUrlSafeEncodeDecode() {
-  List<int> decUrlSafe = BASE64.decode('-_A=');
-  List<int> dec = BASE64.decode('+/A=');
-  expect(decUrlSafe, orderedEquals(dec));
-  expect(BASE64.encode(dec, urlSafe: true), '-_A=');
-  expect(BASE64.encode(dec), '+/A=');
-}
-
-void _testEncodeDecodeLists() {
-  for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 256 - i; j++) {
-      List<int> x = new List<int>(i);
-      for (int k = 0; k < i; k++) {
-        x[k] = j;
+  test('successfully round-trips data', () {
+    for (var i = 0; i < 10; i++) {
+      for (var j = 0; j < 256 - i; j++) {
+        var data = new List.filled(i, j);
+        expect(BASE64.decode(BASE64.encode(data)), equals(data));
       }
-      var enc = BASE64.encode(x);
-      var dec = BASE64.decode(enc);
-      expect(dec, orderedEquals(x));
     }
-  }
+  });
 }
 
-void _fillRandom(List<int> l) {
-  var random = new Random(0xBABE);
-  for (int j = 0; j < l.length; j++) {
-    l[j] = random.nextInt(255);
+/// Performs chunked Base64 decoding of [chunks] and returns the result as a
+/// byte array.
+List<int> _decodeChunked(Iterable<String> chunks) {
+  var bytes;
+  var innerSink = new ByteConversionSink.withCallback(
+      (result) => bytes = result);
+  var sink = BASE64.decoder.startChunkedConversion(innerSink);
+
+  for (var chunk in chunks) {
+    sink.add(chunk);
   }
+  sink.close();
+
+  return bytes;
 }
 
-void _testOldApi() {
-  for (int i = 0; i < _INPUTS.length; i++) {
-    expect(CryptoUtils.bytesToBase64(_INPUTS[i].codeUnits), _RESULTS[i]);
-    expect(CryptoUtils.base64StringToBytes(_RESULTS[i]), _INPUTS[i].codeUnits);
-  }
-}
+/// Performs chunked Base64 encoding of [chunks] and returns the result.
+String _encodeChunked(Iterable<List<int>> chunks) {
+  var string;
+  var innerSink = new StringConversionSink.withCallback(
+      (result) => string = result);
+  var sink = BASE64.encoder.startChunkedConversion(innerSink);
 
-void _testPerformance() {
-  var l = new List<int>(1024);
-  var iters = 5000;
-  _fillRandom(l);
-  String enc;
-  var w = new Stopwatch()..start();
-  for (int i = 0; i < iters; ++i) {
-    enc = BASE64.encode(l);
+  for (var chunk in chunks) {
+    sink.add(chunk);
   }
-  int ms = w.elapsedMilliseconds;
-  int perSec = (iters * l.length) * 1000 ~/ ms;
-  // print("Encode 1024 bytes for $iters times: $ms msec. $perSec b/s");
-  w..reset();
-  for (int i = 0; i < iters; ++i) {
-    BASE64.decode(enc);
-  }
-  ms = w.elapsedMilliseconds;
-  perSec = (iters * l.length) * 1000 ~/ ms;
-  // ('''Decode into ${l.length} bytes for $iters
-  //     times: $ms msec. $perSec b/s''');
+  sink.close();
+
+  return string;
 }
