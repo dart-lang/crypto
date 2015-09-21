@@ -8,6 +8,7 @@ export 'src/base64.dart';
 export 'src/base64/decoder.dart';
 export 'src/base64/encoder.dart';
 export 'src/crypto_utils.dart';
+export 'src/digest.dart';
 export 'src/hash.dart';
 export 'src/hmac.dart';
 export 'src/md5.dart';
