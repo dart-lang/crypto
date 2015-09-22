@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:typed_data/typed_data.dart';
 
+import 'digest_sink.dart';
 import 'hash.dart';
 
 /// An implementation of [keyed-hash method authentication codes][rfc].
@@ -29,7 +30,7 @@ class HMAC {
   final _message = new Uint8Buffer();
 
   /// The hash function used to compute the authentication digest.
-  Hash _hash;
+  final Hash _hash;
 
   /// The secret key shared by the sender and the receiver.
   final Uint8List _key;
@@ -45,11 +46,7 @@ class HMAC {
       : _hash = hash,
         _key = new Uint8List(hash.blockSize) {
     // Hash the key if it's longer than the block size of the hash.
-    if (key.length > _hash.blockSize) {
-      _hash = _hash.newInstance();
-      _hash.add(key);
-      key = _hash.close();
-    }
+    if (key.length > _hash.blockSize) key = _hash.convert(key).bytes;
 
     // If [key] is shorter than the block size, the rest of [_key] will be
     // 0-padded.
@@ -73,10 +70,7 @@ class HMAC {
     }
 
     // Inner hash computation.
-    _hash = _hash.newInstance();
-    _hash.add(padding);
-    _hash.add(_message);
-    var innerDigest = _hash.close();
+    var innerDigest = _hashWithPadding(padding, _message);
 
     // Compute outer padding.
     for (var i = 0; i < padding.length; i++) {
@@ -84,10 +78,17 @@ class HMAC {
     }
 
     // Outer hash computation which is the result.
-    _hash = _hash.newInstance();
-    _hash.add(padding);
-    _hash.add(innerDigest);
-    return _hash.close();
+    return _hashWithPadding(padding, innerDigest);
+  }
+
+  /// Returns the digest of [padding] followed by [data].
+  List<int> _hashWithPadding(List<int> padding, List<int> data) {
+    var innerSink = new DigestSink();
+    _hash.startChunkedConversion(innerSink)
+      ..add(padding)
+      ..add(data)
+      ..close();
+    return innerSink.value.bytes;
   }
 
   /// Closes [this] and returns the digest of the message as a list of bytes.

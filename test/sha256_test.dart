@@ -2,8 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Library tag to allow Dartium to run the tests.
-library sha256_test;
+import "dart:async";
 
 import "package:test/test.dart";
 import "package:crypto/crypto.dart";
@@ -11,26 +10,42 @@ import "package:crypto/crypto.dart";
 import "utils.dart";
 
 void main() {
-  test('add may not be called after close', () {
-    var sha = new SHA256();
-    sha.close();
-    expect(() => sha.add([0]), throwsStateError);
+  group("with the old API", () {
+    test('add may not be called after close', () {
+      var sha = new SHA256();
+      sha.close();
+      expect(() => sha.add([0]), throwsStateError);
+    });
+
+    test('close returns the same digest repeatedly', () {
+      var sha = new SHA256();
+      var digest = sha.close();
+      expect(sha.close(), equals(digest));
+      expect(sha.close(), equals(digest));
+      expect(sha.close(), equals(digest));
+    });
   });
 
-  test('close returns the same digest repeatedly', () {
-    var sha = new SHA256();
-    var digest = sha.close();
-    expect(sha.close(), equals(digest));
-    expect(sha.close(), equals(digest));
-    expect(sha.close(), equals(digest));
+  group("with a chunked converter", () {
+    test('add may not be called after close', () {
+      var sink = sha256.startChunkedConversion(new StreamController().sink);
+      sink.close();
+      expect(() => sink.add([0]), throwsStateError);
+    });
+
+    test('close may be called multiple times', () {
+      var sink = sha256.startChunkedConversion(new StreamController().sink);
+      sink.close();
+      sink.close();
+      sink.close();
+      sink.close();
+    });
   });
 
   group("standard vector", () {
     for (var i = 0; i < _inputs.length; i++) {
       test(_digests[i], () {
-        var hash = new SHA256();
-        hash.add(_inputs[i]);
-        expect(CryptoUtils.bytesToHex(hash.close()), equals(_digests[i]));
+        expect(sha256.convert(_inputs[i]).toString(), equals(_digests[i]));
       });
     }
   });

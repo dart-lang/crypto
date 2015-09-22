@@ -1,10 +1,24 @@
-# Changelog
+## 0.9.2
 
-## next
+* `Hash`, `MD5`, `SHA1`, and `SHA256` now implement `Converter`. They convert
+  between `List<int>`s and the new `Digest` class, which represents a hash
+  digest. The `Converter` APIs—`Hash.convert()` and
+  `Hash.startChunkedConversion`—should be used in preference to the old APIs,
+  which are now deprecated.
 
-* Hashing (md5, sha1, sha256) now works correctly for input sizes
-  up to 64 bits.
-* Small example added to generate message digests for files.
+* Top-level `sha1`, `sha256`, and `md5` fields have been added to make it easier
+  to use those hash algorithms without having to instantiate new instances.
+
+* Hashing now works correctly for input sizes up to 2^64 bytes.
+
+### Deprecations
+
+* `Hash.add`, `Hash.close`, and `Hash.newInstance` are deprecated.
+  `Hash.convert` should be used for hashing single values, and
+  `Hash.startChunkedConversion` should be used for hashing streamed values.
+  
+* `new SHA1()`, `new SHA256()`, and `new MD5()` are deprecated. Use the
+  top-level `sha1`, `sha256`, and `md5` fields instead.
 
 ## 0.9.1
 

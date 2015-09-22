@@ -4,19 +4,37 @@
 
 library crypto.sha256;
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'digest.dart';
 import 'hash.dart';
-import 'hash_base.dart';
+import 'hash_sink.dart';
 import 'utils.dart';
+
+/// An instance of [SHA256].
+///
+/// This instance provides convenient access to the [SHA256][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc6234
+final sha256 = new SHA256();
 
 /// An implementation of the [SHA-256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-abstract class SHA256 implements Hash {
-  factory SHA256() = _SHA256;
+///
+/// Note that it's almost always easier to use [sha256] rather than creating a
+/// new instance.
+class SHA256 extends Hash {
+  final int blockSize = 16 * bytesPerWord;
 
-  SHA256 newInstance();
+  @Deprecated("Use the sha256 field instead.")
+  SHA256();
+
+  SHA256 newInstance() => new SHA256();
+
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      new ByteConversionSink.from(new _SHA256Sink(sink));
 }
 
 /// Data from a non-linear function that functions as reproducible noise.
@@ -38,7 +56,7 @@ const List<int> _noise = const [
 ///
 /// This is separate so that it can extend [HashBase] without leaking additional
 /// public memebers.
-class _SHA256 extends HashBase implements SHA256 {
+class _SHA256Sink extends HashSink {
   final digest = new Uint32List(8);
 
   /// The sixteen words from the original chunk, extended to 64 words.
@@ -47,9 +65,9 @@ class _SHA256 extends HashBase implements SHA256 {
   /// used across invocations of [updateHash].
   final Uint32List _extended;
 
-  _SHA256()
+  _SHA256Sink(Sink<Digest> sink)
       : _extended = new Uint32List(64),
-        super(16) {
+        super(sink, 16) {
     // Initial value of the hash parts. First 32 bits of the fractional parts
     // of the square roots of the first 8 prime numbers.
     digest[0] = 0x6a09e667;
@@ -61,8 +79,6 @@ class _SHA256 extends HashBase implements SHA256 {
     digest[6] = 0x1f83d9ab;
     digest[7] = 0x5be0cd19;
   }
-
-  SHA256 newInstance() => new _SHA256();
 
   // The following helper functions are taken directly from
   // http://tools.ietf.org/html/rfc6234.

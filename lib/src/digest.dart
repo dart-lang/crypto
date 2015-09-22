@@ -4,8 +4,6 @@
 
 library crypto.digest;
 
-import 'dart:typed_data';
-
 import 'crypto_utils.dart';
 
 /// A message digest as computed by a [Hash] or [HMAC] function.
@@ -13,8 +11,7 @@ class Digest {
   /// The message digest as an array of bytes.
   final List<int> bytes;
 
-  Digest(List<int> bytes)
-      : bytes = new Uint8List.fromList(bytes);
+  Digest(this.bytes);
 
   /// Returns whether this is equal to another digest.
   ///
@@ -22,11 +19,13 @@ class Digest {
   /// information via timing.
   bool operator ==(Object other) {
     if (other is! Digest) return false;
-    if (other.bytes.length != bytes.length) return false;
+
+    var digest = other as Digest;
+    if (digest.bytes.length != bytes.length) return false;
 
     var result = 0;
     for (var i = 0; i < bytes.length; i++) {
-      result |= bytes[i] ^ other.bytes[i];
+      result |= bytes[i] ^ digest.bytes[i];
     }
     return result == 0;
   }

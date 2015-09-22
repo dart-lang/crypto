@@ -4,26 +4,44 @@
 
 library crypto.sha1;
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'digest.dart';
 import 'hash.dart';
-import 'hash_base.dart';
+import 'hash_sink.dart';
 import 'utils.dart';
+
+/// An instance of [SHA1].
+///
+/// This instance provides convenient access to the [SHA1][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc3174
+final sha1 = new SHA1();
 
 /// An implementation of the [SHA-1][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
-abstract class SHA1 implements Hash {
-  factory SHA1() = _SHA1;
+///
+/// Note that it's almost always easier to use [sha1] rather than creating a new
+/// instance.
+class SHA1 extends Hash {
+  final int blockSize = 16 * bytesPerWord;
 
-  SHA1 newInstance();
+  @Deprecated("Use the sha1 field instead.")
+  SHA1();
+
+  SHA1 newInstance() => new SHA1();
+
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      new ByteConversionSink.from(new _SHA1Sink(sink));
 }
 
 /// The concrete implementation of [SHA1].
 ///
 /// This is separate so that it can extend [HashBase] without leaking additional
 /// public memebers.
-class _SHA1 extends HashBase implements SHA1 {
+class _SHA1Sink extends HashSink {
   final digest = new Uint32List(5);
 
   /// The sixteen words from the original chunk, extended to 80 words.
@@ -32,17 +50,15 @@ class _SHA1 extends HashBase implements SHA1 {
   /// used across invocations of [updateHash].
   final Uint32List _extended;
 
-  _SHA1()
+  _SHA1Sink(Sink<Digest> sink)
       : _extended = new Uint32List(80),
-        super(16) {
+        super(sink, 16) {
     digest[0] = 0x67452301;
     digest[1] = 0xEFCDAB89;
     digest[2] = 0x98BADCFE;
     digest[3] = 0x10325476;
     digest[4] = 0xC3D2E1F0;
   }
-
-  SHA1 newInstance() => new _SHA1();
 
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 16);

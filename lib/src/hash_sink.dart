@@ -8,13 +8,17 @@ import 'dart:typed_data';
 
 import 'package:typed_data/typed_data.dart';
 
+import 'digest.dart';
 import 'hash.dart';
 import 'utils.dart';
 
-/// A base class for [Hash] implementations.
+/// A base class for [Sink] implementations for hash algorithms.
 ///
 /// Subclasses should override [updateHash] and [digest].
-abstract class HashBase implements Hash {
+abstract class HashSink implements Sink<List<int>> {
+  /// The inner sink that this should forward to.
+  final Sink<Digest> _sink;
+
   /// Whether the hash function operates on big-endian words.
   final Endianness _endian;
 
@@ -38,13 +42,12 @@ abstract class HashBase implements Hash {
   /// This should be updated each time [updateHash] is called.
   Uint32List get digest;
 
-  int get blockSize => _currentChunk.lengthInBytes;
-
   /// Creates a new hash.
   ///
   /// [chunkSizeInWords] represents the size of the input chunks processed by
   /// the algorithm, in terms of 32-bit words.
-  HashBase(int chunkSizeInWords, {Endianness endian: Endianness.BIG_ENDIAN})
+  HashSink(this._sink, int chunkSizeInWords,
+          {Endianness endian: Endianness.BIG_ENDIAN})
       : _endian = endian,
         _currentChunk = new Uint32List(chunkSizeInWords);
 
@@ -62,14 +65,14 @@ abstract class HashBase implements Hash {
     _iterate();
   }
 
-  List<int> close() {
-    if (_isClosed) return _byteDigest();
+  void close() {
+    if (_isClosed) return;
     _isClosed = true;
 
     _finalizeData();
     _iterate();
     assert(_pendingData.isEmpty);
-    return _byteDigest();
+    _sink.add(new Digest(_byteDigest()));
   }
 
   Uint8List _byteDigest() {

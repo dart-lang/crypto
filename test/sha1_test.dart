@@ -2,33 +2,48 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Library tag to allow dartium to run the test.
-library sha1_test;
+import "dart:async";
 
 import "package:crypto/crypto.dart";
 import "package:test/test.dart";
 
 void main() {
-  test('add may not be called after close', () {
-    var sha = new SHA1();
-    sha.close();
-    expect(() => sha.add([0]), throwsStateError);
+  group("with the old API", () {
+    test('add may not be called after close', () {
+      var sha = new SHA1();
+      sha.close();
+      expect(() => sha.add([0]), throwsStateError);
+    });
+
+    test('close returns the same digest repeatedly', () {
+      var sha = new SHA1();
+      var digest = sha.close();
+      expect(sha.close(), equals(digest));
+      expect(sha.close(), equals(digest));
+      expect(sha.close(), equals(digest));
+    });
   });
 
-  test('close returns the same digest repeatedly', () {
-    var sha = new SHA1();
-    var digest = sha.close();
-    expect(sha.close(), equals(digest));
-    expect(sha.close(), equals(digest));
-    expect(sha.close(), equals(digest));
+  group("with a chunked converter", () {
+    test('add may not be called after close', () {
+      var sink = sha1.startChunkedConversion(new StreamController().sink);
+      sink.close();
+      expect(() => sink.add([0]), throwsStateError);
+    });
+
+    test('close may be called multiple times', () {
+      var sink = sha1.startChunkedConversion(new StreamController().sink);
+      sink.close();
+      sink.close();
+      sink.close();
+      sink.close();
+    });
   });
 
   group("standard vector", () {
     for (var i = 0; i < _inputs.length; i++) {
       test(_digests[i], () {
-        var hash = new SHA1();
-        hash.add(_inputs[i]);
-        expect(CryptoUtils.bytesToHex(hash.close()), equals(_digests[i]));
+        expect(sha1.convert(_inputs[i]).toString(), equals(_digests[i]));
       });
     }
   });

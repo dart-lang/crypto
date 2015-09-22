@@ -4,11 +4,23 @@
 
 library crypto.md5;
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'digest.dart';
 import 'hash.dart';
-import 'hash_base.dart';
+import 'hash_sink.dart';
 import 'utils.dart';
+
+/// An instance of [MD5].
+///
+/// This instance provides convenient access to the [MD5][rfc] hash function.
+///
+/// [rfc]: https://tools.ietf.org/html/rfc1321
+///
+/// **Warning**: MD5 has known collisions and should only be used when required
+/// for backwards compatibility.
+final md5 = new MD5._();
 
 /// An implementation of the [MD5][rfc] hash function.
 ///
@@ -16,10 +28,19 @@ import 'utils.dart';
 ///
 /// **Warning**: MD5 has known collisions and should only be used when required
 /// for backwards compatibility.
-abstract class MD5 implements Hash {
-  factory MD5() = _MD5;
+///
+/// Note that it's almost always easier to use [md5] rather than creating a new
+/// instance.
+class MD5 extends Hash {
+  final int blockSize = 16 * bytesPerWord;
 
-  MD5 newInstance();
+  @Deprecated("Use the md5 field instead.")
+  MD5();
+
+  MD5 newInstance() => new MD5._();
+
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      new ByteConversionSink.from(new _MD5Sink(sink));
 }
 
 /// Data from a non-linear mathematical function that functions as
@@ -50,17 +71,16 @@ const _shiftAmounts = const [
 ///
 /// This is separate so that it can extend [HashBase] without leaking additional
 /// public memebers.
-class _MD5 extends HashBase implements MD5 {
+class _MD5Sink extends HashSink {
   final digest = new Uint32List(4);
 
-  _MD5() : super(16, endian: Endianness.LITTLE_ENDIAN) {
+  _MD5Sink(Sink<Digest> sink)
+      : super(sink, 16, endian: Endianness.LITTLE_ENDIAN) {
     digest[0] = 0x67452301;
     digest[1] = 0xefcdab89;
     digest[2] = 0x98badcfe;
     digest[3] = 0x10325476;
   }
-
-  MD5 newInstance() => new _MD5();
 
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 16);
