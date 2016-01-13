@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-library crypto.digest;
-
 import 'crypto_utils.dart';
 
 /// A message digest as computed by a [Hash] or [HMAC] function.

@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-library crypto.digest_sink;
-
 import 'digest.dart';
 
 /// A sink used to get a digest value out of [Hash.startChunkedConversion].

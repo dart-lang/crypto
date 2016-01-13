@@ -3,8 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // Library tag to allow the test to run on Dartium.
-library hmac_sha1_test;
-
 import "package:crypto/crypto.dart";
 import "package:test/test.dart";
 
