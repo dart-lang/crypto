@@ -17,28 +17,18 @@ import 'hash.dart';
 ///
 /// HMAC allows messages to be cryptographically authenticated using any
 /// iterated cryptographic hash function.
-class HMAC extends Converter<List<int>, Digest> {
+class Hmac extends Converter<List<int>, Digest> {
   /// The hash function used to compute the authentication digest.
   final Hash _hash;
 
   /// The secret key shared by the sender and the receiver.
   final Uint8List _key;
 
-  /// The bytes from the message so far.
-  final _message = new Uint8Buffer();
-
-  /// The sink for implementing the deprecated APIs that involved adding data
-  /// directly to the [HMAC] instance.
-  _HmacSink _sink;
-
-  /// The sink that [_sink] sends the [Digest] to once it finishes hashing.
-  DigestSink _innerSink;
-
   /// Create an [HMAC] object from a [Hash] and a binary key.
   ///
   /// The key should be a secret shared between the sender and receiver of the
   /// message.
-  HMAC(Hash hash, List<int> key)
+  Hmac(Hash hash, List<int> key)
       : _hash = hash,
         _key = new Uint8List(hash.blockSize) {
     // Hash the key if it's longer than the block size of the hash.
@@ -47,9 +37,6 @@ class HMAC extends Converter<List<int>, Digest> {
     // If [key] is shorter than the block size, the rest of [_key] will be
     // 0-padded.
     _key.setRange(0, key.length, key);
-
-    _innerSink = new DigestSink();
-    _sink = startChunkedConversion(_innerSink);
   }
 
   Digest convert(List<int> data) {
@@ -62,30 +49,44 @@ class HMAC extends Converter<List<int>, Digest> {
 
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new _HmacSink(sink, _hash, _key);
+}
 
-  /// Adds a list of bytes to the message.
+/// This is deprecated.
+///
+/// Use [Hmac] instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
+class HMAC {
+  final Hmac _hmac;
+
+  /// The sink for implementing the deprecated APIs that involved adding data
+  /// directly to the [HMAC] instance.
+  _HmacSink _sink;
+
+  /// The sink that [_sink] sends the [Digest] to once it finishes hashing.
+  DigestSink _innerSink;
+
+  /// The bytes from the message so far.
+  final _message = new Uint8Buffer();
+
+  /// Create an [HMAC] object from a [Hash] and a binary key.
   ///
-  /// If [this] has already been closed, throws a [StateError].
-  @Deprecated("Expires in 1.0.0. Use HMAC.convert() or "
-      "HMAC.startChunkedConversion() instead.")
+  /// The key should be a secret shared between the sender and receiver of the
+  /// message.
+  HMAC(Hash hash, List<int> key) : _hmac = new Hmac(hash, key) {
+    _innerSink = new DigestSink();
+    _sink = _hmac.startChunkedConversion(_innerSink);
+  }
+
   void add(List<int> data) {
     _message.addAll(data);
     _sink.add(data);
   }
 
-  /// Closes [this] and returns the digest of the message as a list of bytes.
-  ///
-  /// Once closed, [add] may no longer be called.
-  @Deprecated("Expires in 1.0.0. Use HMAC.convert() or "
-      "HMAC.startChunkedConversion() instead.")
   List<int> close() {
     _sink.close();
     return _innerSink.value.bytes;
   }
 
-  /// Returns the digest of the message so far, as a list of bytes.
-  @Deprecated("Expires in 1.0.0. Use HMAC.convert() or "
-      "HMAC.startChunkedConversion() instead.")
   List<int> get digest {
     if (_sink._isClosed) return _innerSink.value.bytes;
 
@@ -97,27 +98,18 @@ class HMAC extends Converter<List<int>, Digest> {
     var bytes = _innerSink.value.bytes;
 
     _innerSink = new DigestSink();
-    _sink = _hash.startChunkedConversion(_innerSink);
+    _sink = _hmac._hash.startChunkedConversion(_innerSink);
     _sink.add(_message);
 
     return bytes;
   }
 
-  /// Returns whether the digest computed for the data so far matches the given
-  /// [digest].
-  ///
-  /// This method should be used instead of iterative comparisons to avoid
-  /// leaking information via timing.
-  ///
-  /// Throws an [ArgumentError] if the given digest does not have the same size
-  /// as the digest computed by [this].
-  @Deprecated("Expires in 1.0.0. Use Digest.==() instead.")
   bool verify(List<int> digest) {
     var computedDigest = this.digest;
     if (digest.length != computedDigest.length) {
       throw new ArgumentError(
           'Invalid digest size: ${digest.length} in HMAC.verify. '
-          'Expected: ${_hash.blockSize}.');
+          'Expected: ${_hmac._hash.blockSize}.');
     }
 
     var result = 0;

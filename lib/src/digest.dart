@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'crypto_utils.dart';
+import 'package:convert/convert.dart';
 
 /// A message digest as computed by a [Hash] or [HMAC] function.
 class Digest {
@@ -29,5 +29,5 @@ class Digest {
   }
 
   /// The message digest as a string of hexadecimal digits.
-  String toString() => CryptoUtils.bytesToHex(bytes);
+  String toString() => hex.encode(bytes);
 }

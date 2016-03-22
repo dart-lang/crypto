@@ -10,12 +10,12 @@ import 'hash.dart';
 import 'hash_sink.dart';
 import 'utils.dart';
 
-/// An instance of [SHA256].
+/// An instance of [Sha256].
 ///
-/// This instance provides convenient access to the [SHA256][rfc] hash function.
+/// This instance provides convenient access to the [Sha256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha256 = new SHA256();
+final sha256 = new Sha256._();
 
 /// An implementation of the [SHA-256][rfc] hash function.
 ///
@@ -23,16 +23,25 @@ final sha256 = new SHA256();
 ///
 /// Note that it's almost always easier to use [sha256] rather than creating a
 /// new instance.
-class SHA256 extends Hash {
+class Sha256 extends Hash {
   final int blockSize = 16 * bytesPerWord;
 
-  @Deprecated("Use the sha256 field instead.")
-  SHA256();
+  Sha256._();
 
-  SHA256 newInstance() => new SHA256();
+  Sha256 newInstance() => new Sha256._();
 
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
-      new ByteConversionSink.from(new _SHA256Sink(sink));
+      new ByteConversionSink.from(new _Sha256Sink(sink));
+}
+
+/// This class is deprecated.
+///
+/// Use [sha256] instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
+class SHA256 extends Sha256 {
+  SHA256() : super._();
+
+  SHA256 newInstance() => new SHA256();
 }
 
 /// Data from a non-linear function that functions as reproducible noise.
@@ -50,11 +59,11 @@ const List<int> _noise = const [
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
 
-/// The concrete implementation of [SHA256].
+/// The concrete implementation of [Sha256].
 ///
 /// This is separate so that it can extend [HashBase] without leaking additional
 /// public memebers.
-class _SHA256Sink extends HashSink {
+class _Sha256Sink extends HashSink {
   final digest = new Uint32List(8);
 
   /// The sixteen words from the original chunk, extended to 64 words.
@@ -63,7 +72,7 @@ class _SHA256Sink extends HashSink {
   /// used across invocations of [updateHash].
   final Uint32List _extended;
 
-  _SHA256Sink(Sink<Digest> sink)
+  _Sha256Sink(Sink<Digest> sink)
       : _extended = new Uint32List(64),
         super(sink, 16) {
     // Initial value of the hash parts. First 32 bits of the fractional parts

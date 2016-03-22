@@ -6,6 +6,9 @@
   `Hash.startChunkedConversion`—should be used in preference to the old APIs,
   which are now deprecated.
 
+* `SHA1`, `SHA256`, and `HMAC` have been renamed to `Sha1`, `Sha256`, and
+  `Hmac`, respectively. The old names still work, but are deprecated.
+
 * Top-level `sha1`, `sha256`, and `md5` fields have been added to make it easier
   to use those hash algorithms without having to instantiate new instances.
 
@@ -17,8 +20,20 @@
   `Hash.convert` should be used for hashing single values, and
   `Hash.startChunkedConversion` should be used for hashing streamed values.
   
-* `new SHA1()`, `new SHA256()`, and `new MD5()` are deprecated. Use the
-  top-level `sha1`, `sha256`, and `md5` fields instead.
+* `SHA1` and `SHA256` are deprecated. Use the top-level `sha1` and `sha256`
+  fields instead.
+
+* While the `MD5` class is not deprecated, the `new MD5()` constructor is. Use
+  the top-level `md5` field instead.
+
+* `HMAC` is deprecated. Use `Hmac` instead.
+
+* `Base64Codec`, `Base64Encoder`, `Base64Decoder`, `Base64EncoderSink`,
+  `Base64DecoderSink`, and `BASE64` are deprecated. Use the Base64 APIs in
+  `dart:convert` instead.
+
+* `CryptoUtils` is deprecated. Use the Base64 APIs in `dart:convert` and the hex
+  APIs in the `convert` package instead.
 
 ## 0.9.1
 

@@ -24,9 +24,10 @@ const _decodeTable = const [
   38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
 ];
 
-/// An encoder that converts [Base64][rfc] strings to sequences of bytes.
+/// This is deprecated.
 ///
-/// [rfc]: https://tools.ietf.org/html/rfc4648
+/// Use the `Base64Decoder` class in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 class Base64Decoder extends Converter<String, List<int>> {
   const Base64Decoder();
 

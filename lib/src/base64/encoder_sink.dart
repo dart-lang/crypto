@@ -6,7 +6,10 @@ import 'dart:convert';
 
 import 'encoder.dart';
 
-/// A [ChunkedConversionSink] for encoding chunks of data to Base64.
+/// This is deprecated.
+///
+/// Use the `Base64Encoder` class in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 class Base64EncoderSink extends ChunkedConversionSink<List<int>> {
   /// The encoder used to encode each chunk.
   final Base64Encoder _encoder;

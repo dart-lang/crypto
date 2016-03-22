@@ -40,21 +40,22 @@ abstract class Hash extends Converter<List<int>, Digest> {
 
   ByteConversionSink startChunkedConversion(Sink<Digest> sink);
 
-  /// Returns a new instance of this hash function.
-  @Deprecated("Expires in 1.0.0. Use Hash.startChunkedConversion() instead.")
+  /// This is deprecated.
+  ///
+  /// Use [startChunkedConversion] instead.
+  @Deprecated("Will be removed in crypto 1.0.0.")
   Hash newInstance();
 
-  /// Add a list of bytes to the hash computation.
+  /// This is deprecated.
   ///
-  /// If [this] has already been closed, throws a [StateError].
-  @Deprecated("Expires in 1.0.0. Use Hash.convert() or "
-      "Hash.startChunkedConversion() instead.")
+  /// Use [convert] or [startChunkedConversion] instead.
+  @Deprecated("Will be removed in crypto 1.0.0.")
   void add(List<int> data) => _sink.add(data);
 
-  /// Finish the hash computation and extract the message digest as a list of
-  /// bytes.
-  @Deprecated("Expires in 1.0.0. Use Hash.convert() or "
-      "Hash.startChunkedConversion() instead.")
+  /// This is deprecated.
+  ///
+  /// Use [convert] or [startChunkedConversion] instead.
+  @Deprecated("Will be removed in crypto 1.0.0.")
   List<int> close() {
     _sink.close();
     return _innerSink.value.bytes;

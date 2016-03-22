@@ -7,14 +7,16 @@ import 'dart:convert';
 import 'base64/decoder.dart';
 import 'base64/encoder.dart';
 
-/// An instance of the default implementation of [Base64Codec].
+/// This is deprecated.
 ///
-/// This provides convenient access to most common Base64 use-cases.
+/// Use the `BASE64` constant in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 const Base64Codec BASE64 = const Base64Codec();
 
-/// A codec that converts between binary data and [Base64][rfc]-encoded strings.
+/// This is deprecated.
 ///
-/// [rfc]: https://tools.ietf.org/html/rfc4648
+/// Use the `Base64Codec` class in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 class Base64Codec extends Codec<List<int>, String> {
   final bool _urlSafe;
   final bool _addLineSeparator;

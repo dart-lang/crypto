@@ -32,7 +32,10 @@ final md5 = new MD5();
 class MD5 extends Hash {
   final int blockSize = 16 * bytesPerWord;
 
-  @Deprecated("Use the md5 field instead.")
+  /// This constructor is deprecated.
+  ///
+  /// Use [md5] instead.
+  @Deprecated("Will be removed in crypto 1.0.0.")
   MD5();
 
   MD5 newInstance() => new MD5();

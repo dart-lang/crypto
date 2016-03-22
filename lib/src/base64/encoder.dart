@@ -25,9 +25,10 @@ const _encodeTable =
 /// The line length for Base64 strings with line separators.
 const _lineLength = 76;
 
-/// An encoder that converts sequences of bytes to strings using [Base64][rfc].
+/// This is deprecated.
 ///
-/// [rfc]: https://tools.ietf.org/html/rfc4648
+/// Use the `Base64Encoder` class in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 class Base64Encoder extends Converter<List<int>, String> {
   /// Whether this encoder generates URL-safe strings.
   final bool _urlSafe;

@@ -4,10 +4,12 @@
 
 import 'base64.dart';
 
-/// Utility methods for working with message digests.
+/// This class is deprecated.
+@Deprecated("Will be removed in crypto 1.0.0.")
 abstract class CryptoUtils {
-  /// Convert a list of bytes (for example a message digest) into a hexadecimal
-  /// string.
+  /// This is deprecated.
+  ///
+  /// Use `hex` from `package:convert` instead.
   static String bytesToHex(List<int> bytes) {
     var result = new StringBuffer();
     for (var part in bytes) {
@@ -16,30 +18,16 @@ abstract class CryptoUtils {
     return result.toString();
   }
 
-  /// Converts a list of bytes into a [Base64-encoded][rfc] string.
+  /// This is deprecated.
   ///
-  /// [rfc]: https://tools.ietf.org/html/rfc4648
-  ///
-  /// The list can be any list of integers from 0 to 255 inclusive, for example
-  /// a message digest.
-  ///
-  /// If [addLineSeparator] is true, the resulting string will  be
-  /// broken into lines of 76 characters, separated by "\r\n".
-  ///
-  /// If [urlSafe] is true, the resulting string will be URL- and filename-
-  /// safe.
+  /// Use `BASE64` from `dart:convert` instead.
   static String bytesToBase64(List<int> bytes,
           {bool urlSafe: false, bool addLineSeparator: false}) =>
       BASE64.encode(bytes,
           urlSafe: urlSafe, addLineSeparator: addLineSeparator);
 
-  /// Converts a [Base64-encoded][rfc] String into list of bytes.
+  /// This is deprecated.
   ///
-  /// [rfc]: https://tools.ietf.org/html/rfc4648
-  ///
-  /// This ignores "\r\n" sequences in [input]. It accepts both URL-safe and
-  /// -unsafe Base 64 encoded strings.
-  ///
-  /// Throws a [FormatException] if [input] contains invalid characters.
+  /// Use `BASE64` from `dart:convert` instead.
   static List<int> base64StringToBytes(String input) => BASE64.decode(input);
 }

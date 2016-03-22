@@ -6,7 +6,10 @@ import 'dart:convert';
 
 import 'decoder.dart';
 
-/// A [ChunkedConversionSink] for decoding chunks of Base64 strings to data.
+/// This is deprecated.
+///
+/// Use the `Base64Decoder` class in `dart:convert` instead.
+@Deprecated("Will be removed in crypto 1.0.0.")
 class Base64DecoderSink extends ChunkedConversionSink<String> {
   /// The encoder used to decode each chunk.
   final Base64Decoder _decoder = new Base64Decoder();
