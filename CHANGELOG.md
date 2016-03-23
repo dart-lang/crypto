@@ -4,6 +4,10 @@
   been added. Packages that would use 1.0.0 as a lower bound should use 0.9.2
   instead—for example, `crypto: ">=0.9.2 <2.0.0"`.
 
+## 0.9.2+1
+
+* Avoid core library methods that don't work on dart2js.
+
 ## 0.9.2
 
 * `Hash`, `MD5`, `SHA1`, and `SHA256` now implement `Converter`. They convert

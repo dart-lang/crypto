@@ -128,7 +128,20 @@ abstract class HashSink implements Sink<List<int>> {
     // hash.
     var offset = _pendingData.length;
     _pendingData.addAll(new Uint8List(8));
-    _pendingData.buffer.asByteData().setUint64(offset, lengthInBits, _endian);
+    var byteData = _pendingData.buffer.asByteData();
+
+    // We're essentially doing byteData.setUint64(offset, lengthInBits, _endian)
+    // here, but that method isn't supported on dart2js so we implement it
+    // manually instead.
+    var highBits = lengthInBits >> 32;
+    var lowBits = lengthInBits & mask32;
+    if (_endian == Endianness.BIG_ENDIAN) {
+      byteData.setUint32(offset, highBits, _endian);
+      byteData.setUint32(offset + bytesPerWord, lowBits, _endian);
+    } else {
+      byteData.setUint32(offset, lowBits, _endian);
+      byteData.setUint32(offset + bytesPerWord, highBits, _endian);
+    }
   }
 
   /// Rounds [val] up to the next multiple of [n], as long as [n] is a power of
