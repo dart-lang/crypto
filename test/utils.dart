@@ -2,9 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math' as math;
-import 'dart:io';
-
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 

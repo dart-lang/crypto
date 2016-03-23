@@ -10,13 +10,15 @@ import "package:test/test.dart";
 void main() {
   group("with a chunked converter", () {
     test('add may not be called after close', () {
-      var sink = sha1.startChunkedConversion(new StreamController().sink);
+      var sink =
+          sha1.startChunkedConversion(new StreamController<Digest>().sink);
       sink.close();
       expect(() => sink.add([0]), throwsStateError);
     });
 
     test('close may be called multiple times', () {
-      var sink = sha1.startChunkedConversion(new StreamController().sink);
+      var sink =
+          sha1.startChunkedConversion(new StreamController<Digest>().sink);
       sink.close();
       sink.close();
       sink.close();
@@ -36,7 +38,7 @@ void main() {
 // Standard test vectors from:
 //   http://csrc.nist.gov/groups/STM/cavp/documents/shs/shabytetestvectors.zip
 
-const _inputs = const [
+const _inputs = const <List<int>>[
   const [ ],
   const [ 0x36 ],
   const [ 0x19, 0x5a ],
