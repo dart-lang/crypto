@@ -1,3 +1,7 @@
+## 0.9.2+1
+
+* Avoid core library methods that don't work on dart2js.
+
 ## 0.9.2
 
 * `Hash`, `MD5`, `SHA1`, and `SHA256` now implement `Converter`. They convert
