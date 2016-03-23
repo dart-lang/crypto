@@ -34,16 +34,6 @@ class Sha256 extends Hash {
       new ByteConversionSink.from(new _Sha256Sink(sink));
 }
 
-/// This class is deprecated.
-///
-/// Use [sha256] instead.
-@Deprecated("Will be removed in crypto 1.0.0.")
-class SHA256 extends Sha256 {
-  SHA256() : super._();
-
-  SHA256 newInstance() => new SHA256();
-}
-
 /// Data from a non-linear function that functions as reproducible noise.
 const List<int> _noise = const [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,

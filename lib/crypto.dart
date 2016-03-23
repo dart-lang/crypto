@@ -2,10 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-export 'src/base64.dart';
-export 'src/base64/decoder.dart';
-export 'src/base64/encoder.dart';
-export 'src/crypto_utils.dart';
 export 'src/digest.dart';
 export 'src/hash.dart';
 export 'src/hmac.dart';

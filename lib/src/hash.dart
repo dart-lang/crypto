@@ -15,20 +15,11 @@ import 'digest_sink.dart';
 abstract class Hash extends Converter<List<int>, Digest> {
   /// The internal block size of the hash in bytes.
   ///
-  /// This is exposed for use by the [HMAC] class, which needs to know the block
+  /// This is exposed for use by the [Hmac] class, which needs to know the block
   /// size for the [Hash] it uses.
   int get blockSize;
 
-  /// The sink for implementing the deprecated APIs that involved adding data
-  /// directly to the [Hash] instance.
-  ByteConversionSink _sink;
-
-  /// The sink that [_sink] sends the [Digest] to once it finishes hashing.
-  final DigestSink _innerSink = new DigestSink();
-
-  Hash() {
-    _sink = startChunkedConversion(_innerSink);
-  }
+  const Hash();
 
   Digest convert(List<int> data) {
     var innerSink = new DigestSink();
@@ -39,25 +30,4 @@ abstract class Hash extends Converter<List<int>, Digest> {
   }
 
   ByteConversionSink startChunkedConversion(Sink<Digest> sink);
-
-  /// This is deprecated.
-  ///
-  /// Use [startChunkedConversion] instead.
-  @Deprecated("Will be removed in crypto 1.0.0.")
-  Hash newInstance();
-
-  /// This is deprecated.
-  ///
-  /// Use [convert] or [startChunkedConversion] instead.
-  @Deprecated("Will be removed in crypto 1.0.0.")
-  void add(List<int> data) => _sink.add(data);
-
-  /// This is deprecated.
-  ///
-  /// Use [convert] or [startChunkedConversion] instead.
-  @Deprecated("Will be removed in crypto 1.0.0.")
-  List<int> close() {
-    _sink.close();
-    return _innerSink.value.bytes;
-  }
 }

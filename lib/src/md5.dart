@@ -18,7 +18,7 @@ import 'utils.dart';
 ///
 /// **Warning**: MD5 has known collisions and should only be used when required
 /// for backwards compatibility.
-final md5 = new MD5();
+final md5 = new MD5._();
 
 /// An implementation of the [MD5][rfc] hash function.
 ///
@@ -32,13 +32,7 @@ final md5 = new MD5();
 class MD5 extends Hash {
   final int blockSize = 16 * bytesPerWord;
 
-  /// This constructor is deprecated.
-  ///
-  /// Use [md5] instead.
-  @Deprecated("Will be removed in crypto 1.0.0.")
-  MD5();
-
-  MD5 newInstance() => new MD5();
+  MD5._();
 
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new ByteConversionSink.from(new _MD5Sink(sink));

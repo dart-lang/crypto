@@ -25,20 +25,8 @@ class Sha1 extends Hash {
 
   Sha1._();
 
-  Sha1 newInstance() => new Sha1._();
-
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new ByteConversionSink.from(new _Sha1Sink(sink));
-}
-
-/// This class is deprecated.
-///
-/// Use [sha1] instead.
-@Deprecated("Will be removed in crypto 1.0.0.")
-class SHA1 extends Sha1 {
-  SHA1() : super._();
-
-  SHA1 newInstance() => new SHA1();
 }
 
 /// The concrete implementation of [Sha1].

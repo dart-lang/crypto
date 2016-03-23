@@ -1,3 +1,9 @@
+## 1.0.0
+
+* All APIs that were deprecated in 0.9.2 have been removed. No new APIs have
+  been added. Packages that would use 1.0.0 as a lower bound should use 0.9.2
+  instead—for example, `crypto: ">=0.9.2 <2.0.0"`.
+
 ## 0.9.2
 
 * `Hash`, `MD5`, `SHA1`, and `SHA256` now implement `Converter`. They convert

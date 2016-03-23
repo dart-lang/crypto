@@ -10,22 +10,6 @@ import "package:crypto/crypto.dart";
 import "utils.dart";
 
 void main() {
-  group("with the old API", () {
-    test('add may not be called after close', () {
-      var sha = new SHA256();
-      sha.close();
-      expect(() => sha.add([0]), throwsStateError);
-    });
-
-    test('close returns the same digest repeatedly', () {
-      var sha = new SHA256();
-      var digest = sha.close();
-      expect(sha.close(), equals(digest));
-      expect(sha.close(), equals(digest));
-      expect(sha.close(), equals(digest));
-    });
-  });
-
   group("with a chunked converter", () {
     test('add may not be called after close', () {
       var sink = sha256.startChunkedConversion(new StreamController().sink);
