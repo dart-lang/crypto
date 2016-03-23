@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 
 /// A message digest as computed by a [Hash] or [HMAC] function.
@@ -15,18 +16,10 @@ class Digest {
   ///
   /// This should be used instead of manual comparisons to avoid leaking
   /// information via timing.
-  bool operator ==(Object other) {
-    if (other is! Digest) return false;
+  bool operator ==(Object other) => other is Digest &&
+      const ListEquality().equals(bytes, other.bytes);
 
-    var digest = other as Digest;
-    if (digest.bytes.length != bytes.length) return false;
-
-    var result = 0;
-    for (var i = 0; i < bytes.length; i++) {
-      result |= bytes[i] ^ digest.bytes[i];
-    }
-    return result == 0;
-  }
+  int get hashCode => const ListEquality().hash(bytes);
 
   /// The message digest as a string of hexadecimal digits.
   String toString() => hex.encode(bytes);
