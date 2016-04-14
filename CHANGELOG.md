@@ -1,3 +1,10 @@
+## 1.1.0
+
+* `Hmac` and `Hash` now extend the new `ChunkedConverter` class from
+  `dart:convert`.
+
+* Fix all strong mode warnings.
+
 ## 1.0.0
 
 * All APIs that were deprecated in 0.9.2 have been removed. No new APIs have

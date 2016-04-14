@@ -12,7 +12,8 @@ import 'digest_sink.dart';
 /// Every hash is a converter that takes a list of ints and returns a single
 /// digest. When used in chunked mode, it will only ever add one digest to the
 /// inner [Sink].
-abstract class Hash extends Converter<List<int>, Digest> {
+abstract class Hash
+    extends ChunkedConverter<List<int>, Digest, List<int>, Digest> {
   /// The internal block size of the hash in bytes.
   ///
   /// This is exposed for use by the [Hmac] class, which needs to know the block
