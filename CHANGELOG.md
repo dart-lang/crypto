@@ -1,3 +1,8 @@
+## 1.1.1
+
+* Properly close sinks passed to `Hash.startChunkedConversion()` when
+  `ByteConversionSink.close()` is called.
+
 ## 1.1.0
 
 * `Hmac` and `Hash` now extend the new `ChunkedConverter` class from

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import "dart:async";
+import "dart:convert";
 
 import "package:test/test.dart";
 import "package:crypto/crypto.dart";
@@ -23,6 +24,21 @@ void main() {
       sink.close();
       sink.close();
       sink.close();
+    });
+
+    test('close closes the underlying sink', () {
+      var inner = new ChunkedConversionSink<Digest>.withCallback(
+          expectAsync((accumulated) {
+        expect(accumulated.length, equals(1));
+        expect(
+            accumulated.first.toString(),
+            equals(
+                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8"
+                "55"));
+      }));
+
+      var outer = sha256.startChunkedConversion(inner);
+      outer.close();
     });
   });
 

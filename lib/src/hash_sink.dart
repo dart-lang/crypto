@@ -70,6 +70,7 @@ abstract class HashSink implements Sink<List<int>> {
     _iterate();
     assert(_pendingData.isEmpty);
     _sink.add(new Digest(_byteDigest()));
+    _sink.close();
   }
 
   Uint8List _byteDigest() {
