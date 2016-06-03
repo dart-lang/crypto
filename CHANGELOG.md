@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Support `convert` 2.0.0.
+
 ## 2.0.0
 
 **Note**: There are no APIs in 2.0.0 that weren't also in 0.9.2. Packages that
