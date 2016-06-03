@@ -1,3 +1,11 @@
+## 2.0.0
+
+**Note**: There are no APIs in 2.0.0 that weren't also in 0.9.2. Packages that
+would use 2.0.0 as a lower bound should use 0.9.2 instead—for example, `crypto:
+">=0.9.2 <3.0.0"`.
+
+* `Hash` and `Hmac` no longer extend `ChunkedConverter`.
+
 ## 1.1.1
 
 * Properly close sinks passed to `Hash.startChunkedConversion()` when

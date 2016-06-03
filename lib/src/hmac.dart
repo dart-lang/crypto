@@ -15,7 +15,7 @@ import 'hash.dart';
 ///
 /// HMAC allows messages to be cryptographically authenticated using any
 /// iterated cryptographic hash function.
-class Hmac extends ChunkedConverter<List<int>, Digest, List<int>, Digest> {
+class Hmac extends Converter<List<int>, Digest> {
   /// The hash function used to compute the authentication digest.
   final Hash _hash;
 
