@@ -21,19 +21,22 @@ final sha1 = new Sha1._();
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
 class Sha1 extends Hash {
+  @override
   final int blockSize = 16 * bytesPerWord;
 
   Sha1._();
 
+  @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new ByteConversionSink.from(new _Sha1Sink(sink));
 }
 
 /// The concrete implementation of [Sha1].
 ///
-/// This is separate so that it can extend [HashBase] without leaking additional
+/// This is separate so that it can extend [HashSink] without leaking additional
 /// public memebers.
 class _Sha1Sink extends HashSink {
+  @override
   final digest = new Uint32List(5);
 
   /// The sixteen words from the original chunk, extended to 80 words.
@@ -52,6 +55,7 @@ class _Sha1Sink extends HashSink {
     digest[4] = 0xC3D2E1F0;
   }
 
+  @override
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 16);
 

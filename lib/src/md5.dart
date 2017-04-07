@@ -30,10 +30,12 @@ final md5 = new MD5._();
 /// Note that it's almost always easier to use [md5] rather than creating a new
 /// instance.
 class MD5 extends Hash {
+  @override
   final int blockSize = 16 * bytesPerWord;
 
   MD5._();
 
+  @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new ByteConversionSink.from(new _MD5Sink(sink));
 }
@@ -64,9 +66,10 @@ const _shiftAmounts = const [
 
 /// The concrete implementation of [MD5].
 ///
-/// This is separate so that it can extend [HashBase] without leaking additional
-/// public memebers.
+/// This is separate so that it can extend [HashSink] without leaking additional
+/// public members.
 class _MD5Sink extends HashSink {
+  @override
   final digest = new Uint32List(4);
 
   _MD5Sink(Sink<Digest> sink)
@@ -77,6 +80,7 @@ class _MD5Sink extends HashSink {
     digest[3] = 0x10325476;
   }
 
+  @override
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 16);
 

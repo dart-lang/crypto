@@ -51,10 +51,11 @@ abstract class HashSink implements Sink<List<int>> {
   /// Runs a single iteration of the hash computation, updating [digest] with
   /// the result.
   ///
-  /// [m] is the current chunk, whose size is given by the `chunkSizeInWords`
-  /// parameter passed to the constructor.
+  /// [chunk] is the current chunk, whose size is given by the
+  /// `chunkSizeInWords` parameter passed to the constructor.
   void updateHash(Uint32List chunk);
 
+  @override
   void add(List<int> data) {
     if (_isClosed) throw new StateError('Hash.add() called after close().');
     _lengthInBytes += data.length;
@@ -62,6 +63,7 @@ abstract class HashSink implements Sink<List<int>> {
     _iterate();
   }
 
+  @override
   void close() {
     if (_isClosed) return;
     _isClosed = true;

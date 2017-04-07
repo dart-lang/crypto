@@ -24,12 +24,14 @@ final sha256 = new Sha256._();
 /// Note that it's almost always easier to use [sha256] rather than creating a
 /// new instance.
 class Sha256 extends Hash {
+  @override
   final int blockSize = 16 * bytesPerWord;
 
   Sha256._();
 
   Sha256 newInstance() => new Sha256._();
 
+  @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       new ByteConversionSink.from(new _Sha256Sink(sink));
 }
@@ -51,9 +53,10 @@ const List<int> _noise = const [
 
 /// The concrete implementation of [Sha256].
 ///
-/// This is separate so that it can extend [HashBase] without leaking additional
-/// public memebers.
+/// This is separate so that it can extend [HashSink] without leaking additional
+/// public members.
 class _Sha256Sink extends HashSink {
+  @override
   final digest = new Uint32List(8);
 
   /// The sixteen words from the original chunk, extended to 64 words.
@@ -88,6 +91,7 @@ class _Sha256Sink extends HashSink {
   int _ssig0(int x) => _rotr32(7, x) ^ _rotr32(18, x) ^ (x >> 3);
   int _ssig1(int x) => _rotr32(17, x) ^ _rotr32(19, x) ^ (x >> 10);
 
+  @override
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 16);
 
