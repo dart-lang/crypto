@@ -28,7 +28,7 @@ void main() {
 
     test('close closes the underlying sink', () {
       var inner = new ChunkedConversionSink<Digest>.withCallback(
-          expectAsync((accumulated) {
+          expectAsync1((accumulated) {
         expect(accumulated.length, equals(1));
         expect(accumulated.first.toString(),
             equals("da39a3ee5e6b4b0d3255bfef95601890afd80709"));
