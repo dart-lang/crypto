@@ -41,7 +41,7 @@ class MD5 extends Hash {
 /// Data from a non-linear mathematical function that functions as
 /// reproducible noise.
 const _noise = const [
-  0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a,
+  0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, //
   0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
   0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821, 0xf61e2562, 0xc040b340,
   0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
@@ -56,7 +56,7 @@ const _noise = const [
 
 /// Per-round shift amounts.
 const _shiftAmounts = const [
-  07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14,
+  07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14, //
   20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,
   16, 23, 04, 11, 16, 23, 04, 11, 16, 23, 06, 10, 15, 21, 06, 10, 15, 21, 06,
   10, 15, 21, 06, 10, 15, 21
@@ -108,10 +108,7 @@ class _MD5Sink extends HashSink {
       c = b;
       b = add32(
           b,
-          rotl32(
-              add32(
-                  add32(a, e),
-                  add32(_noise[i], chunk[f])),
+          rotl32(add32(add32(a, e), add32(_noise[i], chunk[f])),
               _shiftAmounts[i]));
       a = temp;
     }

@@ -16,8 +16,8 @@ class Digest {
   ///
   /// This should be used instead of manual comparisons to avoid leaking
   /// information via timing.
-  bool operator ==(Object other) => other is Digest &&
-      const ListEquality().equals(bytes, other.bytes);
+  bool operator ==(Object other) =>
+      other is Digest && const ListEquality().equals(bytes, other.bytes);
 
   int get hashCode => const ListEquality().hash(bytes);
 

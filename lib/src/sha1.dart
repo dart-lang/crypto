@@ -66,7 +66,9 @@ class _Sha1Sink extends HashSink {
         _extended[i] = chunk[i];
       } else {
         _extended[i] = rotl32(
-            _extended[i - 3] ^ _extended[i - 8] ^ _extended[i - 14] ^
+            _extended[i - 3] ^
+                _extended[i - 8] ^
+                _extended[i - 14] ^
                 _extended[i - 16],
             1);
       }

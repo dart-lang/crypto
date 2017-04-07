@@ -11,6 +11,7 @@ class DigestSink extends Sink<Digest> {
     assert(_value != null);
     return _value;
   }
+
   Digest _value;
 
   /// Adds [value] to the sink.
