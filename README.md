@@ -4,9 +4,9 @@ A set of cryptographic hashing functions implemented in pure Dart
 
 The following hashing algorithms are supported:
 
-* MD5
 * SHA-1
 * SHA-256
+* MD5
 * HMAC (i.e. HMAC-MD5, HMAC-SHA1, HMAC-SHA256)
 
 ## Usage
@@ -90,8 +90,8 @@ void main() {
   var key = UTF8.encode('p@ssw0rd');
   var bytes = UTF8.encode("foobar");
 
-  var hmac = new Hmac(sha256, key); // HMAC-SHA256
-  var digest = hmac.convert(bytes);
+  var hmacSha256 = new Hmac(sha256, key); // HMAC-SHA256
+  var digest = hmacSha256.convert(bytes);
   
   print("HMAC digest as bytes: ${digest.bytes}");
   print("HMAC digest as hex string: $digest");
