@@ -20,8 +20,8 @@ These methods return a [`Digest`][Digest] object, where the hash value
 can be obtained as a list of bytes or encoded in hexadecimal.
 
 The variables [`sha256`][sha256], [`sha1`][sha1], and [`md5`][md5] are
-instances of the [`Sha256`][Sha256], [`Sha1`][Sha1], and [`MD5`][MD5]
-classes, respectively.
+convenient instances of the [`Sha256`][Sha256], [`Sha1`][Sha1], and
+[`MD5`][MD5] classes, respectively.
 
 ```dart
 import 'package:crypto/crypto.dart';
@@ -39,14 +39,14 @@ void main() {
 
 ### Digest on chunked input
 
-If the input data is not a single `List<int>`, use the chunked
-conversion approach.
+If the input data is not available as a _single_ list of bytes, use
+the chunked conversion approach.
 
-Invoke the `startChunkedConversion` method to create a sink for the
-input data. On the sink, invoke the `add` method for each chunk of
-input data, and invoke the `close` method when all the chunks have
-been added. The digest can then be retrieved from the `Sink<Digest>`
-used to create the input data sink.
+Invoke the [`startChunkedConversion`][startChunkedConversion] method
+to create a sink for the input data. On the sink, invoke the `add`
+method for each chunk of input data, and invoke the `close` method
+when all the chunks have been added. The digest can then be retrieved
+from the `Sink<Digest>` used to create the input data sink.
 
 ```dart
 import 'dart:convert';
@@ -87,10 +87,10 @@ import 'package:crypto/crypto.dart';
 import 'package:crypto/src/digest_sink.dart';
 
 void main() {
-  var keyBytes = UTF8.encode('p@ssw0rd');
+  var key = UTF8.encode('p@ssw0rd');
   var bytes = UTF8.encode("foobar");
 
-  var hmac = new Hmac(sha256, keyBytes); // HMAC-SHA256
+  var hmac = new Hmac(sha256, key); // HMAC-SHA256
   var digest = hmac.convert(bytes);
   
   print("HMAC digest as bytes: ${digest.bytes}");
@@ -118,14 +118,13 @@ This library has not been reviewed or vetted by security professionals.
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: https://github.com/dart-lang/crypto/issues
-
 [Digest]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Digest-class.html
-[Hmac] https://www.dartdocs.org/documentation/crypto/latests/crypto/Hmac-class.html
+[Hmac]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hmac-class.html
+[MD5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/MD5-class.html
+[Sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha1-class.html
+[Sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha256-class.html
+[md5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
 [sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
 [sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html
-[md5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
-
-[MD5] https://www.dartdocs.org/documentation/crypto/latests/crypto/MD5-class.html
-[Sha1] https://www.dartdocs.org/documentation/crypto/latests/crypto/Sha1-class.html
-[Sha256] https://www.dartdocs.org/documentation/crypto/latests/crypto/Sha256-class.html
+[startChunkedConversion]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hash/startChunkedConversion.html
+[tracker]: https://github.com/dart-lang/crypto/issues
