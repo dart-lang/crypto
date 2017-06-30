@@ -1,9 +1,8 @@
-# Cryptographic digest functions for Dart
+# Cryptographic hashing functions for Dart
 
-A set of cryptographic digest functions implemented in pure
-Dart. Cryptographic digest is also known as cryptographic hashing.
+A set of cryptographic hashing functions implemented in pure Dart
 
-The following digest/hashing algorithms are supported:
+The following hashing algorithms are supported:
 
 * MD5
 * SHA-1
@@ -14,40 +13,29 @@ The following digest/hashing algorithms are supported:
 
 ### Digest on a single input
 
-Use the `sha256` property to obtain an instance of the `Sha256` class.
-Or use the `sha1` or `md5` properties to use those other digest
-algorithms.
+Use `sha256.convert()`, `sha1.convert()`, or `md5.convert()` to hash a
+list of bytes.
 
-Invoke the `convert` method, passing the input data as a sequence of
-bytes (i.e. `List<int>`). It returns a `Digest` object, where the
-digest value can be obtained as bytes in a `List<int>` or encoded in
-hexadecimal as a `String`.
+These methods return a [`Digest`][Digest] object, where the hash value
+can be obtained as a list of bytes or encoded in hexadecimal.
+
+The variables [`sha256`][sha256], [`sha1`][sha1], and [`md5`][md5] are
+instances of the [`Sha256`][Sha256], [`Sha1`][Sha1], and [`MD5`][MD5]
+classes, respectively.
 
 ```dart
 import 'package:crypto/crypto.dart';
 import 'dart:convert'; // for the UTF8.encode method
 
-  ...
-
-  var dataString = "foobar"; // input data being hashed
-
-  var bytes = UTF8.encode(dataString);
+void main() {
+  var bytes = UTF8.encode("foobar"); // data being hashed
 
   var digest = sha1.convert(bytes);
 
   print("Digest as bytes: ${digest.bytes}");
-  print("Digest as a hexadecimal string: $digest");
+  print("Digest as hex string: $digest");
+}
 ```
-
-In the above example, the data being digested is a `String`, so the
-`UTF8.encode` method was used to convert it into a sequence of bytes.
-
-**Warning:** The input data represents a sequence of bytes, so the
-`List<int>` **must not** contain integers outside the range 0-255.
-Do not use the `codeUnits` property of a `String`, unless it is
-_guaranteed_ the string will never contain characters outside the
-range of 0-255. Even then, characters in the range of 128-255 might
-produce the wrong result.
 
 ### Digest on chunked input
 
@@ -65,21 +53,20 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:crypto/src/digest_sink.dart';
 
-  ...
-
+void main() {
   var firstChunk = UTF8.encode("foo");
   var secondChunk = UTF8.encode("bar");
 
   var ds = new DigestSink();
   var s = sha1.startChunkedConversion(ds);
   s.add(firstChunk);
-  s.add(secondChunk);
-  // keep calling `add` for all input data
+  s.add(secondChunk); // call `add` for every chunk of input data
   s.close();
   var digest = ds.value;
 
   print("Digest as bytes: ${digest.bytes}");
-  print("Digest as a hexadecimal string: $digest");
+  print("Digest as hex string: $digest");
+}
 ```
 
 The above example uses the `DigestSink` class that comes with the
@@ -90,20 +77,25 @@ invoked.
 
 ### HMAC
 
-Create a `Hmac` object with the hash function and secret key being
-used.  The `Hmac` object is then used like the other hash calculating
-objects.
+Create an instance of the [`Hmac`][Hmac] class with the hash function
+and secret key being used.  The object can then be used like the other
+hash calculating objects.
 
 ```dart
-  ...
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:crypto/src/digest_sink.dart';
 
-  var keyBytes = UTF8.encode(keyString);
-  var bytes = UTF8.encode(dataString);
+void main() {
+  var keyBytes = UTF8.encode('p@ssw0rd');
+  var bytes = UTF8.encode("foobar");
 
   var hmac = new Hmac(sha256, keyBytes); // HMAC-SHA256
   var digest = hmac.convert(bytes);
-  print("Digest as bytes: ${digest.bytes}");
-  print("Digest as a hexadecimal string: $digest");
+  
+  print("HMAC digest as bytes: ${digest.bytes}");
+  print("HMAC digest as hex string: $digest");
+}
 ```
 
 ## Test status
@@ -127,3 +119,13 @@ This library has not been reviewed or vetted by security professionals.
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: https://github.com/dart-lang/crypto/issues
+
+[Digest]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Digest-class.html
+[Hmac] https://www.dartdocs.org/documentation/crypto/latests/crypto/Hmac-class.html
+[sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
+[sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html
+[md5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
+
+[MD5] https://www.dartdocs.org/documentation/crypto/latests/crypto/MD5-class.html
+[Sha1] https://www.dartdocs.org/documentation/crypto/latests/crypto/Sha1-class.html
+[Sha256] https://www.dartdocs.org/documentation/crypto/latests/crypto/Sha256-class.html
