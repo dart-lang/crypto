@@ -13,15 +13,9 @@ The following hashing algorithms are supported:
 
 ### Digest on a single input
 
-Use `sha256.convert()`, `sha1.convert()`, or `md5.convert()` to hash a
-list of bytes.
-
-These methods return a [`Digest`][Digest] object, where the hash value
-can be obtained as a list of bytes or encoded in hexadecimal.
-
-The variables [`sha256`][sha256], [`sha1`][sha1], and [`md5`][md5] are
-convenient instances of the [`Sha256`][Sha256], [`Sha1`][Sha1], and
-[`MD5`][MD5] classes, respectively.
+To hash a list of bytes, invoke the [`convert`][convert] method on the
+[`sha1`][sha1-obj], [`sha256`][sha256-obj] or [`md5`][md5-obj]
+objects.
 
 ```dart
 import 'package:crypto/crypto.dart';
@@ -98,16 +92,6 @@ void main() {
 }
 ```
 
-## Test status
-
-See http://build.chromium.org/p/client.dart.packages/console
-
-The individual builders are at:
-
-http://build.chromium.org/p/client.dart.packages/builders/packages-windows-crypto
-http://build.chromium.org/p/client.dart.packages/builders/packages-linux-crypto
-http://build.chromium.org/p/client.dart.packages/builders/packages-mac-crypto
-
 ## Disclaimer
 
 Support for this library is given as _best effort_.
@@ -118,13 +102,14 @@ This library has not been reviewed or vetted by security professionals.
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
+[convert]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hash/convert.html
 [Digest]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Digest-class.html
 [Hmac]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hmac-class.html
 [MD5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/MD5-class.html
 [Sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha1-class.html
 [Sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha256-class.html
-[md5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
-[sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
-[sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html
+[md5-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
+[sha1-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
+[sha256-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html
 [startChunkedConversion]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hash/startChunkedConversion.html
 [tracker]: https://github.com/dart-lang/crypto/issues
