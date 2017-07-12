@@ -5,9 +5,6 @@
 /// A bitmask that limits an integer to 32 bits.
 const mask32 = 0xFFFFFFFF;
 
-/// The highest value representable by a 64-bit unsigned integer.
-const maxUint64 = 0xFFFFFFFFFFFFFFFF;
-
 /// The number of bits in a byte.
 const bitsPerByte = 8;
 

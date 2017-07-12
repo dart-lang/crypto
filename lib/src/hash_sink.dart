@@ -121,11 +121,13 @@ abstract class HashSink implements Sink<List<int>> {
       _pendingData.add(0);
     }
 
-    var lengthInBits = _lengthInBytes * bitsPerByte;
-    if (lengthInBits > maxUint64) {
+    const maxMessageLengthInBytes = ((1 << (64 - bitsPerByte)) - 1);
+    if (_lengthInBytes > maxMessageLengthInBytes) {
       throw new UnsupportedError(
           "Hashing is unsupported for messages with more than 2^64 bits.");
     }
+
+    var lengthInBits = _lengthInBytes * bitsPerByte;
 
     // Add the full length of the input data as a 64-bit value at the end of the
     // hash.
