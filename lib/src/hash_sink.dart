@@ -25,6 +25,10 @@ abstract class HashSink implements Sink<List<int>> {
   /// used across invocations of [_iterate].
   final Uint32List _currentChunk;
 
+  /// Messages with more than 2^64-1 bits are not supported.
+  /// So the maximum length in bytes is (2^64-1)/8.
+  static const _maxMessageLengthInBytes = 0x1fffffffffffffff;
+
   /// The length of the input data so far, in bytes.
   int _lengthInBytes = 0;
 
@@ -121,8 +125,7 @@ abstract class HashSink implements Sink<List<int>> {
       _pendingData.add(0);
     }
 
-    const maxMessageLengthInBytes = ((1 << (64 - bitsPerByte)) - 1);
-    if (_lengthInBytes > maxMessageLengthInBytes) {
+    if (_lengthInBytes > _maxMessageLengthInBytes) {
       throw new UnsupportedError(
           "Hashing is unsupported for messages with more than 2^64 bits.");
     }
