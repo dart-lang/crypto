@@ -8,5 +8,6 @@ environment:
 dependencies:
   collection: '^1.0.0'
   convert: '>=1.0.0 <3.0.0'
+  typed_data: '^1.0.0'
 dev_dependencies:
   test: '^0.12.17'
