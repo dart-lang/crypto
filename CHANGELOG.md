@@ -1,3 +1,8 @@
+## 2.0.2
+
+* Prepare `HashSink` implementation for limiting integers to 64 bits in Dart
+  language.
+
 ## 2.0.1
 
 * Support `convert` 2.0.0.
