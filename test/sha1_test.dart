@@ -2,14 +2,14 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:async";
-import "dart:convert";
+import 'dart:async';
+import 'dart:convert';
 
-import "package:crypto/crypto.dart";
-import "package:test/test.dart";
+import 'package:crypto/crypto.dart';
+import 'package:test/test.dart';
 
 void main() {
-  group("with a chunked converter", () {
+  group('with a chunked converter', () {
     test('add may not be called after close', () {
       var sink =
           sha1.startChunkedConversion(new StreamController<Digest>().sink);
@@ -31,7 +31,7 @@ void main() {
           expectAsync1((accumulated) {
         expect(accumulated.length, equals(1));
         expect(accumulated.first.toString(),
-            equals("da39a3ee5e6b4b0d3255bfef95601890afd80709"));
+            equals('da39a3ee5e6b4b0d3255bfef95601890afd80709'));
       }));
 
       var outer = sha1.startChunkedConversion(inner);
@@ -39,7 +39,7 @@ void main() {
     });
   });
 
-  group("standard vector", () {
+  group('standard vector', () {
     for (var i = 0; i < _inputs.length; i++) {
       test(_digests[i], () {
         expect(sha1.convert(_inputs[i]).toString(), equals(_digests[i]));
@@ -51,7 +51,7 @@ void main() {
 // Standard test vectors from:
 //   http://csrc.nist.gov/groups/STM/cavp/documents/shs/shabytetestvectors.zip
 
-const _inputs = const [
+const _inputs = const <List<int>>[
   const [],
   const [0x36],
   const [0x19, 0x5a],

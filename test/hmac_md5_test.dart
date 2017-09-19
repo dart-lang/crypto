@@ -2,13 +2,13 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "package:crypto/crypto.dart";
-import "package:test/test.dart";
+import 'package:crypto/crypto.dart';
+import 'package:test/test.dart';
 
 import 'utils.dart';
 
 void main() {
-  group("standard vector", () {
+  group('standard vector', () {
     for (var i = 0; i < _inputs.length; i++) {
       test(_macs[i], () {
         expectHmacEquals(md5, _inputs[i], _keys[i], _macs[i]);

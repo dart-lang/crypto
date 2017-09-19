@@ -3,13 +3,13 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // Library tag to allow the test to run on Dartium.
-import "package:crypto/crypto.dart";
-import "package:test/test.dart";
+import 'package:crypto/crypto.dart';
+import 'package:test/test.dart';
 
 import 'utils.dart';
 
 void main() {
-  group("standard vector", () {
+  group('standard vector', () {
     for (var i = 0; i < _inputs.length; i++) {
       test(_macs[i], () {
         expectHmacEquals(sha256, _inputs[i], _keys[i], _macs[i]);
