@@ -4,7 +4,7 @@ A set of cryptographic functions implemented in pure Dart.
 
 * MD5
 * SHA1
-* SHA265
+* SHA256
 * HMAC
 * Converting a list of bytes into a hex string
 * Converting a list of bytes into a base64-encoded string.
