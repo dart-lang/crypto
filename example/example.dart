@@ -7,7 +7,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 
-final _usage = 'Usage: dart hash.dart <md5|sha1|sha256> <input_filename>';
+final _usage = 'Usage: dart example.dart <md5|sha1|sha256> <input_filename>';
 
 Future main(List<String> args) async {
   if (args == null || args.length != 2) {
@@ -15,21 +15,12 @@ Future main(List<String> args) async {
     exit(1);
   }
 
-  Hash hasher;
+  var hashInstance = _getHash(args[0]);
 
-  switch (args[0]) {
-    case 'md5':
-      hasher = md5;
-      break;
-    case 'sha1':
-      hasher = sha1;
-      break;
-    case 'sha256':
-      hasher = sha256;
-      break;
-    default:
-      print(_usage);
-      exit(1);
+  if (hashInstance == null) {
+    print(_usage);
+    exitCode = 1;
+    return;
   }
 
   var filename = args[1];
@@ -37,10 +28,25 @@ Future main(List<String> args) async {
 
   if (!input.existsSync()) {
     print('File "$filename" does not exist.');
-    exit(1);
+    exitCode = 1;
+    return;
   }
 
-  var value = await hasher.bind(input.openRead()).first;
+  var value = await input.openRead().transform(hashInstance).first;
 
   print(value);
+}
+
+Hash _getHash(String name) {
+  switch (name) {
+    case 'md5':
+      return md5;
+    case 'sha1':
+      return sha1;
+      break;
+    case 'sha256':
+      return sha256;
+      break;
+  }
+  return null;
 }

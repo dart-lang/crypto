@@ -1,6 +1,8 @@
 ## 2.0.3
 
-* Updated SDK version to 2.0.0-dev.17.0
+* Updated SDK version to 2.0.0-dev.17.0.
+
+* Improvements to the README and example.
 
 ## 2.0.2+1
 
