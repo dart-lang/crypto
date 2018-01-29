@@ -4,18 +4,11 @@
 
 // Library tag to allow the test to run on Dartium.
 import 'package:crypto/crypto.dart';
-import 'package:test/test.dart';
 
-import 'utils.dart';
+import 'test_utils.dart';
 
 void main() {
-  group('standard vector', () {
-    for (var i = 0; i < _inputs.length; i++) {
-      test(_macs[i], () {
-        expectHmacEquals(sha1, _inputs[i], _keys[i], _macs[i]);
-      });
-    }
-  });
+  testHmac(sha1, _inputs, _macs, _keys);
 }
 
 // Standard test vectors from:

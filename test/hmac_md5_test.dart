@@ -3,18 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:crypto/crypto.dart';
-import 'package:test/test.dart';
 
-import 'utils.dart';
+import 'test_utils.dart';
 
 void main() {
-  group('standard vector', () {
-    for (var i = 0; i < _inputs.length; i++) {
-      test(_macs[i], () {
-        expectHmacEquals(md5, _inputs[i], _keys[i], _macs[i]);
-      });
-    }
-  });
+  testHmac(md5, _inputs, _macs, _keys);
 }
 
 // Data from http://tools.ietf.org/html/rfc2202.
