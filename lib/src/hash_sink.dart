@@ -17,7 +17,7 @@ abstract class HashSink implements Sink<List<int>> {
   final Sink<Digest> _sink;
 
   /// Whether the hash function operates on big-endian words.
-  final Endianness _endian;
+  final Endian _endian;
 
   /// The words in the current chunk.
   ///
@@ -48,7 +48,7 @@ abstract class HashSink implements Sink<List<int>> {
   /// [chunkSizeInWords] represents the size of the input chunks processed by
   /// the algorithm, in terms of 32-bit words.
   HashSink(this._sink, int chunkSizeInWords,
-      {Endianness endian: Endianness.BIG_ENDIAN})
+      {Endian endian: Endian.big})
       : _endian = endian,
         _currentChunk = new Uint32List(chunkSizeInWords);
 
@@ -80,7 +80,7 @@ abstract class HashSink implements Sink<List<int>> {
   }
 
   Uint8List _byteDigest() {
-    if (_endian == Endianness.HOST_ENDIAN) return digest.buffer.asUint8List();
+    if (_endian == Endian.host) return digest.buffer.asUint8List();
 
     var byteDigest = new Uint8List(digest.lengthInBytes);
     var byteData = byteDigest.buffer.asByteData();
@@ -143,7 +143,7 @@ abstract class HashSink implements Sink<List<int>> {
     // manually instead.
     var highBits = lengthInBits >> 32;
     var lowBits = lengthInBits & mask32;
-    if (_endian == Endianness.BIG_ENDIAN) {
+    if (_endian == Endian.big) {
       byteData.setUint32(offset, highBits, _endian);
       byteData.setUint32(offset + bytesPerWord, lowBits, _endian);
     } else {
