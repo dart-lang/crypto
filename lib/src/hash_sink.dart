@@ -47,8 +47,7 @@ abstract class HashSink implements Sink<List<int>> {
   ///
   /// [chunkSizeInWords] represents the size of the input chunks processed by
   /// the algorithm, in terms of 32-bit words.
-  HashSink(this._sink, int chunkSizeInWords,
-      {Endian endian: Endian.big})
+  HashSink(this._sink, int chunkSizeInWords, {Endian endian: Endian.big})
       : _endian = endian,
         _currentChunk = new Uint32List(chunkSizeInWords);
 
