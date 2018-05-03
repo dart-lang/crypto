@@ -19,10 +19,10 @@ objects.
 
 ```dart
 import 'package:crypto/crypto.dart';
-import 'dart:convert'; // for the UTF8.encode method
+import 'dart:convert'; // for the utf8.encode method
 
 void main() {
-  var bytes = UTF8.encode("foobar"); // data being hashed
+  var bytes = utf8.encode("foobar"); // data being hashed
 
   var digest = sha1.convert(bytes);
 
@@ -48,8 +48,8 @@ import 'package:crypto/crypto.dart';
 import 'package:crypto/src/digest_sink.dart';
 
 void main() {
-  var firstChunk = UTF8.encode("foo");
-  var secondChunk = UTF8.encode("bar");
+  var firstChunk = utf8.encode("foo");
+  var secondChunk = utf8.encode("bar");
 
   var ds = new DigestSink();
   var s = sha1.startChunkedConversion(ds);
@@ -81,8 +81,8 @@ import 'package:crypto/crypto.dart';
 import 'package:crypto/src/digest_sink.dart';
 
 void main() {
-  var key = UTF8.encode('p@ssw0rd');
-  var bytes = UTF8.encode("foobar");
+  var key = utf8.encode('p@ssw0rd');
+  var bytes = utf8.encode("foobar");
 
   var hmacSha256 = new Hmac(sha256, key); // HMAC-SHA256
   var digest = hmacSha256.convert(bytes);
