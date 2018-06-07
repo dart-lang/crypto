@@ -1,3 +1,8 @@
+## 2.0.4
+
+* Made max message size a BigNum instead of an int so that dart2js can compile
+  with crypto.
+
 ## 2.0.3
 
 * Updated SDK version to 2.0.0-dev.17.0
