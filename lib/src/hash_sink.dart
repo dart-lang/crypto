@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:typed_data';
+import 'dart:math' as math;
 
 import 'package:typed_data/typed_data.dart';
 
@@ -24,10 +25,6 @@ abstract class HashSink implements Sink<List<int>> {
   /// This is an instance variable to avoid re-allocating, but its data isn't
   /// used across invocations of [_iterate].
   final Uint32List _currentChunk;
-
-  /// Messages with more than 2^64-1 bits are not supported.
-  /// So the maximum length in bytes is (2^64-1)/8.
-  static const _maxMessageLengthInBytes = 0x1fffffffffffffff;
 
   /// The length of the input data so far, in bytes.
   int _lengthInBytes = 0;
@@ -124,7 +121,10 @@ abstract class HashSink implements Sink<List<int>> {
       _pendingData.add(0);
     }
 
-    if (_lengthInBytes > _maxMessageLengthInBytes) {
+    if (new BigInt.from(_lengthInBytes) >
+        (new BigInt.from(2).pow(64) - BigInt.one)) {
+      // Messages with more than 2^64-1 bits are not supported.
+      // So the maximum length in bytes is (2^64-1)/8.
       throw new UnsupportedError(
           'Hashing is unsupported for messages with more than 2^64 bits.');
     }
