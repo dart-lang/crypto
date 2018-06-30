@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:typed_data';
-import 'dart:math' as math;
 
 import 'package:typed_data/typed_data.dart';
 
