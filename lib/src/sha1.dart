@@ -15,7 +15,7 @@ import 'utils.dart';
 /// This instance provides convenient access to the [SHA-1][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
-final sha1 = new Sha1._();
+final sha1 = Sha1._();
 
 /// An implementation of the [SHA-1][rfc] hash function.
 ///
@@ -28,7 +28,7 @@ class Sha1 extends Hash {
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
-      new ByteConversionSink.from(new _Sha1Sink(sink));
+      ByteConversionSink.from(_Sha1Sink(sink));
 }
 
 /// The concrete implementation of [Sha1].
@@ -37,7 +37,7 @@ class Sha1 extends Hash {
 /// public memebers.
 class _Sha1Sink extends HashSink {
   @override
-  final digest = new Uint32List(5);
+  final digest = Uint32List(5);
 
   /// The sixteen words from the original chunk, extended to 80 words.
   ///
@@ -46,7 +46,7 @@ class _Sha1Sink extends HashSink {
   final Uint32List _extended;
 
   _Sha1Sink(Sink<Digest> sink)
-      : _extended = new Uint32List(80),
+      : _extended = Uint32List(80),
         super(sink, 16) {
     digest[0] = 0x67452301;
     digest[1] = 0xEFCDAB89;

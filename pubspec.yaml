@@ -3,11 +3,15 @@ version: 2.0.6
 author: Dart Team <misc@dartlang.org>
 description: Library of cryptographic functions.
 homepage: https://www.github.com/dart-lang/crypto
+
 environment:
-  sdk: '>=2.0.0-dev.17.0 <3.0.0'
+  sdk: '>=2.0.0 <3.0.0'
+
 dependencies:
   collection: '^1.0.0'
   convert: '>=1.0.0 <3.0.0'
   typed_data: '^1.0.0'
+
 dev_dependencies:
+  pedantic: ^1.0.0
   test: ^1.0.0

@@ -15,7 +15,7 @@ import 'utils.dart';
 /// This instance provides convenient access to the [Sha256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha256 = new Sha256._();
+final sha256 = Sha256._();
 
 /// An implementation of the [SHA-256][rfc] hash function.
 ///
@@ -29,15 +29,15 @@ class Sha256 extends Hash {
 
   Sha256._();
 
-  Sha256 newInstance() => new Sha256._();
+  Sha256 newInstance() => Sha256._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
-      new ByteConversionSink.from(new _Sha256Sink(sink));
+      ByteConversionSink.from(_Sha256Sink(sink));
 }
 
 /// Data from a non-linear function that functions as reproducible noise.
-const List<int> _noise = const [
+const List<int> _noise = [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, //
   0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
   0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -57,7 +57,7 @@ const List<int> _noise = const [
 /// public members.
 class _Sha256Sink extends HashSink {
   @override
-  final digest = new Uint32List(8);
+  final digest = Uint32List(8);
 
   /// The sixteen words from the original chunk, extended to 64 words.
   ///
@@ -66,7 +66,7 @@ class _Sha256Sink extends HashSink {
   final Uint32List _extended;
 
   _Sha256Sink(Sink<Digest> sink)
-      : _extended = new Uint32List(64),
+      : _extended = Uint32List(64),
         super(sink, 16) {
     // Initial value of the hash parts. First 32 bits of the fractional parts
     // of the square roots of the first 8 prime numbers.

@@ -34,7 +34,7 @@ abstract class HashSink implements Sink<List<int>> {
   int _lengthInBytes = 0;
 
   /// Data that has yet to be processed by the hash function.
-  final _pendingData = new Uint8Buffer();
+  final _pendingData = Uint8Buffer();
 
   /// Whether [close] has been called.
   bool _isClosed = false;
@@ -48,9 +48,9 @@ abstract class HashSink implements Sink<List<int>> {
   ///
   /// [chunkSizeInWords] represents the size of the input chunks processed by
   /// the algorithm, in terms of 32-bit words.
-  HashSink(this._sink, int chunkSizeInWords, {Endian endian: Endian.big})
+  HashSink(this._sink, int chunkSizeInWords, {Endian endian = Endian.big})
       : _endian = endian,
-        _currentChunk = new Uint32List(chunkSizeInWords);
+        _currentChunk = Uint32List(chunkSizeInWords);
 
   /// Runs a single iteration of the hash computation, updating [digest] with
   /// the result.
@@ -61,7 +61,7 @@ abstract class HashSink implements Sink<List<int>> {
 
   @override
   void add(List<int> data) {
-    if (_isClosed) throw new StateError('Hash.add() called after close().');
+    if (_isClosed) throw StateError('Hash.add() called after close().');
     _lengthInBytes += data.length;
     _pendingData.addAll(data);
     _iterate();
@@ -75,14 +75,14 @@ abstract class HashSink implements Sink<List<int>> {
     _finalizeData();
     _iterate();
     assert(_pendingData.isEmpty);
-    _sink.add(new Digest(_byteDigest()));
+    _sink.add(Digest(_byteDigest()));
     _sink.close();
   }
 
   Uint8List _byteDigest() {
     if (_endian == Endian.host) return digest.buffer.asUint8List();
 
-    var byteDigest = new Uint8List(digest.lengthInBytes);
+    var byteDigest = Uint8List(digest.lengthInBytes);
     var byteData = byteDigest.buffer.asByteData();
     for (var i = 0; i < digest.length; i++) {
       byteData.setUint32(i * bytesPerWord, digest[i]);
@@ -126,7 +126,7 @@ abstract class HashSink implements Sink<List<int>> {
     }
 
     if (_lengthInBytes > _maxMessageLengthInBytes) {
-      throw new UnsupportedError(
+      throw UnsupportedError(
           'Hashing is unsupported for messages with more than 2^53 bits.');
     }
 
@@ -135,7 +135,7 @@ abstract class HashSink implements Sink<List<int>> {
     // Add the full length of the input data as a 64-bit value at the end of the
     // hash.
     var offset = _pendingData.length;
-    _pendingData.addAll(new Uint8List(8));
+    _pendingData.addAll(Uint8List(8));
     var byteData = _pendingData.buffer.asByteData();
 
     // We're essentially doing byteData.setUint64(offset, lengthInBits, _endian)
