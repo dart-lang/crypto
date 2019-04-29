@@ -18,7 +18,7 @@ import 'utils.dart';
 ///
 /// **Warning**: MD5 has known collisions and should only be used when required
 /// for backwards compatibility.
-final md5 = new MD5._();
+final md5 = MD5._();
 
 /// An implementation of the [MD5][rfc] hash function.
 ///
@@ -37,12 +37,12 @@ class MD5 extends Hash {
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
-      new ByteConversionSink.from(new _MD5Sink(sink));
+      ByteConversionSink.from(_MD5Sink(sink));
 }
 
 /// Data from a non-linear mathematical function that functions as
 /// reproducible noise.
-const _noise = const [
+const _noise = [
   0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, //
   0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
   0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821, 0xf61e2562, 0xc040b340,
@@ -57,7 +57,7 @@ const _noise = const [
 ];
 
 /// Per-round shift amounts.
-const _shiftAmounts = const [
+const _shiftAmounts = [
   07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14, //
   20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,
   16, 23, 04, 11, 16, 23, 04, 11, 16, 23, 06, 10, 15, 21, 06, 10, 15, 21, 06,
@@ -70,7 +70,7 @@ const _shiftAmounts = const [
 /// public members.
 class _MD5Sink extends HashSink {
   @override
-  final digest = new Uint32List(4);
+  final digest = Uint32List(4);
 
   _MD5Sink(Sink<Digest> sink) : super(sink, 16, endian: Endian.little) {
     digest[0] = 0x67452301;

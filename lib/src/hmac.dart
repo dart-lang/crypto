@@ -28,7 +28,7 @@ class Hmac extends Converter<List<int>, Digest> {
   /// message.
   Hmac(Hash hash, List<int> key)
       : _hash = hash,
-        _key = new Uint8List(hash.blockSize) {
+        _key = Uint8List(hash.blockSize) {
     // Hash the key if it's longer than the block size of the hash.
     if (key.length > _hash.blockSize) key = _hash.convert(key).bytes;
 
@@ -39,7 +39,7 @@ class Hmac extends Converter<List<int>, Digest> {
 
   @override
   Digest convert(List<int> data) {
-    var innerSink = new DigestSink();
+    var innerSink = DigestSink();
     var outerSink = startChunkedConversion(innerSink);
     outerSink.add(data);
     outerSink.close();
@@ -48,7 +48,7 @@ class Hmac extends Converter<List<int>, Digest> {
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
-      new _HmacSink(sink, _hash, _key);
+      _HmacSink(sink, _hash, _key);
 }
 
 /// The concrete implementation of the HMAC algorithm.
@@ -57,7 +57,7 @@ class _HmacSink extends ByteConversionSink {
   final ByteConversionSink _outerSink;
 
   /// The sink that [_innerSink]'s result will be added to when it's available.
-  final _innerResultSink = new DigestSink();
+  final _innerResultSink = DigestSink();
 
   /// The sink for the inner hash computation.
   ByteConversionSink _innerSink;
@@ -70,7 +70,7 @@ class _HmacSink extends ByteConversionSink {
     _innerSink = hash.startChunkedConversion(_innerResultSink);
 
     // Compute outer padding.
-    var padding = new Uint8List(key.length);
+    var padding = Uint8List(key.length);
     for (var i = 0; i < padding.length; i++) {
       padding[i] = 0x5c ^ key[i];
     }
@@ -85,13 +85,13 @@ class _HmacSink extends ByteConversionSink {
 
   @override
   void add(List<int> data) {
-    if (_isClosed) throw new StateError('HMAC is closed');
+    if (_isClosed) throw StateError('HMAC is closed');
     _innerSink.add(data);
   }
 
   @override
   void addSlice(List<int> data, int start, int end, bool isLast) {
-    if (_isClosed) throw new StateError('HMAC is closed');
+    if (_isClosed) throw StateError('HMAC is closed');
     _innerSink.addSlice(data, start, end, isLast);
   }
 

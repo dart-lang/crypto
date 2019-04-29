@@ -33,7 +33,7 @@ Future main(List<String> args) async {
   }
 
   var filename = args[1];
-  var input = new File(filename);
+  var input = File(filename);
 
   if (!input.existsSync()) {
     print('File "$filename" does not exist.');

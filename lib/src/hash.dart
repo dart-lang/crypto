@@ -23,7 +23,7 @@ abstract class Hash extends Converter<List<int>, Digest> {
 
   @override
   Digest convert(List<int> data) {
-    var innerSink = new DigestSink();
+    var innerSink = DigestSink();
     var outerSink = startChunkedConversion(innerSink);
     outerSink.add(data);
     outerSink.close();

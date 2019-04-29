@@ -7,6 +7,6 @@ import 'package:test/test.dart';
 
 /// Asserts that an HMAC using [hash] returns [mac] for [input] and [key].
 void expectHmacEquals(Hash hash, List<int> input, List<int> key, String mac) {
-  var hmac = new Hmac(hash, key);
+  var hmac = Hmac(hash, key);
   expect(hmac.convert(input).toString(), startsWith(mac));
 }
