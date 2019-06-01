@@ -44,30 +44,29 @@ from the `Sink<Digest>` used to create the input data sink.
 
 ```dart
 import 'dart:convert';
+import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
-import 'package:crypto/src/digest_sink.dart';
 
 void main() {
   var firstChunk = utf8.encode("foo");
   var secondChunk = utf8.encode("bar");
 
-  var ds = new DigestSink();
-  var s = sha1.startChunkedConversion(ds);
-  s.add(firstChunk);
-  s.add(secondChunk); // call `add` for every chunk of input data
-  s.close();
-  var digest = ds.value;
+  var output = new AccumulatorSink<Digest>();
+  var input = sha1.startChunkedConversion(output);
+  input.add(firstChunk);
+  input.add(secondChunk); // call `add` for every chunk of input data
+  input.close();
+  var digest = output.events.single;
 
   print("Digest as bytes: ${digest.bytes}");
   print("Digest as hex string: $digest");
 }
 ```
 
-The above example uses the `DigestSink` class that comes with the
-_crypto_ package. Its `value` property retrieves the last `Digest`
-that was added to it, which is fine for this purpose since only one
-`Digest` is added to it when the data sink's `close` method was
-invoked.
+The above example uses the `AccumulatorSink` class that comes with the
+_convert_ package. It is capable of accumulating multiple events, but
+in this usage only a single `Digest` is added to it when the data sink's
+`close` method is invoked.
 
 ### HMAC
 
@@ -78,7 +77,6 @@ hash calculating objects.
 ```dart
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:crypto/src/digest_sink.dart';
 
 void main() {
   var key = utf8.encode('p@ssw0rd');
