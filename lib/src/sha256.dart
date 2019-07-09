@@ -17,6 +17,13 @@ import 'utils.dart';
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 final sha256 = Sha256._();
 
+/// An instance of [Sha224].
+///
+/// This instance provides convenient access to the [Sha224][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc6234
+final sha224 = Sha224._();
+
 /// An implementation of the [SHA-256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
@@ -36,6 +43,25 @@ class Sha256 extends Hash {
       ByteConversionSink.from(_Sha256Sink(sink));
 }
 
+/// An implementation of the [SHA-224][rfc] hash function.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc6234
+///
+/// Note that it's almost always easier to use [sha224] rather than creating a
+/// new instance.
+class Sha224 extends Hash {
+  @override
+  final int blockSize = 16 * bytesPerWord;
+
+  Sha224._();
+
+  Sha224 newInstance() => Sha224._();
+
+  @override
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      ByteConversionSink.from(_Sha224Sink(sink));
+}
+
 /// Data from a non-linear function that functions as reproducible noise.
 const List<int> _noise = [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, //
@@ -51,34 +77,16 @@ const List<int> _noise = [
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
 
-/// The concrete implementation of [Sha256].
-///
-/// This is separate so that it can extend [HashSink] without leaking additional
-/// public members.
-class _Sha256Sink extends HashSink {
-  @override
-  final digest = Uint32List(8);
+abstract class _Sha32BitSink extends HashSink {
+  final Uint32List _digest;
 
   /// The sixteen words from the original chunk, extended to 64 words.
   ///
   /// This is an instance variable to avoid re-allocating, but its data isn't
   /// used across invocations of [updateHash].
-  final Uint32List _extended;
+  final _extended = Uint32List(64);
 
-  _Sha256Sink(Sink<Digest> sink)
-      : _extended = Uint32List(64),
-        super(sink, 16) {
-    // Initial value of the hash parts. First 32 bits of the fractional parts
-    // of the square roots of the first 8 prime numbers.
-    digest[0] = 0x6a09e667;
-    digest[1] = 0xbb67ae85;
-    digest[2] = 0x3c6ef372;
-    digest[3] = 0xa54ff53a;
-    digest[4] = 0x510e527f;
-    digest[5] = 0x9b05688c;
-    digest[6] = 0x1f83d9ab;
-    digest[7] = 0x5be0cd19;
-  }
+  _Sha32BitSink(Sink<Digest> sink, this._digest) : super(sink, 16);
 
   // The following helper functions are taken directly from
   // http://tools.ietf.org/html/rfc6234.
@@ -105,14 +113,14 @@ class _Sha256Sink extends HashSink {
     }
 
     // Shuffle around the bits.
-    var a = digest[0];
-    var b = digest[1];
-    var c = digest[2];
-    var d = digest[3];
-    var e = digest[4];
-    var f = digest[5];
-    var g = digest[6];
-    var h = digest[7];
+    var a = _digest[0];
+    var b = _digest[1];
+    var c = _digest[2];
+    var d = _digest[3];
+    var e = _digest[4];
+    var f = _digest[5];
+    var g = _digest[6];
+    var h = _digest[7];
 
     for (var i = 0; i < 64; i++) {
       var temp1 = add32(add32(h, _bsig1(e)),
@@ -129,13 +137,61 @@ class _Sha256Sink extends HashSink {
     }
 
     // Update hash values after iteration.
-    digest[0] = add32(a, digest[0]);
-    digest[1] = add32(b, digest[1]);
-    digest[2] = add32(c, digest[2]);
-    digest[3] = add32(d, digest[3]);
-    digest[4] = add32(e, digest[4]);
-    digest[5] = add32(f, digest[5]);
-    digest[6] = add32(g, digest[6]);
-    digest[7] = add32(h, digest[7]);
+    _digest[0] = add32(a, _digest[0]);
+    _digest[1] = add32(b, _digest[1]);
+    _digest[2] = add32(c, _digest[2]);
+    _digest[3] = add32(d, _digest[3]);
+    _digest[4] = add32(e, _digest[4]);
+    _digest[5] = add32(f, _digest[5]);
+    _digest[6] = add32(g, _digest[6]);
+    _digest[7] = add32(h, _digest[7]);
   }
+}
+
+/// The concrete implementation of [Sha256].
+///
+/// This is separate so that it can extend [HashSink] without leaking additional
+/// public members.
+class _Sha256Sink extends _Sha32BitSink {
+  @override
+  Uint32List get digest => _digest;
+
+  // Initial value of the hash parts. First 32 bits of the fractional parts
+  // of the square roots of the first 8 prime numbers.
+  _Sha256Sink(Sink<Digest> sink)
+      : super(
+            sink,
+            Uint32List.fromList([
+              0x6a09e667,
+              0xbb67ae85,
+              0x3c6ef372,
+              0xa54ff53a,
+              0x510e527f,
+              0x9b05688c,
+              0x1f83d9ab,
+              0x5be0cd19,
+            ]));
+}
+
+/// The concrete implementation of [Sha224].
+///
+/// This is separate so that it can extend [HashSink] without leaking additional
+/// public members.
+class _Sha224Sink extends _Sha32BitSink {
+  @override
+  Uint32List get digest => _digest.buffer.asUint32List(0, 7);
+
+  _Sha224Sink(Sink<Digest> sink)
+      : super(
+            sink,
+            Uint32List.fromList([
+              0xc1059ed8,
+              0x367cd507,
+              0x3070dd17,
+              0xf70e5939,
+              0xffc00b31,
+              0x68581511,
+              0x64f98fa7,
+              0xbefa4fa4,
+            ]));
 }

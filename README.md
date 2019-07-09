@@ -5,7 +5,10 @@ A set of cryptographic hashing functions implemented in pure Dart
 The following hashing algorithms are supported:
 
 * SHA-1
+* SHA-224
 * SHA-256
+* SHA-384
+* SHA-512
 * MD5
 * HMAC (i.e. HMAC-MD5, HMAC-SHA1, HMAC-SHA256)
 
@@ -105,7 +108,10 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 [Hmac]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hmac-class.html
 [MD5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/MD5-class.html
 [Sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha1-class.html
+[Sha224]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha224-class.html
 [Sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha256-class.html
+[Sha384]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha384-class.html
+[Sha512]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha512-class.html
 [md5-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
 [sha1-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
 [sha256-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html

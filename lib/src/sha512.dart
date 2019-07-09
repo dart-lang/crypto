@@ -108,15 +108,14 @@ final List<BigInt> _noise = [
   _bigFromTwo(0x5fcb6fab, 0x3ad6faec), _bigFromTwo(0x6c44198c, 0x4a475817),
 ];
 
-/// The concrete implementation of [Sha384].
-///
-/// This is separate so that it can extend [HashSink] without leaking additional
-/// public members.
-class _Sha384Sink extends HashSink {
+abstract class _Sha64BitSink extends HashSink {
+  int get digestBytes;
+
   @override
   Uint32List get digest {
-    var ret = Uint32List(12);
-    for (int i = 0; i < 6; i++) {
+    final ret = Uint32List(digestBytes);
+    final loop64 = digestBytes ~/ 2;
+    for (int i = 0; i < loop64; i++) {
       ret[i * 2] = (_digest[i] >> 32).toUnsigned(32).toInt();
       ret[i * 2 + 1] = (_digest[i]).toUnsigned(32).toInt();
     }
@@ -131,23 +130,9 @@ class _Sha384Sink extends HashSink {
   ///
   /// This is an instance variable to avoid re-allocating, but its data isn't
   /// used across invocations of [updateHash].
-  final List<BigInt> _extended;
+  final _extended = List<BigInt>(80);
 
-  _Sha384Sink(Sink<Digest> sink, {List<BigInt> digestInit})
-      : _extended = List<BigInt>(80),
-        _digest = digestInit ??
-            [
-              _bigFromTwo(0xcbbb9d5d, 0xc1059ed8),
-              _bigFromTwo(0x629a292a, 0x367cd507),
-              _bigFromTwo(0x9159015a, 0x3070dd17),
-              _bigFromTwo(0x152fecd8, 0xf70e5939),
-              _bigFromTwo(0x67332667, 0xffc00b31),
-              _bigFromTwo(0x8eb44a87, 0x68581511),
-              _bigFromTwo(0xdb0c2e0d, 0x64f98fa7),
-              _bigFromTwo(0x47b5481d, 0xbefa4fa4),
-            ],
-        super(sink, 32);
-
+  _Sha64BitSink(Sink<Digest> sink, this._digest) : super(sink, 32);
   // The following helper functions are taken directly from
   // http://tools.ietf.org/html/rfc6234.
 
@@ -213,13 +198,35 @@ class _Sha384Sink extends HashSink {
   }
 }
 
+/// The concrete implementation of [Sha384].
+///
+/// This is separate so that it can extend [HashSink] without leaking additional
+/// public members.
+class _Sha384Sink extends _Sha64BitSink {
+  final digestBytes = 12;
+
+  _Sha384Sink(Sink<Digest> sink)
+      : super(sink, [
+          _bigFromTwo(0xcbbb9d5d, 0xc1059ed8),
+          _bigFromTwo(0x629a292a, 0x367cd507),
+          _bigFromTwo(0x9159015a, 0x3070dd17),
+          _bigFromTwo(0x152fecd8, 0xf70e5939),
+          _bigFromTwo(0x67332667, 0xffc00b31),
+          _bigFromTwo(0x8eb44a87, 0x68581511),
+          _bigFromTwo(0xdb0c2e0d, 0x64f98fa7),
+          _bigFromTwo(0x47b5481d, 0xbefa4fa4),
+        ]);
+}
+
 /// The concrete implementation of [Sha512].
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
-class _Sha512Sink extends _Sha384Sink {
+class _Sha512Sink extends _Sha64BitSink {
+  final digestBytes = 16;
+
   _Sha512Sink(Sink<Digest> sink)
-      : super(sink, digestInit: [
+      : super(sink, [
           // Initial value of the hash parts. First 64 bits of the fractional
           // parts of the square roots of the first eight prime numbers.
           _bigFromTwo(0x6a09e667, 0xf3bcc908),
@@ -231,14 +238,4 @@ class _Sha512Sink extends _Sha384Sink {
           _bigFromTwo(0x1f83d9ab, 0xfb41bd6b),
           _bigFromTwo(0x5be0cd19, 0x137e2179),
         ]);
-
-  @override
-  Uint32List get digest {
-    var ret = Uint32List(16);
-    for (int i = 0; i < 8; i++) {
-      ret[i * 2] = (_digest[i] >> 32).toUnsigned(32).toInt();
-      ret[i * 2 + 1] = (_digest[i]).toUnsigned(32).toInt();
-    }
-    return ret;
-  }
 }
