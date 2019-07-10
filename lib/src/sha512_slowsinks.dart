@@ -2,13 +2,10 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'digest.dart';
-import 'hash.dart';
 import 'hash_sink.dart';
-import 'utils.dart';
 
 /// Data from a non-linear function that functions as reproducible noise.
 ///
@@ -132,61 +129,64 @@ abstract class _Sha64BitSink extends HashSink {
         word2[0 + offset2] + (word1[1 + offset1] < _addTemp ? 1 : 0);
   }
 
-  final _rotrTemp1 = Uint32List(2);
-  final _rotrTemp2 = Uint32List(2);
+  static const _rotrIndex1 = 0;
+  static const _rotrIndex2 = _rotrIndex1 + 2;
+  static const _sigIndex1 = _rotrIndex2 + 2;
+  static const _sigIndex2 = _sigIndex1 + 2;
+  static const _sigIndex3 = _sigIndex2 + 2;
+  static const _sigIndex4 = _sigIndex3 + 2;
+  static const _aIndex = _sigIndex4 + 2;
+  static const _bIndex = _aIndex + 2;
+  static const _cIndex = _bIndex + 2;
+  static const _dIndex = _cIndex + 2;
+  static const _eIndex = _dIndex + 2;
+  static const _fIndex = _eIndex + 2;
+  static const _gIndex = _fIndex + 2;
+  static const _hIndex = _gIndex + 2;
+  static const _tmp1 = _hIndex + 2;
+  static const _tmp2 = _tmp1 + 2;
+  static const _tmp3 = _tmp2 + 2;
+  static const _tmp4 = _tmp3 + 2;
+  static const _tmp5 = _tmp4 + 2;
+  final _nums = Uint32List(12 + 16 + 10);
+
   // SHA rotate   ((word >> bits) | (word << (64-bits)))
   _rotr(int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
-    _shr(bits, word, offset, _rotrTemp1, 0);
-    _shl(64 - bits, word, offset, _rotrTemp2, 0);
-    _or(_rotrTemp1, 0, _rotrTemp2, 0, ret, offsetR);
+    _shr(bits, word, offset, _nums, _rotrIndex1);
+    _shl(64 - bits, word, offset, _nums, _rotrIndex2);
+    _or(_nums, _rotrIndex1, _nums, _rotrIndex2, ret, offsetR);
   }
 
-  final _sigma0Temp1 = Uint32List(2);
-  final _sigma0Temp2 = Uint32List(2);
-  final _sigma0Temp3 = Uint32List(2);
-  final _sigma0Temp4 = Uint32List(2);
   _bsig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
-    _rotr(28, word, offset, _sigma0Temp1, 0);
-    _rotr(34, word, offset, _sigma0Temp2, 0);
-    _rotr(39, word, offset, _sigma0Temp3, 0);
-    _xor(_sigma0Temp2, 0, _sigma0Temp3, 0, _sigma0Temp4, 0);
-    _xor(_sigma0Temp1, 0, _sigma0Temp4, 0, ret, offsetR);
+    _rotr(28, word, offset, _nums, _sigIndex1);
+    _rotr(34, word, offset, _nums, _sigIndex2);
+    _rotr(39, word, offset, _nums, _sigIndex3);
+    _xor(_nums, _sigIndex2, _nums, _sigIndex3, _nums, _sigIndex4);
+    _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  final _sigma1Temp1 = Uint32List(2);
-  final _sigma1Temp2 = Uint32List(2);
-  final _sigma1Temp3 = Uint32List(2);
-  final _sigma1Temp4 = Uint32List(2);
   _bsig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
-    _rotr(14, word, offset, _sigma1Temp1, 0);
-    _rotr(18, word, offset, _sigma1Temp2, 0);
-    _rotr(41, word, offset, _sigma1Temp3, 0);
-    _xor(_sigma1Temp2, 0, _sigma1Temp3, 0, _sigma1Temp4, 0);
-    _xor(_sigma1Temp1, 0, _sigma1Temp4, 0, ret, offsetR);
+    _rotr(14, word, offset, _nums, _sigIndex1);
+    _rotr(18, word, offset, _nums, _sigIndex2);
+    _rotr(41, word, offset, _nums, _sigIndex3);
+    _xor(_nums, _sigIndex2, _nums, _sigIndex3, _nums, _sigIndex4);
+    _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  final _lsigma0Temp1 = Uint32List(2);
-  final _lsigma0Temp2 = Uint32List(2);
-  final _lsigma0Temp3 = Uint32List(2);
-  final _lsigma0Temp4 = Uint32List(2);
   _ssig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
-    _rotr(1, word, offset, _lsigma0Temp1, 0);
-    _rotr(8, word, offset, _lsigma0Temp2, 0);
-    _shr(7, word, offset, _lsigma0Temp3, 0);
-    _xor(_lsigma0Temp2, 0, _lsigma0Temp3, 0, _lsigma0Temp4, 0);
-    _xor(_lsigma0Temp1, 0, _lsigma0Temp4, 0, ret, offsetR);
+    _rotr(1, word, offset, _nums, _sigIndex1);
+    _rotr(8, word, offset, _nums, _sigIndex2);
+    _shr(7, word, offset, _nums, _sigIndex3);
+    _xor(_nums, _sigIndex2, _nums, _sigIndex3, _nums, _sigIndex4);
+    _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  final _lsigma1Temp1 = Uint32List(2);
-  final _lsigma1Temp2 = Uint32List(2);
-  final _lsigma1Temp3 = Uint32List(2);
-  final _lsigma1Temp4 = Uint32List(2);
   _ssig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
-    _rotr(19, word, offset, _lsigma1Temp1, 0);
-    _rotr(61, word, offset, _lsigma1Temp2, 0);
-    _shr(6, word, offset, _lsigma1Temp3, 0);
-    _xor(_lsigma1Temp2, 0, _lsigma1Temp3, 0, _lsigma1Temp4, 0);
-    _xor(_lsigma1Temp1, 0, _lsigma1Temp4, 0, ret, offsetR);
+    _rotr(19, word, offset, _nums, _sigIndex1);
+    _rotr(61, word, offset, _nums, _sigIndex2);
+    _shr(6, word, offset, _nums, _sigIndex3);
+    _xor(_nums, _sigIndex2, _nums, _sigIndex3, _nums, _sigIndex4);
+    _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
   _ch(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
@@ -205,15 +205,6 @@ abstract class _Sha64BitSink extends HashSink {
         (y[1 + offsetY] & z[1 + offsetZ]));
   }
 
-  final a = Uint32List(2);
-  final b = Uint32List(2);
-  final c = Uint32List(2);
-  final d = Uint32List(2);
-  final e = Uint32List(2);
-  final f = Uint32List(2);
-  final g = Uint32List(2);
-  final h = Uint32List(2);
-
   @override
   void updateHash(Uint32List chunk) {
     assert(chunk.length == 32);
@@ -222,76 +213,58 @@ abstract class _Sha64BitSink extends HashSink {
     for (var i = 0; i < 32; i++) {
       _extended[i] = chunk[i];
     }
-    final tmp1 = Uint32List(2);
-    final tmp2 = Uint32List(2);
-    final tmp3 = Uint32List(2);
-    final tmp4 = Uint32List(2);
-    final tmp5 = Uint32List(2);
 
     for (var i = 32; i < 160; i += 2) {
-      _ssig1(_extended, i - 2 * 2, tmp1, 0);
-      _add(tmp1, 0, _extended, i - 7 * 2, tmp2, 0);
-      _ssig0(_extended, i - 15 * 2, tmp1, 0);
-      _add(tmp1, 0, _extended, i - 16 * 2, tmp3, 0);
-      _add(tmp2, 0, tmp3, 0, _extended, i);
+      _ssig1(_extended, i - 2 * 2, _nums, _tmp1);
+      _add(_nums, _tmp1, _extended, i - 7 * 2, _nums, _tmp2);
+      _ssig0(_extended, i - 15 * 2, _nums, _tmp1);
+      _add(_nums, _tmp1, _extended, i - 16 * 2, _nums, _tmp3);
+      _add(_nums, _tmp2, _nums, _tmp3, _extended, i);
     }
 
     // Shuffle around the bits.
-    a[0] = _digest[0];
-    a[1] = _digest[1];
-    b[0] = _digest[2];
-    b[1] = _digest[3];
-    c[0] = _digest[4];
-    c[1] = _digest[5];
-    d[0] = _digest[6];
-    d[1] = _digest[7];
-    e[0] = _digest[8];
-    e[1] = _digest[9];
-    f[0] = _digest[10];
-    f[1] = _digest[11];
-    g[0] = _digest[12];
-    g[1] = _digest[13];
-    h[0] = _digest[14];
-    h[1] = _digest[15];
+    _nums.setRange(_aIndex, _hIndex + 2, _digest);
 
     for (var i = 0; i < 160; i += 2) {
       // temp1 = H + SHA512_SIGMA1(E) + SHA_Ch(E,F,G) + K[t] + W[t];
-      _bsig1(e, 0, tmp1, 0);
-      _add(h, 0, tmp1, 0, tmp2, 0);
-      _ch(e, 0, f, 0, g, 0, tmp3, 0);
-      _add(tmp2, 0, tmp3, 0, tmp4, 0);
-      _add(_noise32, i, _extended, i, tmp5, 0);
-      _add(tmp4, 0, tmp5, 0, tmp1, 0);
+      _bsig1(_nums, _eIndex, _nums, _tmp1);
+      _add(_nums, _hIndex, _nums, _tmp1, _nums, _tmp2);
+      _ch(_nums, _eIndex, _nums, _fIndex, _nums, _gIndex, _nums, _tmp3);
+      _add(_nums, _tmp2, _nums, _tmp3, _nums, _tmp4);
+      _add(_noise32, i, _extended, i, _nums, _tmp5);
+      _add(_nums, _tmp4, _nums, _tmp5, _nums, _tmp1);
 
       // temp2 = SHA512_SIGMA0(A) + SHA_Maj(A,B,C);
-      _bsig0(a, 0, tmp3, 0);
-      _maj(a, 0, b, 0, c, 0, tmp4, 0);
-      _add(tmp3, 0, tmp4, 0, tmp2, 0);
-      h[0] = g[0];
-      h[1] = g[1];
-      g[0] = f[0];
-      g[1] = f[1];
-      f[0] = e[0];
-      f[1] = e[1];
-      _add(d, 0, tmp1, 0, e, 0);
-      d[0] = c[0];
-      d[1] = c[1];
-      c[0] = b[0];
-      c[1] = b[1];
-      b[0] = a[0];
-      b[1] = a[1];
-      _add(tmp1, 0, tmp2, 0, a, 0);
+      _bsig0(_nums, _aIndex, _nums, _tmp3);
+      _maj(_nums, _aIndex, _nums, _bIndex, _nums, _cIndex, _nums, _tmp4);
+      _add(_nums, _tmp3, _nums, _tmp4, _nums, _tmp2);
+
+      _nums[_hIndex] = _nums[_gIndex];
+      _nums[_hIndex + 1] = _nums[_gIndex + 1];
+      _nums[_gIndex] = _nums[_fIndex];
+      _nums[_gIndex + 1] = _nums[_fIndex + 1];
+      _nums[_fIndex] = _nums[_eIndex];
+      _nums[_fIndex + 1] = _nums[_eIndex + 1];
+      _add(_nums, _dIndex, _nums, _tmp1, _nums, _eIndex);
+      _nums[_dIndex] = _nums[_cIndex];
+      _nums[_dIndex + 1] = _nums[_cIndex + 1];
+      _nums[_cIndex] = _nums[_bIndex];
+      _nums[_cIndex + 1] = _nums[_bIndex + 1];
+      _nums[_bIndex] = _nums[_aIndex];
+      _nums[_bIndex + 1] = _nums[_aIndex + 1];
+
+      _add(_nums, _tmp1, _nums, _tmp2, _nums, _aIndex);
     }
 
     // Update hash values after iteration.
-    _addTo2(_digest, 0, a, 0);
-    _addTo2(_digest, 2, b, 0);
-    _addTo2(_digest, 4, c, 0);
-    _addTo2(_digest, 6, d, 0);
-    _addTo2(_digest, 8, e, 0);
-    _addTo2(_digest, 10, f, 0);
-    _addTo2(_digest, 12, g, 0);
-    _addTo2(_digest, 14, h, 0);
+    _addTo2(_digest, 0, _nums, _aIndex);
+    _addTo2(_digest, 2, _nums, _bIndex);
+    _addTo2(_digest, 4, _nums, _cIndex);
+    _addTo2(_digest, 6, _nums, _dIndex);
+    _addTo2(_digest, 8, _nums, _eIndex);
+    _addTo2(_digest, 10, _nums, _fIndex);
+    _addTo2(_digest, 12, _nums, _gIndex);
+    _addTo2(_digest, 14, _nums, _hIndex);
   }
 }
 
