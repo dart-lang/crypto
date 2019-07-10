@@ -1,8 +1,6 @@
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-//
-// 32-bit math taken
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -476,7 +474,6 @@ abstract class _Sha64BitSinkFast extends HashSink {
     var h = _digest[7];
 
     for (var i = 0; i < 80; i++) {
-      // temp1 = H + SHA512_SIGMA1(E) + SHA_Ch(E,F,G) + K[t] + W[t];
       var temp1 = h + _bsig1(e) + _ch(e, f, g) + _noise64[i] + _extended[i];
       var temp2 = _bsig0(a) + _maj(a, b, c);
       h = g;
