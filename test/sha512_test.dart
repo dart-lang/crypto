@@ -41,11 +41,6 @@ void main() {
         outer.close();
       });
     });
-
-    test('384 Vectors', () {
-      expect('${sha384.convert('this is a test'.codeUnits)}',
-          '43382a8cc650904675c9d62d785786e368f3a99db99aeaaa7b76b02530677154d09c0b6bd2e21b4329fd41543b9a785b');
-    });
   });
 
   group('SHA2-512', () {
@@ -79,11 +74,6 @@ void main() {
         var outer = sha512.startChunkedConversion(inner);
         outer.close();
       });
-    });
-
-    test('512 Vectors', () {
-      expect('${sha512.convert('this is a test'.codeUnits)}',
-          '7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c');
     });
   });
 }
