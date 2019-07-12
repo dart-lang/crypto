@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'digest.dart';
 import 'hash.dart';
 import 'sha512_fastsinks.dart' if (dart.library.js) 'sha512_slowsinks.dart';
+//import 'sha512_slowsinks.dart';
 import 'utils.dart';
 
 /// An instance of [Sha2Sha384].
