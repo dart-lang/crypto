@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 
 main() {
   group("Monte Vectors", () {
-    final sha224Test = MonteTest(
+    monteTest(
       'sha224',
       sha224,
       'ed2b70d575d9d0b4196ae84a03eed940057ea89cdd729b95b7d4e6a5',
@@ -17,7 +17,7 @@ main() {
         'b285f829b0499ff45f8454eda2d4e0997b3f438c2728f1a25cfbb05a',
       ],
     );
-    final sha256Test = MonteTest(
+    monteTest(
       'sha256',
       sha256,
       '6d1e72ad03ddeb5de891e572e2396f8da015d899ef0e79503152d6010a3fe691',
@@ -29,7 +29,7 @@ main() {
         'f9eba2a4cf6263826beaf6150057849eb975a9513c0b76ecad0f1c19ebbad89b',
       ],
     );
-    final sha384Test = MonteTest(
+    monteTest(
         'sha384',
         sha384,
         'edff07255c71b54a9beae52cdfa083569a08be89949cbba73ddc8acf429359ca5e5be7a673633ca0d9709848f522a9df',
@@ -40,7 +40,7 @@ main() {
           '9e7477ffd4baad1fcca035f4687b35ed47a57832fb27d131eb8018fcb41edf4d5e25874466d2e2d61ae3accdfc7aa364',
           'd7b4d4e779ca70c8d065630db1f9128ee43b4bde08a81bce13d48659b6ef47b6cfc802af6d8756f6cd43c709bb445bab',
         ]);
-    final sha512Test = MonteTest(
+    monteTest(
         'sha512',
         sha512,
         '5c337de5caf35d18ed90b5cddfce001ca1b8ee8602f367e7c24ccca6f893802fb1aca7a3dae32dcd60800a59959bc540d63237876b799229ae71a2526fbc52cd',
@@ -51,48 +51,40 @@ main() {
           'bb3a58f71148116e377505461d65d6c89906481fedfbcfe481b7aa8ceb977d252b3fe21bfff6e7fbf7575ceecf5936bd635e1cf52698c36ef6908ddbd5b6ae05',
           'b68f0cd2d63566b3934a50666dec6d62ca1db98e49d7733084c1f86d91a8a08c756fa7ece815e20930dd7cb66351bad8c087c2f94e8757cb98e7f4b86b21a8a8',
         ]);
-    for (var shaTest in [sha224Test, sha256Test, sha384Test, sha512Test]) {
-      test(shaTest.name, () {
-        expect(shaTest.run().toList(), shaTest.expected);
-      });
-    }
   });
 }
 
-class MonteTest {
-  final String name;
-  final Hash hash;
-  final String seed;
-  final List<String> expected;
-
-  MonteTest(this.name, this.hash, this.seed, this.expected);
-
-  static final toupleMatch = RegExp('([0-9a-fA-F]{2})');
-  static Uint8List bytesFromHexString(String message) {
-    var seed = <int>[];
-    for (var match in toupleMatch.allMatches(message)) {
-      seed.add(int.parse(match.group(0), radix: 16));
-    }
-    return Uint8List.fromList(seed);
-  }
-
-  Iterable<String> run() sync* {
-    var _seed = bytesFromHexString(seed);
-    for (int j = 0; j < expected.length; j++) {
-      Uint8List md0, md1, md2;
-      md0 = (Uint8List.fromList(_seed));
-      md1 = (Uint8List.fromList(_seed));
-      md2 = (Uint8List.fromList(_seed));
-      Digest mdI;
-      for (int i = 3; i < 1003; i++) {
-        var mI = <int>[]..addAll(md0)..addAll(md1)..addAll(md2);
-        mdI = hash.convert(mI);
-        md0.setAll(0, md1);
-        md1.setAll(0, md2);
-        md2.setAll(0, mdI.bytes);
+monteTest(String name, Hash hash, String seed, List<String> expected) {
+  test(name, () {
+    Iterable<String> run() sync* {
+      var _seed = bytesFromHexString(seed);
+      for (int j = 0; j < expected.length; j++) {
+        Uint8List md0, md1, md2;
+        md0 = (Uint8List.fromList(_seed));
+        md1 = (Uint8List.fromList(_seed));
+        md2 = (Uint8List.fromList(_seed));
+        Digest mdI;
+        for (int i = 3; i < 1003; i++) {
+          var mI = <int>[]..addAll(md0)..addAll(md1)..addAll(md2);
+          mdI = hash.convert(mI);
+          md0.setAll(0, md1);
+          md1.setAll(0, md2);
+          md2.setAll(0, mdI.bytes);
+        }
+        yield '$mdI';
+        _seed.setAll(0, md2);
       }
-      yield '$mdI';
-      _seed.setAll(0, md2);
     }
+
+    expect(run().toList(), expected);
+  });
+}
+
+final toupleMatch = RegExp('([0-9a-fA-F]{2})');
+Uint8List bytesFromHexString(String message) {
+  var seed = <int>[];
+  for (var match in toupleMatch.allMatches(message)) {
+    seed.add(int.parse(match.group(0), radix: 16));
   }
+  return Uint8List.fromList(seed);
 }
