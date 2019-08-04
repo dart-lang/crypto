@@ -90,6 +90,28 @@ void main() {
 }
 ```
 
+### KDF: PBKDF2
+
+Create an instance of the [`PBKDF2`][PBKDF2] class with sha1 as default hash function.
+
+```dart
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+
+void main() {
+  Uint8List password = utf8.encode('p@ssw0rd');
+  Uint8List salt = utf8.encode("foobar");
+  int rounds = 65536
+  int dkLen = 20
+
+  var pbkdf2 = new PBKDF2();
+  var digest = pbkdf2.process(password, salt, rounds, dkLen);
+
+  print("HMAC digest as bytes: ${digest.bytes}");
+  print("HMAC digest as hex string: $digest");
+}
+```
+
 ## Disclaimer
 
 Support for this library is given as _best effort_.
