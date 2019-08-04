@@ -39,7 +39,7 @@ void main() {
 var _inputs = <Map<String, dynamic>>[
   {'password': utf8.encode('password'), 'salt': utf8.encode('salt'), 'rounds': 2, 'dkLen': 20, 'result': 'ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957'},
   {'password': utf8.encode('password'), 'salt': utf8.encode('salt'), 'rounds': 4096, 'dkLen': 20, 'result': '4b007901b765489abead49d926f721d065a429c1'},
-  //{'password': utf8.encode('password'), 'salt': utf8.encode('salt'), 'rounds': 16777216, 'dkLen': 20, 'result': 'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984'},
+  {'password': utf8.encode('password'), 'salt': utf8.encode('salt'), 'rounds': 16777216, 'dkLen': 20, 'result': 'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984'},
   {'password': utf8.encode('passwordPASSWORDpassword'), 'salt': utf8.encode('saltSALTsaltSALTsaltSALTsaltSALTsalt'), 'rounds': 4096, 'dkLen': 25, 'result': '3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038'},
   {'password': utf8.encode('pass\u0000word'), 'salt': utf8.encode('sa\u0000lt'), 'rounds': 4096, 'dkLen': 16, 'result': '56fa6aa75548099dcc37d7f03425e0c3'},
 ];
