@@ -27,7 +27,6 @@ final pbkdf2 = PBKDF2._();
 /// Note that it's almost always easier to use [pbkdf2] rather than creating a new
 /// instance.
 class PBKDF2 {
-
   Hash _prf;
 
   PBKDF2([Hash prf]) {
@@ -39,14 +38,14 @@ class PBKDF2 {
   }
 
   Digest process(List<int> password, List<int> salt, int rounds, int dkLen) {
-
     final int hLen = _prf.convert([]).bytes.length;
 
     if (dkLen > (pow(2, 32) - 1) * hLen) {
       throw UnsupportedError('Length of derived key too long');
     }
 
-    final int l = (dkLen / hLen).ceil(); // number of hLen-octet blocks in the derived key, rounding up
+    final int l = (dkLen / hLen)
+        .ceil(); // number of hLen-octet blocks in the derived key, rounding up
     final Hmac hash = Hmac(_prf, password);
     final Uint8List key = Uint8List(dkLen);
     final Uint8List inputBuffer = Uint8List(salt.length + 4)
@@ -71,7 +70,6 @@ class PBKDF2 {
     return Digest(key);
   }
 }
-
 
 /// The concrete implementation of [PBKDF2].
 ///
