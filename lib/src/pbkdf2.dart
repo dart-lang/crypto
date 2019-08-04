@@ -2,14 +2,14 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:typed_data';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'digest.dart';
 import 'hash.dart';
+import 'hash_sink.dart';
 import 'hmac.dart';
 import 'sha1.dart';
-import 'hash_sink.dart';
 
 /// An instance of [PBKDF2].
 ///
