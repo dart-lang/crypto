@@ -9,34 +9,82 @@ import 'package:test/test.dart';
 import 'package:crypto/crypto.dart';
 
 void main() {
-  group('with a chunked converter', () {
-    test('add may not be called after close', () {
-      var sink = sha256.startChunkedConversion(StreamController<Digest>().sink);
-      sink.close();
-      expect(() => sink.add([0]), throwsStateError);
+  group('SHA2-256', () {
+    group('with a chunked converter', () {
+      test('add may not be called after close', () {
+        var sink =
+            sha256.startChunkedConversion(StreamController<Digest>().sink);
+        sink.close();
+        expect(() => sink.add([0]), throwsStateError);
+      });
+
+      test('close may be called multiple times', () {
+        var sink =
+            sha256.startChunkedConversion(StreamController<Digest>().sink);
+        sink.close();
+        sink.close();
+        sink.close();
+        sink.close();
+      });
+
+      test('close closes the underlying sink', () {
+        var inner = ChunkedConversionSink<Digest>.withCallback(
+            expectAsync1((accumulated) {
+          expect(accumulated.length, equals(1));
+          expect(
+              accumulated.first.toString(),
+              equals(
+                  'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8'
+                  '55'));
+        }));
+
+        var outer = sha256.startChunkedConversion(inner);
+        outer.close();
+      });
     });
 
-    test('close may be called multiple times', () {
-      var sink = sha256.startChunkedConversion(StreamController<Digest>().sink);
-      sink.close();
-      sink.close();
-      sink.close();
-      sink.close();
+    test('vectors', () {
+      expect('${sha256.convert('this is a test'.codeUnits)}',
+          '2e99758548972a8e8822ad47fa1017ff72f06f3ff6a016851f45c398732bc50c');
+    });
+  });
+
+  group('SHA2-224', () {
+    group('with a chunked converter', () {
+      test('add may not be called after close', () {
+        var sink =
+            sha224.startChunkedConversion(StreamController<Digest>().sink);
+        sink.close();
+        expect(() => sink.add([0]), throwsStateError);
+      });
+
+      test('close may be called multiple times', () {
+        var sink =
+            sha224.startChunkedConversion(StreamController<Digest>().sink);
+        sink.close();
+        sink.close();
+        sink.close();
+        sink.close();
+      });
+
+      test('close closes the underlying sink', () {
+        var inner = ChunkedConversionSink<Digest>.withCallback(
+            expectAsync1((accumulated) {
+          expect(accumulated.length, equals(1));
+          expect(
+              accumulated.first.toString(),
+              equals(
+                  'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f'));
+        }));
+
+        var outer = sha224.startChunkedConversion(inner);
+        outer.close();
+      });
     });
 
-    test('close closes the underlying sink', () {
-      var inner = ChunkedConversionSink<Digest>.withCallback(
-          expectAsync1((accumulated) {
-        expect(accumulated.length, equals(1));
-        expect(
-            accumulated.first.toString(),
-            equals(
-                'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8'
-                '55'));
-      }));
-
-      var outer = sha256.startChunkedConversion(inner);
-      outer.close();
+    test('vectors', () {
+      expect('${sha224.convert('this is a test'.codeUnits)}',
+          '52fa5d621db1c9f11602fc92d1e8d1115a9018f191de948944c4ac39');
     });
   });
 
