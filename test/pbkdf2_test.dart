@@ -56,13 +56,13 @@ var _inputs = <Map<String, dynamic>>[
     'dkLen': 20,
     'result': '4b007901b765489abead49d926f721d065a429c1'
   },
-  {
-    'password': utf8.encode('password'),
-    'salt': utf8.encode('salt'),
-    'rounds': 16777216,
-    'dkLen': 20,
-    'result': 'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984'
-  },
+//  {
+//    'password': utf8.encode('password'),
+//    'salt': utf8.encode('salt'),
+//    'rounds': 16777216,
+//    'dkLen': 20,
+//    'result': 'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984'
+//  },
   {
     'password': utf8.encode('passwordPASSWORDpassword'),
     'salt': utf8.encode('saltSALTsaltSALTsaltSALTsaltSALTsalt'),
