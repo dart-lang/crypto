@@ -1,11 +1,3 @@
-## 2.1.0
-  * Added SHA384, and SHA512
-  * Add Sha224 + Refactor
-  * Support 32bit and 64bit operations for SHA384/51
-  * Add conditional imports
-  * De-listify 32bit allocations
-  * Add sha monte tests for 224,256,384, and 512
-
 ## 2.0.5
 
 * Changed the max message size instead to 0x3ffffffffffff, which is the largest
