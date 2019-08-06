@@ -1,3 +1,7 @@
+## 2.1.2
+  * Bump version number for publish mishap (spare file uploaded with `pub
+    publish`).
+
 ## 2.1.1
   * Added a workaround for a bug in DDC (used in build_web_compilers 1.x). 
   This bug is not present in DDK (used in build_web_compilers 2.x).
