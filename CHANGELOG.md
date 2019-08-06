@@ -1,3 +1,7 @@
+## 2.1.1
+  * Added a workaround for a bug in DDC (used in build_web_compilers 1.x). 
+  This bug is not present in DDK (used in build_web_compilers 2.x).
+
 ## 2.1.0
   * Added SHA384, and SHA512
   * Add Sha224 + Refactor
