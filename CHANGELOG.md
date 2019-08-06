@@ -1,3 +1,7 @@
+## 2.2.0
+  * Added a workaround for an old analyzer error. It goes away with ddk (new
+    analyzer versions).
+
 ## 2.1.0
   * Added SHA384, and SHA512
   * Add Sha224 + Refactor
