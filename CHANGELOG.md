@@ -1,3 +1,19 @@
+## 2.1.1+1
+  * Bump version number for publish mishap (spare file uploaded with `pub
+    publish`).
+
+## 2.1.1
+  * Added a workaround for a bug in DDC (used in build_web_compilers 1.x). 
+  This bug is not present in DDK (used in build_web_compilers 2.x).
+
+## 2.1.0
+  * Added SHA384, and SHA512
+  * Add Sha224 + Refactor
+  * Support 32bit and 64bit operations for SHA384/51
+  * Add conditional imports
+  * De-listify 32bit allocations
+  * Add sha monte tests for 224,256,384, and 512
+
 ## 2.0.5
 
 * Changed the max message size instead to 0x3ffffffffffff, which is the largest
