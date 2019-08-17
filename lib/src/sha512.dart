@@ -32,7 +32,7 @@ final sha512 = Sha512._();
 /// new instance.
 class Sha384 extends Hash {
   @override
-  final int blockSize = 16 * bytesPerWord;
+  final int blockSize = 32 * bytesPerWord;
 
   Sha384._();
 
