@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 import 'package:crypto/crypto.dart';
 
+import 'utils.dart';
+
 main() {
   group("Monte Vectors", () {
     monteTest(
@@ -78,13 +80,4 @@ monteTest(String name, Hash hash, String seed, List<String> expected) {
 
     expect(run().toList(), expected);
   });
-}
-
-final toupleMatch = RegExp('([0-9a-fA-F]{2})');
-Uint8List bytesFromHexString(String message) {
-  var seed = <int>[];
-  for (var match in toupleMatch.allMatches(message)) {
-    seed.add(int.parse(match.group(0), radix: 16));
-  }
-  return Uint8List.fromList(seed);
 }
