@@ -1,5 +1,4 @@
 ## 2.1.3
-
 * Added `randomBytes`
 
 ## 2.1.2
