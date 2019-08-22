@@ -1,3 +1,6 @@
+## 2.2.0
+* Added `randomBytes`
+
 ## 2.1.2
   * Fix bug in SHA-2 384/512 blocksize.
   * Added HMAC-SHA-2 test vectors
