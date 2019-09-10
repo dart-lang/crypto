@@ -17,8 +17,22 @@ class Digest {
   /// This should be used instead of manual comparisons to avoid leaking
   /// information via timing.
   @override
-  bool operator ==(Object other) =>
-      other is Digest && const ListEquality().equals(bytes, other.bytes);
+  bool operator ==(Object other) {
+    if (other is Digest) {
+      final a = bytes;
+      final b = other.bytes;
+      if (a.length != b.length) {
+        return false;
+      }
+      final n = a.length;
+      int mismatch = 0;
+      for (int i = 0; i < n; i++) {
+        mismatch |= a[i] ^ b[i];
+      }
+      return mismatch == 0;
+    }
+    return false;
+  }
 
   @override
   int get hashCode => const ListEquality().hash(bytes);
