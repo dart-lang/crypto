@@ -44,6 +44,9 @@ abstract class HashSink implements Sink<List<int>> {
   /// This should be updated each time [updateHash] is called.
   Uint32List get digest;
 
+  /// The length
+  int get signatureByteSize => 8;
+
   /// Creates a new hash.
   ///
   /// [chunkSizeInWords] represents the size of the input chunks processed by
@@ -82,10 +85,12 @@ abstract class HashSink implements Sink<List<int>> {
   Uint8List _byteDigest() {
     if (_endian == Endian.host) return digest.buffer.asUint8List();
 
-    var byteDigest = Uint8List(digest.lengthInBytes);
-    var byteData = byteDigest.buffer.asByteData();
-    for (var i = 0; i < digest.length; i++) {
-      byteData.setUint32(i * bytesPerWord, digest[i]);
+    // Cache the digest locally as `get` could be expensive.
+    final cachedDigest = digest;
+    final byteDigest = Uint8List(cachedDigest.lengthInBytes);
+    final byteData = byteDigest.buffer.asByteData();
+    for (var i = 0; i < cachedDigest.length; i++) {
+      byteData.setUint32(i * bytesPerWord, cachedDigest[i]);
     }
     return byteDigest;
   }
@@ -116,11 +121,14 @@ abstract class HashSink implements Sink<List<int>> {
   /// This adds a 1 bit to the end of the message, and expands it with 0 bits to
   /// pad it out.
   void _finalizeData() {
-    // Pad out the data with 0x80, eight 0s, and as many more 0s as we need to
-    // land cleanly on a chunk boundary.
+    // Pad out the data with 0x80, eight or sixteen 0s, and as many more 0s
+    // as we need to land cleanly on a chunk boundary.
     _pendingData.add(0x80);
-    var contentsLength = _lengthInBytes + 9;
-    var finalizedLength = _roundUp(contentsLength, _currentChunk.lengthInBytes);
+
+    final contentsLength = _lengthInBytes + 1 /* 0x80 */ + signatureByteSize;
+    final finalizedLength =
+        _roundUp(contentsLength, _currentChunk.lengthInBytes);
+
     for (var i = 0; i < finalizedLength - contentsLength; i++) {
       _pendingData.add(0);
     }
@@ -133,9 +141,11 @@ abstract class HashSink implements Sink<List<int>> {
     var lengthInBits = _lengthInBytes * bitsPerByte;
 
     // Add the full length of the input data as a 64-bit value at the end of the
-    // hash.
-    var offset = _pendingData.length;
-    _pendingData.addAll(Uint8List(8));
+    // hash. Note: we're only writing out 64 bits, so skip ahead 8 if the
+    // signature is 128-bit.
+    final offset = _pendingData.length + (signatureByteSize - 8);
+
+    _pendingData.addAll(Uint8List(signatureByteSize));
     var byteData = _pendingData.buffer.asByteData();
 
     // We're essentially doing byteData.setUint64(offset, lengthInBits, _endian)

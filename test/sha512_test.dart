@@ -75,5 +75,27 @@ void main() {
         outer.close();
       });
     });
+
+    test('128 bit padding', () {
+      final salts = [
+        'AAAA{3FXhiiyc5gGWlRrVQ2RlJ.6xj.DKvf6l0bJxqh0BzA}'.codeUnits,
+        'AAAA{3FXhiiyc5gGWlRrVQ.2RlJ6xj.DKvf6l0bJxqh0BzA}'.codeUnits,
+        'AAAA{rFXhiiyc5gGWlVQ.2RlJ6xj.DKvf6lFXhiiyc5gGWl0}'.codeUnits,
+      ];
+
+      const results = [
+        'nYg7eEsF/P7/l1AO0w8JFNNomS1gC76VE7Eg7Dpet+Dh6XiScDntYEU4tVItXp67evaLFvtMpW2uVJBZVKrBPw==',
+        'TXNM4uk1Iwr2cYisWSdFifXdjfNiJTGEmNaMtqYrwJoS3JXpL1rebPKPfKudbFQGpcgJkLLhhpfnLzULBqq8KA==',
+        'ckPYMDuPJjc73qHXQZiJgCskNG8mj9cPqFNsqYqxcBbQESgkWChoibAN7ssJrnoMFIpz9HwsBwMtt3z/KDUh9w==',
+      ];
+
+      for (int i = 0; i < salts.length; i++) {
+        var digest = <int>[];
+        for (int run = 0; run < 2000; run++) {
+          digest = sha512.convert([]..addAll(digest)..addAll(salts[i])).bytes;
+        }
+        expect(base64.encode(digest), results[i]);
+      }
+    });
   });
 }

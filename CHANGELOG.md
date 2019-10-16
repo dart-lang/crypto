@@ -1,3 +1,6 @@
+## 2.1.4
+  * BugFix: padding was incorrect for some SHA-512/328.
+
 ## 2.1.3
   * **Security vulnerability**: Fixed constant-time comparison in `Digest`.
 
