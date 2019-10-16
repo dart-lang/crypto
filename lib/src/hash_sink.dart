@@ -45,7 +45,7 @@ abstract class HashSink implements Sink<List<int>> {
   Uint32List get digest;
 
   /// The length
-  int get signatureByteSize => 8;
+  int get signatureBytes => 8;
 
   /// Creates a new hash.
   ///
@@ -125,7 +125,7 @@ abstract class HashSink implements Sink<List<int>> {
     // as we need to land cleanly on a chunk boundary.
     _pendingData.add(0x80);
 
-    final contentsLength = _lengthInBytes + 1 /* 0x80 */ + signatureByteSize;
+    final contentsLength = _lengthInBytes + 1 /* 0x80 */ + signatureBytes;
     final finalizedLength =
         _roundUp(contentsLength, _currentChunk.lengthInBytes);
 
@@ -143,9 +143,9 @@ abstract class HashSink implements Sink<List<int>> {
     // Add the full length of the input data as a 64-bit value at the end of the
     // hash. Note: we're only writing out 64 bits, so skip ahead 8 if the
     // signature is 128-bit.
-    final offset = _pendingData.length + (signatureByteSize - 8);
+    final offset = _pendingData.length + (signatureBytes - 8);
 
-    _pendingData.addAll(Uint8List(signatureByteSize));
+    _pendingData.addAll(Uint8List(signatureBytes));
     var byteData = _pendingData.buffer.asByteData();
 
     // We're essentially doing byteData.setUint64(offset, lengthInBits, _endian)

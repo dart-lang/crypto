@@ -54,6 +54,9 @@ final _noise32 = Uint32List.fromList([
 ]);
 
 abstract class _Sha64BitSink extends HashSink {
+  @override
+  int get signatureBytes => 16;
+
   int get digestBytes;
 
   @override
