@@ -8,7 +8,6 @@ import 'digest.dart';
 import 'hash_sink.dart';
 
 abstract class _Sha64BitSink extends HashSink {
-
   @override
   int get signatureBytes => 16;
 
