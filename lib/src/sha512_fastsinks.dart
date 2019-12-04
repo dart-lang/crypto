@@ -30,7 +30,8 @@ abstract class _Sha64BitSink extends HashSink {
   /// used across invocations of [updateHash].
   final _extended = Uint64List(80);
 
-  _Sha64BitSink(Sink<Digest> sink, this._digest) : super(sink, 32);
+  _Sha64BitSink(Sink<Digest> sink, this._digest)
+      : super(sink, 32, signatureBytes: 16);
   // The following helper functions are taken directly from
   // http://tools.ietf.org/html/rfc6234.
 
