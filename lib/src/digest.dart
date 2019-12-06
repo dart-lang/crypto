@@ -25,8 +25,8 @@ class Digest {
         return false;
       }
       final n = a.length;
-      int mismatch = 0;
-      for (int i = 0; i < n; i++) {
+      var mismatch = 0;
+      for (var i = 0; i < n; i++) {
         mismatch |= a[i] ^ b[i];
       }
       return mismatch == 0;

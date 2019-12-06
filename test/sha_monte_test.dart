@@ -5,8 +5,8 @@ import 'package:crypto/crypto.dart';
 
 import 'utils.dart';
 
-main() {
-  group("Monte Vectors", () {
+void main() {
+  group('Monte Vectors', () {
     monteTest(
       'sha224',
       sha224,
@@ -56,18 +56,18 @@ main() {
   });
 }
 
-monteTest(String name, Hash hash, String seed, List<String> expected) {
+void monteTest(String name, Hash hash, String seed, List<String> expected) {
   test(name, () {
     Iterable<String> run() sync* {
       var _seed = bytesFromHexString(seed);
-      for (int j = 0; j < expected.length; j++) {
+      for (var j = 0; j < expected.length; j++) {
         Uint8List md0, md1, md2;
         md0 = (Uint8List.fromList(_seed));
         md1 = (Uint8List.fromList(_seed));
         md2 = (Uint8List.fromList(_seed));
         Digest mdI;
-        for (int i = 3; i < 1003; i++) {
-          var mI = <int>[]..addAll(md0)..addAll(md1)..addAll(md2);
+        for (var i = 3; i < 1003; i++) {
+          var mI = [...md0, ...md1, ...md2];
           mdI = hash.convert(mI);
           md0.setAll(0, md1);
           md1.setAll(0, md2);

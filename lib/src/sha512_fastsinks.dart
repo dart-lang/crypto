@@ -14,7 +14,7 @@ abstract class _Sha64BitSink extends HashSink {
   Uint32List get digest {
     var unordered = _digest.buffer.asUint32List();
     var ordered = Uint32List(digestBytes);
-    for (int i = 0; i < digestBytes; i++) {
+    for (var i = 0; i < digestBytes; i++) {
       ordered[i] = unordered[i + (i.isEven ? 1 : -1)];
     }
     return ordered;

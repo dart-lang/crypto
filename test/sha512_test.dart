@@ -89,10 +89,10 @@ void main() {
         'ckPYMDuPJjc73qHXQZiJgCskNG8mj9cPqFNsqYqxcBbQESgkWChoibAN7ssJrnoMFIpz9HwsBwMtt3z/KDUh9w==',
       ];
 
-      for (int i = 0; i < salts.length; i++) {
+      for (var i = 0; i < salts.length; i++) {
         var digest = <int>[];
-        for (int run = 0; run < 2000; run++) {
-          digest = sha512.convert([]..addAll(digest)..addAll(salts[i])).bytes;
+        for (var run = 0; run < 2000; run++) {
+          digest = sha512.convert([...digest, ...salts[i]]).bytes;
         }
         expect(base64.encode(digest), results[i]);
       }

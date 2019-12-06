@@ -52,6 +52,7 @@ class Sha384 extends Hash {
 class Sha512 extends Sha384 {
   Sha512._() : super._();
 
+  @override
   Sha512 newInstance() => Sha512._();
 
   @override
