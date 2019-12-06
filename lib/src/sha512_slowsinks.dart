@@ -308,6 +308,7 @@ class Sha384Sink extends _Sha64BitSink {
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
 class Sha512Sink extends _Sha64BitSink {
+  @override
   final digestBytes = 16;
 
   Sha512Sink(Sink<Digest> sink)
