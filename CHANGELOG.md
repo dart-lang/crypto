@@ -1,3 +1,7 @@
+## 2.2.1-nullsafety-dev
+
+  * AddsSHA-2 512/224 and SHA-2 512/256 from FIPS 180-4
+
 ## 2.2.0-nullsafety-dev
 
 Pre-release for the null safety migration of this package.
