@@ -102,7 +102,7 @@ void main() {
   });
 }
 
-testCase({
+void testCase({
   String name,
   String key,
   String data,

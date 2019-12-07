@@ -76,7 +76,8 @@ abstract class _Sha64BitSink extends HashSink {
   // The following helper functions are taken directly from
   // http://tools.ietf.org/html/rfc6234.
 
-  _shr(int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _shr(
+      int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
     ret[0 + offsetR] =
         ((bits < 32) && (bits >= 0)) ? (word[0 + offset] >> (bits)) : 0;
     ret[1 + offsetR] = (bits > 32)
@@ -89,7 +90,8 @@ abstract class _Sha64BitSink extends HashSink {
                 : 0;
   }
 
-  _shl(int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _shl(
+      int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
     ret[0 + offsetR] = (bits > 32)
         ? (word[1 + offset] << (bits - 32))
         : (bits == 32)
@@ -102,19 +104,19 @@ abstract class _Sha64BitSink extends HashSink {
         ((bits < 32) && (bits >= 0)) ? (word[1 + offset] << bits) : 0;
   }
 
-  _or(Uint32List word1, int offset1, Uint32List word2, int offset2,
+  void _or(Uint32List word1, int offset1, Uint32List word2, int offset2,
       Uint32List ret, int offsetR) {
     ret[0 + offsetR] = word1[0 + offset1] | word2[0 + offset2];
     ret[1 + offsetR] = word1[1 + offset1] | word2[1 + offset2];
   }
 
-  _xor(Uint32List word1, int offset1, Uint32List word2, int offset2,
+  void _xor(Uint32List word1, int offset1, Uint32List word2, int offset2,
       Uint32List ret, int offsetR) {
     ret[0 + offsetR] = word1[0 + offset1] ^ word2[0 + offset2];
     ret[1 + offsetR] = word1[1 + offset1] ^ word2[1 + offset2];
   }
 
-  _add(Uint32List word1, int offset1, Uint32List word2, int offset2,
+  void _add(Uint32List word1, int offset1, Uint32List word2, int offset2,
       Uint32List ret, int offsetR) {
     ret[1 + offsetR] = (word1[1 + offset1] + word2[1 + offset2]);
     ret[0 + offsetR] = word1[0 + offset1] +
@@ -122,7 +124,7 @@ abstract class _Sha64BitSink extends HashSink {
         (ret[1 + offsetR] < word1[1 + offset1] ? 1 : 0);
   }
 
-  _addTo2(Uint32List word1, int offset1, Uint32List word2, int offset2) {
+  void _addTo2(Uint32List word1, int offset1, Uint32List word2, int offset2) {
     int _addTemp;
     _addTemp = word1[1 + offset1];
     word1[1 + offset1] += word2[1 + offset2];
@@ -152,13 +154,14 @@ abstract class _Sha64BitSink extends HashSink {
   final _nums = Uint32List(12 + 16 + 10);
 
   // SHA rotate   ((word >> bits) | (word << (64-bits)))
-  _rotr(int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _rotr(
+      int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
     _shr(bits, word, offset, _nums, _rotrIndex1);
     _shl(64 - bits, word, offset, _nums, _rotrIndex2);
     _or(_nums, _rotrIndex1, _nums, _rotrIndex2, ret, offsetR);
   }
 
-  _bsig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _bsig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
     _rotr(28, word, offset, _nums, _sigIndex1);
     _rotr(34, word, offset, _nums, _sigIndex2);
     _rotr(39, word, offset, _nums, _sigIndex3);
@@ -166,7 +169,7 @@ abstract class _Sha64BitSink extends HashSink {
     _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  _bsig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _bsig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
     _rotr(14, word, offset, _nums, _sigIndex1);
     _rotr(18, word, offset, _nums, _sigIndex2);
     _rotr(41, word, offset, _nums, _sigIndex3);
@@ -174,7 +177,7 @@ abstract class _Sha64BitSink extends HashSink {
     _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  _ssig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _ssig0(Uint32List word, int offset, Uint32List ret, int offsetR) {
     _rotr(1, word, offset, _nums, _sigIndex1);
     _rotr(8, word, offset, _nums, _sigIndex2);
     _shr(7, word, offset, _nums, _sigIndex3);
@@ -182,7 +185,7 @@ abstract class _Sha64BitSink extends HashSink {
     _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  _ssig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
+  void _ssig1(Uint32List word, int offset, Uint32List ret, int offsetR) {
     _rotr(19, word, offset, _nums, _sigIndex1);
     _rotr(61, word, offset, _nums, _sigIndex2);
     _shr(6, word, offset, _nums, _sigIndex3);
@@ -190,7 +193,7 @@ abstract class _Sha64BitSink extends HashSink {
     _xor(_nums, _sigIndex1, _nums, _sigIndex4, ret, offsetR);
   }
 
-  _ch(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
+  void _ch(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
       int offsetZ, Uint32List ret, int offsetR) {
     ret[0 + offsetR] =
         ((x[0 + offsetX] & (y[0 + offsetY] ^ z[0 + offsetZ])) ^ z[0 + offsetZ]);
@@ -198,7 +201,7 @@ abstract class _Sha64BitSink extends HashSink {
         ((x[1 + offsetX] & (y[1 + offsetY] ^ z[1 + offsetZ])) ^ z[1 + offsetZ]);
   }
 
-  _maj(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
+  void _maj(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
       int offsetZ, Uint32List ret, int offsetR) {
     ret[0 + offsetR] = ((x[0 + offsetX] & (y[0 + offsetY] | z[0 + offsetZ])) |
         (y[0 + offsetY] & z[0 + offsetZ]));
@@ -274,6 +277,7 @@ abstract class _Sha64BitSink extends HashSink {
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
 class Sha384Sink extends _Sha64BitSink {
+  @override
   final digestBytes = 12;
 
   Sha384Sink(Sink<Digest> sink)
@@ -304,6 +308,7 @@ class Sha384Sink extends _Sha64BitSink {
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
 class Sha512Sink extends _Sha64BitSink {
+  @override
   final digestBytes = 16;
 
   Sha512Sink(Sink<Digest> sink)

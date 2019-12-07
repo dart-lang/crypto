@@ -1,11 +1,10 @@
 name: crypto
-version: 2.1.4
-author: Dart Team <misc@dartlang.org>
+version: 2.1.5-dev
 description: Library of cryptographic functions.
 homepage: https://www.github.com/dart-lang/crypto
 
 environment:
-  sdk: '>=2.1.0 <3.0.0'
+  sdk: '>=2.3.0 <3.0.0'
 
 dependencies:
   collection: '^1.0.0'
