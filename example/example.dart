@@ -12,7 +12,8 @@ final _usage = 'Usage: dart hash.dart <md5|sha1|sha256> <input_filename>';
 Future main(List<String> args) async {
   if (args == null || args.length != 2) {
     print(_usage);
-    exit(1);
+    exitCode = 64; // Command was used incorrectly.
+    return;
   }
 
   Hash hasher;
@@ -29,7 +30,8 @@ Future main(List<String> args) async {
       break;
     default:
       print(_usage);
-      exit(1);
+      exitCode = 64; // Command was used incorrectly.
+      return;
   }
 
   var filename = args[1];
@@ -37,7 +39,8 @@ Future main(List<String> args) async {
 
   if (!input.existsSync()) {
     print('File "$filename" does not exist.');
-    exit(1);
+    exitCode = 66; // An input file did not exist or was not readable.
+    return;
   }
 
   var value = await hasher.bind(input.openRead()).first;
