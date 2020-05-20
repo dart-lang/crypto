@@ -99,21 +99,10 @@ Support for this library is given as _best effort_.
 
 This library has not been reviewed or vetted by security professionals.
 
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[convert]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hash/convert.html
-[Digest]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Digest-class.html
-[Hmac]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hmac-class.html
-[MD5]: https://www.dartdocs.org/documentation/crypto/latest/crypto/MD5-class.html
-[Sha1]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha1-class.html
-[Sha224]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha224-class.html
-[Sha256]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha256-class.html
-[Sha384]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha384-class.html
-[Sha512]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Sha512-class.html
-[md5-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/md5.html
-[sha1-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha1.html
-[sha256-obj]: https://www.dartdocs.org/documentation/crypto/latest/crypto/sha256.html
-[startChunkedConversion]: https://www.dartdocs.org/documentation/crypto/latest/crypto/Hash/startChunkedConversion.html
-[tracker]: https://github.com/dart-lang/crypto/issues
+[convert]: https://pub.dev/documentation/crypto/latest/crypto/Hash/convert.html
+[Digest]: https://pub.dev/documentation/crypto/latest/crypto/Digest-class.html
+[Hmac]: https://pub.dev/documentation/crypto/latest/crypto/Hmac-class.html
+[md5-obj]: https://pub.dev/documentation/crypto/latest/crypto/md5.html
+[sha1-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha1.html
+[sha256-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha256.html
+[startChunkedConversion]: https://pub.dev/documentation/crypto/latest/crypto/Hash/startChunkedConversion.html
