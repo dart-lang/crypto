@@ -1,6 +1,6 @@
 name: crypto
-version: 2.1.5-dev
-description: Library of cryptographic functions.
+version: 2.1.5
+description: Implementations of SHA, MD5, and HMAC cryptographic functions
 homepage: https://www.github.com/dart-lang/crypto
 
 environment:
