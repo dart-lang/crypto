@@ -1,3 +1,8 @@
+## 2.1.5
+
+* Improve example and package description to address package site maintenance
+  suggestions.
+
 ## 2.1.4
   * BugFix: padding was incorrect for some SHA-512/328.
 
