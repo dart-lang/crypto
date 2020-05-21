@@ -18,7 +18,7 @@ final toupleMatch = RegExp('([0-9a-fA-F]{2})');
 Uint8List bytesFromHexString(String message) {
   var bytes = <int>[];
   for (var match in toupleMatch.allMatches(message)) {
-    bytes.add(int.parse(match.group(0), radix: 16));
+    bytes.add(int.parse(match.group(0)!, radix: 16));
   }
   return Uint8List.fromList(bytes);
 }

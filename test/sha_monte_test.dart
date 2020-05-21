@@ -65,7 +65,7 @@ void monteTest(String name, Hash hash, String seed, List<String> expected) {
         md0 = (Uint8List.fromList(_seed));
         md1 = (Uint8List.fromList(_seed));
         md2 = (Uint8List.fromList(_seed));
-        Digest mdI;
+        late Digest mdI;
         for (var i = 3; i < 1003; i++) {
           var mI = [...md0, ...md1, ...md2];
           mdI = hash.convert(mI);

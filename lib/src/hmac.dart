@@ -60,7 +60,7 @@ class _HmacSink extends ByteConversionSink {
   final _innerResultSink = DigestSink();
 
   /// The sink for the inner hash computation.
-  ByteConversionSink _innerSink;
+  late final ByteConversionSink _innerSink;
 
   /// Whether [close] has been called.
   bool _isClosed = false;
