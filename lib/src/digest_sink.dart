@@ -9,7 +9,7 @@ class DigestSink extends Sink<Digest> {
   /// The value added to the sink, if any.
   Digest get value => _value;
 
-  late Digest _value;
+  late final Digest _value;
 
   /// Adds [value] to the sink.
   ///

@@ -16,7 +16,7 @@ Future main(List<String> args) async {
     return;
   }
 
-  late Hash hasher;
+  Hash hasher;
 
   switch (args[0]) {
     case 'md5':
