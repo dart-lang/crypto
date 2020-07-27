@@ -8,7 +8,7 @@ jobs:
     - stage: analyze_and_format
       name: "Analyze lib/"
       os: linux
-      script: dartanalyzer --enabl-experiment=non-nullable --fatal-warnings --fatal-infos lib/
+      script: dartanalyzer --enable-experiment=non-nullable --fatal-warnings --fatal-infos lib/
     - stage: analyze_and_format
       name: "Analyze test/"
       os: linux
