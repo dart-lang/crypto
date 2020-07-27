@@ -27,7 +27,7 @@ dependency_overrides:
   convert:
     git:
       url: git://github.com/dart-lang/convert.git
-      ref: null_safety-2.10
+      ref: null_safety
   js:
     git:
       url: git://github.com/dart-lang/sdk.git
