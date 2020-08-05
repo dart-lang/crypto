@@ -1,5 +1,5 @@
 name: crypto
-version: 2.1.5
+version: 2.2.0-nullsafety
 description: Implementations of SHA, MD5, and HMAC cryptographic functions
 homepage: https://www.github.com/dart-lang/crypto
 
@@ -25,9 +25,7 @@ dependency_overrides:
   collection:
     git: git://github.com/dart-lang/collection.git
   convert:
-    git:
-      url: git://github.com/dart-lang/convert.git
-      ref: null_safety
+    git: git://github.com/dart-lang/convert.git
   js:
     git:
       url: git://github.com/dart-lang/sdk.git
