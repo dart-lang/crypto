@@ -20,5 +20,7 @@ class DigestSink extends Sink<Digest> {
   }
 
   @override
-  void close() {}
+  void close() {
+    assert((_value as dynamic) != null);
+  }
 }
