@@ -103,13 +103,13 @@ void main() {
 }
 
 void testCase({
-  String name,
-  String key,
-  String data,
-  String hmacSha224,
-  String hmacSha256,
-  String hmacSha384,
-  String hmacSha512,
+  required String name,
+  required String key,
+  required String data,
+  required String hmacSha224,
+  required String hmacSha256,
+  required String hmacSha384,
+  required String hmacSha512,
   bool truncation = false,
 }) {
   test(name, () {

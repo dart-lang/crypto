@@ -10,7 +10,7 @@ import 'package:crypto/crypto.dart';
 final _usage = 'Usage: dart hash.dart <md5|sha1|sha256> <input_filename>';
 
 Future main(List<String> args) async {
-  if (args == null || args.length != 2) {
+  if (args.length != 2) {
     print(_usage);
     exitCode = 64; // Command was used incorrectly.
     return;

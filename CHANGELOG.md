@@ -1,3 +1,14 @@
+## 2.2.0-nullsafety
+
+Pre-release for the null safety migration of this package.
+
+Note that 2.2.0 may not be the final stable null safety release version, we
+reserve the right to release it as a 3.0.0 breaking change.
+
+This release will be pinned to only allow pre-release sdk versions starting from
+2.10.0-2.0.dev, which is the first version where this package will appear in the
+null safety allow list.
+
 ## 2.1.5
 
 * Improve example and package description to address package site maintenance
