@@ -21,6 +21,7 @@ class DigestSink extends Sink<Digest> {
 
   @override
   void close() {
+    // Ensure late final field was assigned before closing.
     assert((_value as dynamic) != null);
   }
 }
