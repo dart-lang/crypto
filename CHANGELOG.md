@@ -1,4 +1,4 @@
-## 2.2.0-nullsafety
+## 2.2.0-nullsafety-dev
 
 Pre-release for the null safety migration of this package.
 
