@@ -85,6 +85,7 @@ class Sha512 extends Sha384 {
 class Sha512224 extends Sha512 {
   Sha512224._() : super._();
 
+  @override
   Sha512224 newInstance() => Sha512224._();
 
   @override
@@ -101,6 +102,7 @@ class Sha512224 extends Sha512 {
 class Sha512256 extends Sha512 {
   Sha512256._() : super._();
 
+  @override
   Sha512256 newInstance() => Sha512256._();
 
   @override

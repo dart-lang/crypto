@@ -7,8 +7,8 @@ import 'utils.dart';
 
 // See https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Secure-Hashing
 
-main() {
-  group("Monte Vectors", () {
+void main() {
+  group('Monte Vectors', () {
     monteTest(
       'sha224',
       sha224,
