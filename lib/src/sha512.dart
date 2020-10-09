@@ -10,35 +10,37 @@ import 'hash.dart';
 import 'sha512_fastsinks.dart' if (dart.library.js) 'sha512_slowsinks.dart';
 import 'utils.dart';
 
-/// An instance of [Sha2Sha384].
+/// A reusable instance of [Sha384].
 ///
-/// This instance provides convenient access to the [Sha384][rfc] hash function.
-///
-/// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha384 = Sha384._();
-
-/// An instance of [Sha2Sha512].
-///
-/// This instance provides convenient access to the [Sha512][rfc] hash function.
+/// This instance provides convenient and canonical access to the
+/// [Sha384][rfc] hash functionality.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha512 = Sha512._();
+const sha384 = Sha384._();
 
-/// An instance of [Sha2Sha512/224].
+/// A reusable instance of [Sha512].
 ///
-/// This instance provides convenient access to the [Sha512/224][FIPS] hash
-/// function.
+/// This instance provides convenient and canonical access to the
+/// [Sha512][rfc] hash functionality.
+///
+/// [rfc]: http://tools.ietf.org/html/rfc6234
+const sha512 = Sha512._();
+
+/// A reusable instance of [Sha512224].
+///
+/// This instance provides convenient and canonical access to the
+/// [Sha512/224][FIPS] hash functionality.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-final sha512224 = Sha512224._();
+const sha512224 = Sha512224._();
 
-/// An instance of [Sha2Sha512/256].
+/// A reusable instance of [Sha512256].
 ///
-/// This instance provides convenient access to the [Sha512/256][FIPS] hash
-/// function.
+/// This instance provides convenient and canonical access to the
+/// [Sha512/256][FIPS] hash functionality.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-final sha512256 = Sha512256._();
+const sha512256 = Sha512256._();
 
 /// An implementation of the [SHA-384][rfc] hash function.
 ///
@@ -50,7 +52,7 @@ class Sha384 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  Sha384._();
+  const Sha384._();
 
   Sha384 newInstance() => Sha384._();
 
@@ -65,10 +67,12 @@ class Sha384 extends Hash {
 ///
 /// Note that it's almost always easier to use [sha512] rather than creating a
 /// new instance.
-class Sha512 extends Sha384 {
-  Sha512._() : super._();
-
+class Sha512 extends Hash {
   @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const Sha512._();
+
   Sha512 newInstance() => Sha512._();
 
   @override
@@ -82,10 +86,12 @@ class Sha512 extends Sha384 {
 ///
 /// Note that it's almost always easier to use [sha512224] rather than creating
 /// a new instance.
-class Sha512224 extends Sha512 {
-  Sha512224._() : super._();
-
+class Sha512224 extends Hash {
   @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const Sha512224._();
+
   Sha512224 newInstance() => Sha512224._();
 
   @override
@@ -99,10 +105,12 @@ class Sha512224 extends Sha512 {
 ///
 /// Note that it's almost always easier to use [sha512256] rather than creating
 /// a new instance.
-class Sha512256 extends Sha512 {
-  Sha512256._() : super._();
-
+class Sha512256 extends Hash {
   @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const Sha512256._();
+
   Sha512256 newInstance() => Sha512256._();
 
   @override
