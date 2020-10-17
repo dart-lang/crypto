@@ -26,21 +26,17 @@ const sha384 = Sha384._();
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 const sha512 = Sha512._();
 
-/// A reusable instance of [Sha512224].
-///
-/// This instance provides convenient and canonical access to the
-/// [Sha512/224][FIPS] hash functionality.
+/// A reusable, canonical instance of the [Sha512/224][FIPS] [Hash]
+/// functionality.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-const sha512224 = Sha512224._();
+const sha512224 = _Sha512224();
 
-/// A reusable instance of [Sha512256].
-///
-/// This instance provides convenient and canonical access to the
-/// [Sha512/256][FIPS] hash functionality.
+/// A reusable, canonical instance of the [Sha512/256][FIPS] [Hash]
+/// functionality.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-const sha512256 = Sha512256._();
+const sha512256 = _Sha512256();
 
 /// An implementation of the [SHA-384][rfc] hash function.
 ///
@@ -86,13 +82,11 @@ class Sha512 extends Hash {
 ///
 /// Note that it's almost always easier to use [sha512224] rather than creating
 /// a new instance.
-class Sha512224 extends Hash {
+class _Sha512224 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  const Sha512224._();
-
-  Sha512224 newInstance() => Sha512224._();
+  const _Sha512224();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
@@ -105,13 +99,11 @@ class Sha512224 extends Hash {
 ///
 /// Note that it's almost always easier to use [sha512256] rather than creating
 /// a new instance.
-class Sha512256 extends Hash {
+class _Sha512256 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  const Sha512256._();
-
-  Sha512256 newInstance() => Sha512256._();
+  const _Sha512256();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
