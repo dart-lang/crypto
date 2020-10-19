@@ -1,3 +1,4 @@
+
 ## 2.2.0-nullsafety-dev
 
 Pre-release for the null safety migration of this package.
@@ -8,6 +9,8 @@ reserve the right to release it as a 3.0.0 breaking change.
 This release will be pinned to only allow pre-release sdk versions starting from
 2.10.0-2.0.dev, which is the first version where this package will appear in the
 null safety allow list.
+
+  * AddsSHA-2 512/224 and SHA-2 512/256 from FIPS 180-4
 
 ## 2.1.5
 

@@ -10,19 +10,33 @@ import 'hash.dart';
 import 'sha512_fastsinks.dart' if (dart.library.js) 'sha512_slowsinks.dart';
 import 'utils.dart';
 
-/// An instance of [Sha2Sha384].
+/// A reusable instance of [Sha384].
 ///
-/// This instance provides convenient access to the [Sha384][rfc] hash function.
+/// This instance provides convenient and canonical access to the
+/// [Sha384][rfc] hash functionality.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha384 = Sha384._();
+const sha384 = Sha384._();
 
-/// An instance of [Sha2Sha512].
+/// A reusable instance of [Sha512].
 ///
-/// This instance provides convenient access to the [Sha512][rfc] hash function.
+/// This instance provides convenient and canonical access to the
+/// [Sha512][rfc] hash functionality.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha512 = Sha512._();
+const sha512 = Sha512._();
+
+/// A reusable, canonical instance of the [Sha512/224][FIPS] [Hash]
+/// functionality.
+///
+/// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+const sha512224 = _Sha512224();
+
+/// A reusable, canonical instance of the [Sha512/256][FIPS] [Hash]
+/// functionality.
+///
+/// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+const sha512256 = _Sha512256();
 
 /// An implementation of the [SHA-384][rfc] hash function.
 ///
@@ -34,7 +48,7 @@ class Sha384 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  Sha384._();
+  const Sha384._();
 
   Sha384 newInstance() => Sha384._();
 
@@ -49,13 +63,49 @@ class Sha384 extends Hash {
 ///
 /// Note that it's almost always easier to use [sha512] rather than creating a
 /// new instance.
-class Sha512 extends Sha384 {
-  Sha512._() : super._();
-
+class Sha512 extends Hash {
   @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const Sha512._();
+
   Sha512 newInstance() => Sha512._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
       ByteConversionSink.from(Sha512Sink(sink));
+}
+
+/// An implementation of the [SHA-512/224][FIPS] hash function.
+///
+/// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+///
+/// Note that it's almost always easier to use [sha512224] rather than creating
+/// a new instance.
+class _Sha512224 extends Hash {
+  @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const _Sha512224();
+
+  @override
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      ByteConversionSink.from(Sha512224Sink(sink));
+}
+
+/// An implementation of the [SHA-512/256][FIPS] hash function.
+///
+/// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+///
+/// Note that it's almost always easier to use [sha512256] rather than creating
+/// a new instance.
+class _Sha512256 extends Hash {
+  @override
+  final int blockSize = 32 * bytesPerWord;
+
+  const _Sha512256();
+
+  @override
+  ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
+      ByteConversionSink.from(Sha512256Sink(sink));
 }
