@@ -27,8 +27,7 @@ final md5 = MD5._();
 /// **Warning**: MD5 has known collisions and should only be used when required
 /// for backwards compatibility.
 ///
-/// Note that it's almost always easier to use [md5] rather than creating a new
-/// instance.
+/// Use the [md5] object to perform MD5 hashing.
 class MD5 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;

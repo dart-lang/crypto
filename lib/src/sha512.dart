@@ -42,14 +42,14 @@ const sha512256 = _Sha512256();
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
-/// Note that it's almost always easier to use [sha384] rather than creating a
-/// new instance.
+/// Use the [sha384] object to perform SHA-384 hashing
 class Sha384 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
   const Sha384._();
 
+  @deprecated
   Sha384 newInstance() => Sha384._();
 
   @override
@@ -61,14 +61,14 @@ class Sha384 extends Hash {
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
-/// Note that it's almost always easier to use [sha512] rather than creating a
-/// new instance.
+/// Use the [sha512] object to perform SHA-512 hashing
 class Sha512 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
   const Sha512._();
 
+  @deprecated
   Sha512 newInstance() => Sha512._();
 
   @override
@@ -80,8 +80,7 @@ class Sha512 extends Hash {
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
 ///
-/// Note that it's almost always easier to use [sha512224] rather than creating
-/// a new instance.
+/// Use the [sha512224] object to perform SHA-512/224 hashing
 class _Sha512224 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
@@ -97,8 +96,7 @@ class _Sha512224 extends Hash {
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
 ///
-/// Note that it's almost always easier to use [sha512256] rather than creating
-/// a new instance.
+/// Use the [sha512256] object to perform SHA-512/256 hashing
 class _Sha512256 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;

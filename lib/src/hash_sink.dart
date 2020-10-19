@@ -25,8 +25,10 @@ abstract class HashSink implements Sink<List<int>> {
   /// used across invocations of [_iterate].
   final Uint32List _currentChunk;
 
-  /// Messages with more than 2^53-1 bits are not supported. (This is the
-  /// largest value that is representable on both JS and the Dart VM.)
+  /// Messages with more than 2^53-1 bits are not supported.
+  ///
+  /// This is the largest value that is precisely representable
+  /// on both JS and the Dart VM.
   /// So the maximum length in bytes is (2^53-1)/8.
   static const _maxMessageLengthInBytes = 0x0003ffffffffffff;
 
