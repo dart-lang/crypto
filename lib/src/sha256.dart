@@ -28,14 +28,14 @@ final sha224 = Sha224._();
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
-/// Note that it's almost always easier to use [sha256] rather than creating a
-/// new instance.
+/// Use the [sha256] object to perform SHA-256 hashing.
 class Sha256 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
   Sha256._();
 
+  @deprecated
   Sha256 newInstance() => Sha256._();
 
   @override
@@ -47,14 +47,15 @@ class Sha256 extends Hash {
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
-/// Note that it's almost always easier to use [sha224] rather than creating a
-/// new instance.
+///
+/// Use the [sha224] object to perform SHA-224 hashing.
 class Sha224 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
   Sha224._();
 
+  @deprecated
   Sha224 newInstance() => Sha224._();
 
   @override

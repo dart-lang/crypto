@@ -21,10 +21,10 @@ class Digest {
     if (other is Digest) {
       final a = bytes;
       final b = other.bytes;
-      if (a.length != b.length) {
+      final n = a.length;
+      if (n != b.length) {
         return false;
       }
-      final n = a.length;
       var mismatch = 0;
       for (var i = 0; i < n; i++) {
         mismatch |= a[i] ^ b[i];

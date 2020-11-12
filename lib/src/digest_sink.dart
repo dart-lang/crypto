@@ -6,22 +6,25 @@ import 'digest.dart';
 
 /// A sink used to get a digest value out of `Hash.startChunkedConversion`.
 class DigestSink extends Sink<Digest> {
-  /// The value added to the sink, if any.
-  Digest get value => _value;
+  /// The value added to the sink.
+  ///
+  /// A value must have been added using [add] before reading the `value`.
+  Digest get value => _value!;
 
-  late final Digest _value;
+  Digest? _value;
 
   /// Adds [value] to the sink.
   ///
   /// Unlike most sinks, this may only be called once.
   @override
   void add(Digest value) {
+    assert(_value == null);
     _value = value;
   }
 
   @override
   void close() {
     // Ensure late final field was assigned before closing.
-    assert((_value as dynamic) != null);
+    assert(_value != null);
   }
 }
