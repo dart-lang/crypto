@@ -1,11 +1,4 @@
-include: package:pedantic/analysis_options.yaml
-analyzer:
-  strong-mode:
-    implicit-casts: false
-
-  enable-experiment:
-  - non-nullable
-
+include: package:pedantic/analysis_options.1.9.0.yaml
 linter:
   rules:
     - avoid_empty_else
