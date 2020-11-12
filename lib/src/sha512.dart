@@ -10,47 +10,36 @@ import 'hash.dart';
 import 'sha512_fastsinks.dart' if (dart.library.js) 'sha512_slowsinks.dart';
 import 'utils.dart';
 
-/// A reusable instance of [Sha384].
-///
-/// This instance provides convenient and canonical access to the
-/// [Sha384][rfc] hash functionality.
+/// An implementation of the [SHA-384][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-const sha384 = Sha384._();
+const Hash sha384 = _Sha384._();
 
-/// A reusable instance of [Sha512].
-///
-/// This instance provides convenient and canonical access to the
-/// [Sha512][rfc] hash functionality.
+/// An implementation of the [SHA-512][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-const sha512 = Sha512._();
+const Hash sha512 = _Sha512._();
 
-/// A reusable, canonical instance of the [Sha512/224][FIPS] [Hash]
-/// functionality.
+/// An implementatino of the [SHA-512/224][FIPS] hash function.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-const sha512224 = _Sha512224();
+const Hash sha512224 = _Sha512224();
 
-/// A reusable, canonical instance of the [Sha512/256][FIPS] [Hash]
-/// functionality.
+/// An implementatino of the [SHA-512/256][FIPS] hash function.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-const sha512256 = _Sha512256();
+const Hash sha512256 = _Sha512256();
 
 /// An implementation of the [SHA-384][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
 /// Use the [sha384] object to perform SHA-384 hashing
-class Sha384 extends Hash {
+class _Sha384 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  const Sha384._();
-
-  @deprecated
-  Sha384 newInstance() => Sha384._();
+  const _Sha384._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
@@ -62,14 +51,11 @@ class Sha384 extends Hash {
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
 /// Use the [sha512] object to perform SHA-512 hashing
-class Sha512 extends Hash {
+class _Sha512 extends Hash {
   @override
   final int blockSize = 32 * bytesPerWord;
 
-  const Sha512._();
-
-  @deprecated
-  Sha512 newInstance() => Sha512._();
+  const _Sha512._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>

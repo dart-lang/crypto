@@ -10,33 +10,26 @@ import 'hash.dart';
 import 'hash_sink.dart';
 import 'utils.dart';
 
-/// An instance of [Sha256].
-///
-/// This instance provides convenient access to the [Sha256][rfc] hash function.
+/// An implementation of the [SHA-256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha256 = Sha256._();
+const Hash sha256 = _Sha256._();
 
-/// An instance of [Sha224].
-///
-/// This instance provides convenient access to the [Sha224][rfc] hash function.
+/// An implementation of the [SHA-224][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
-final sha224 = Sha224._();
+const Hash sha224 = _Sha224._();
 
 /// An implementation of the [SHA-256][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 ///
 /// Use the [sha256] object to perform SHA-256 hashing.
-class Sha256 extends Hash {
+class _Sha256 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
-  Sha256._();
-
-  @deprecated
-  Sha256 newInstance() => Sha256._();
+  const _Sha256._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
@@ -49,14 +42,11 @@ class Sha256 extends Hash {
 ///
 ///
 /// Use the [sha224] object to perform SHA-224 hashing.
-class Sha224 extends Hash {
+class _Sha224 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
-  Sha224._();
-
-  @deprecated
-  Sha224 newInstance() => Sha224._();
+  const _Sha224._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>

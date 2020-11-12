@@ -10,21 +10,19 @@ import 'hash.dart';
 import 'hash_sink.dart';
 import 'utils.dart';
 
-/// An instance of [Sha1].
-///
-/// This instance provides convenient access to the [SHA-1][rfc] hash function.
+/// An implemention of the [SHA-1][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
-final sha1 = Sha1._();
+const Hash sha1 = _Sha1._();
 
 /// An implementation of the [SHA-1][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
-class Sha1 extends Hash {
+class _Sha1 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
-  Sha1._();
+  const _Sha1._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>
