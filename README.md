@@ -56,7 +56,7 @@ void main() {
   var firstChunk = utf8.encode("foo");
   var secondChunk = utf8.encode("bar");
 
-  var output = new AccumulatorSink<Digest>();
+  var output = AccumulatorSink<Digest>();
   var input = sha1.startChunkedConversion(output);
   input.add(firstChunk);
   input.add(secondChunk); // call `add` for every chunk of input data
@@ -87,9 +87,9 @@ void main() {
   var key = utf8.encode('p@ssw0rd');
   var bytes = utf8.encode("foobar");
 
-  var hmacSha256 = new Hmac(sha256, key); // HMAC-SHA256
+  var hmacSha256 = Hmac(sha256, key); // HMAC-SHA256
   var digest = hmacSha256.convert(bytes);
-  
+
   print("HMAC digest as bytes: ${digest.bytes}");
   print("HMAC digest as hex string: $digest");
 }
