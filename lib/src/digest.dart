@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:convert/convert.dart';
 
 /// A message digest as computed by a `Hash` or `HMAC` function.
 class Digest {
@@ -39,5 +38,6 @@ class Digest {
 
   /// The message digest as a string of hexadecimal digits.
   @override
-  String toString() => hex.encode(bytes);
+  String toString() =>
+      bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join('');
 }
