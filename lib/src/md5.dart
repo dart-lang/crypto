@@ -10,15 +10,13 @@ import 'hash.dart';
 import 'hash_sink.dart';
 import 'utils.dart';
 
-/// An instance of [MD5].
-///
-/// This instance provides convenient access to the [MD5][rfc] hash function.
+/// An implementation of the [MD5][rfc] hash function.
 ///
 /// [rfc]: https://tools.ietf.org/html/rfc1321
 ///
 /// **Warning**: MD5 has known collisions and should only be used when required
 /// for backwards compatibility.
-final md5 = MD5._();
+const Hash md5 = _MD5._();
 
 /// An implementation of the [MD5][rfc] hash function.
 ///
@@ -28,11 +26,11 @@ final md5 = MD5._();
 /// for backwards compatibility.
 ///
 /// Use the [md5] object to perform MD5 hashing.
-class MD5 extends Hash {
+class _MD5 extends Hash {
   @override
   final int blockSize = 16 * bytesPerWord;
 
-  MD5._();
+  const _MD5._();
 
   @override
   ByteConversionSink startChunkedConversion(Sink<Digest> sink) =>

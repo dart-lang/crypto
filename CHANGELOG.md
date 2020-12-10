@@ -1,18 +1,12 @@
 
-## 2.2.0-nullsafety-dev
+## 3.0.0-nullsafety.0
 
-Pre-release for the null safety migration of this package.
-
-Note that 2.2.0 may not be the final stable null safety release version, we
-reserve the right to release it as a 3.0.0 breaking change.
-
-This release will be pinned to only allow pre-release sdk versions starting from
-2.10.0-2.0.dev, which is the first version where this package will appear in the
-null safety allow list.
+Null safety migration of this package.
 
 * Adds SHA-2 512/224 and SHA-2 512/256 from FIPS 180-4
 
-* Deprecates `newInstance` instance members on some classes and updates documentation.
+* Removes `newInstance` instance members on some classes
+  and updates documentation.
 
 ## 2.1.5
 
@@ -34,7 +28,7 @@ null safety allow list.
     publish`).
 
 ## 2.1.1
-  * Added a workaround for a bug in DDC (used in build_web_compilers 1.x). 
+  * Added a workaround for a bug in DDC (used in build_web_compilers 1.x).
   This bug is not present in DDK (used in build_web_compilers 2.x).
 
 ## 2.1.0
@@ -123,7 +117,7 @@ would use 2.0.0 as a lower bound should use 0.9.2 instead—for example, `crypto
 * `Hash.add`, `Hash.close`, and `Hash.newInstance` are deprecated.
   `Hash.convert` should be used for hashing single values, and
   `Hash.startChunkedConversion` should be used for hashing streamed values.
-  
+
 * `SHA1` and `SHA256` are deprecated. Use the top-level `sha1` and `sha256`
   fields instead.
 

@@ -15,8 +15,8 @@ import 'digest_sink.dart';
 abstract class Hash extends Converter<List<int>, Digest> {
   /// The internal block size of the hash in bytes.
   ///
-  /// This is exposed for use by the `Hmac` class, which needs to know the block
-  /// size for the [Hash] it uses.
+  /// This is exposed for use by the `Hmac` class,
+  /// which needs to know the block size for the [Hash] it uses.
   int get blockSize;
 
   const Hash();

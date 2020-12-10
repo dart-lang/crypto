@@ -18,13 +18,12 @@ class DigestSink extends Sink<Digest> {
   /// Unlike most sinks, this may only be called once.
   @override
   void add(Digest value) {
-    assert(_value == null);
+    if (_value != null) throw StateError('add may only be called once.');
     _value = value;
   }
 
   @override
   void close() {
-    // Ensure late final field was assigned before closing.
-    assert(_value != null);
+    if (_value == null) throw StateError('add must be called once.');
   }
 }
