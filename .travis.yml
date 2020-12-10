@@ -16,11 +16,11 @@ jobs:
     - stage: test
       name: "Vm Tests"
       os: linux
-      script: pub run --enable-experiment=non-nullable test -p vm
+      script: pub run test -p vm
     - stage: test
       name: "Web Tests"
       os: linux
-      script: pub run --enable-experiment=non-nullable test -p chrome
+      script: pub run test -p chrome
 
 stages:
   - analyze_and_format
