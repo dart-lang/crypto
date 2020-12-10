@@ -8,11 +8,11 @@ jobs:
     - stage: analyze_and_format
       name: "Analyze"
       os: linux
-      script: dartanalyzer --fatal-warnings --fatal-infos .
+      script: dart analyze --fatal-infos .
     - stage: analyze_and_format
       name: "Format"
       os: linux
-      script: dartfmt -n --set-exit-if-changed .
+      script: dart format -o none --set-exit-if-changed .
     - stage: test
       name: "Vm Tests"
       os: linux
