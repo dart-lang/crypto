@@ -2,8 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import 'package:collection/collection.dart';
-import 'package:convert/convert.dart';
 
 /// A message digest as computed by a `Hash` or `HMAC` function.
 class Digest {
@@ -39,5 +40,16 @@ class Digest {
 
   /// The message digest as a string of hexadecimal digits.
   @override
-  String toString() => hex.encode(bytes);
+  String toString() => _hexEncode(bytes);
+}
+
+String _hexEncode(List<int> bytes) {
+  const hexDigits = '0123456789abcdef';
+  var charCodes = Uint8List(bytes.length * 2);
+  for (var i = 0, j = 0; i < bytes.length; i++) {
+    var byte = bytes[i];
+    charCodes[j++] = hexDigits.codeUnitAt((byte >> 4) & 0xF);
+    charCodes[j++] = hexDigits.codeUnitAt(byte & 0xF);
+  }
+  return String.fromCharCodes(charCodes);
 }
