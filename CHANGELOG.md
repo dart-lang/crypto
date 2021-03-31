@@ -1,3 +1,7 @@
+## 3.0.1
+
+* Fix doc links in README.
+
 ## 3.0.0
 
 * Stable release for null safety.

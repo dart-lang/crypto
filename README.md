@@ -104,7 +104,7 @@ This library has not been reviewed or vetted by security professionals.
 [convert]: https://pub.dev/documentation/crypto/latest/crypto/Hash/convert.html
 [Digest]: https://pub.dev/documentation/crypto/latest/crypto/Digest-class.html
 [Hmac]: https://pub.dev/documentation/crypto/latest/crypto/Hmac-class.html
-[md5-obj]: https://pub.dev/documentation/crypto/latest/crypto/md5.html
-[sha1-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha1.html
-[sha256-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha256.html
+[md5-obj]: https://pub.dev/documentation/crypto/latest/crypto/md5-constant.html
+[sha1-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha1-constant.html
+[sha256-obj]: https://pub.dev/documentation/crypto/latest/crypto/sha256-constant.html
 [startChunkedConversion]: https://pub.dev/documentation/crypto/latest/crypto/Hash/startChunkedConversion.html
