@@ -5,8 +5,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:test/test.dart';
 import 'package:crypto/crypto.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('SHA2-384', () {
