@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:test/test.dart';
 import 'package:crypto/crypto.dart';
+import 'package:test/test.dart';
 
 import 'utils.dart';
 
