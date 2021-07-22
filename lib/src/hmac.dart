@@ -38,10 +38,10 @@ class Hmac extends Converter<List<int>, Digest> {
   }
 
   @override
-  Digest convert(List<int> data) {
+  Digest convert(List<int> input) {
     var innerSink = DigestSink();
     var outerSink = startChunkedConversion(innerSink);
-    outerSink.add(data);
+    outerSink.add(input);
     outerSink.close();
     return innerSink.value;
   }
