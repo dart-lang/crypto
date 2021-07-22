@@ -22,10 +22,10 @@ abstract class Hash extends Converter<List<int>, Digest> {
   const Hash();
 
   @override
-  Digest convert(List<int> data) {
+  Digest convert(List<int> input) {
     var innerSink = DigestSink();
     var outerSink = startChunkedConversion(innerSink);
-    outerSink.add(data);
+    outerSink.add(input);
     outerSink.close();
     return innerSink.value;
   }
