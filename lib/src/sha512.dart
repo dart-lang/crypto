@@ -20,12 +20,12 @@ const Hash sha384 = _Sha384._();
 /// [rfc]: http://tools.ietf.org/html/rfc6234
 const Hash sha512 = _Sha512._();
 
-/// An implementatino of the [SHA-512/224][FIPS] hash function.
+/// An implementation of the [SHA-512/224][FIPS] hash function.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
 const Hash sha512224 = _Sha512224();
 
-/// An implementatino of the [SHA-512/256][FIPS] hash function.
+/// An implementation of the [SHA-512/256][FIPS] hash function.
 ///
 /// [FIPS]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
 const Hash sha512256 = _Sha512256();

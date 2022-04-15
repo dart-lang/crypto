@@ -10,7 +10,7 @@ import 'hash.dart';
 import 'hash_sink.dart';
 import 'utils.dart';
 
-/// An implemention of the [SHA-1][rfc] hash function.
+/// An implementation of the [SHA-1][rfc] hash function.
 ///
 /// [rfc]: http://tools.ietf.org/html/rfc3174
 const Hash sha1 = _Sha1._();
@@ -32,7 +32,7 @@ class _Sha1 extends Hash {
 /// The concrete implementation of [Sha1].
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
-/// public memebers.
+/// public members.
 class _Sha1Sink extends HashSink {
   @override
   final digest = Uint32List(5);
