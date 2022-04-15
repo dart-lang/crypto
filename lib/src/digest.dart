@@ -4,8 +4,6 @@
 
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
-
 /// A message digest as computed by a `Hash` or `HMAC` function.
 class Digest {
   /// The message digest as an array of bytes.
@@ -36,7 +34,7 @@ class Digest {
   }
 
   @override
-  int get hashCode => const ListEquality().hash(bytes);
+  int get hashCode => Object.hashAll(bytes);
 
   /// The message digest as a string of hexadecimal digits.
   @override

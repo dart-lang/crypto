@@ -1,5 +1,7 @@
 ## 3.0.2-dev
 
+- Require Dart 2.14.0.
+
 ## 3.0.1
 
 * Fix doc links in README.
