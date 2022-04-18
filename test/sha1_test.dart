@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 
@@ -43,6 +44,19 @@ void main() {
         expect(sha1.convert(_inputs[i]).toString(), equals(_digests[i]));
       });
     }
+  });
+  group('large file', () {
+    final chunk = List.filled(1024, 0);
+    test('produces correct hash', () async {
+      final sink = AccumulatorSink<Digest>();
+      final hash = sha1.startChunkedConversion(sink);
+      for (var i = 0; i < 512 * 1024; i++) {
+        hash.add(chunk);
+      }
+      hash.close();
+      expect(sink.events.single.toString(),
+          '5b088492c9f4778f409b7ae61477dec124c99033');
+    });
   });
 }
 
