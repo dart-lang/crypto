@@ -161,7 +161,7 @@ abstract class HashSink implements Sink<List<int>> {
     // We're essentially doing byteData.setUint64(offset, lengthInBits, _endian)
     // here, but that method isn't supported on dart2js so we implement it
     // manually instead.
-    var highBits = lengthInBits >> 32;
+    var highBits = lengthInBits ~/ 0x100000000; // >> 32
     var lowBits = lengthInBits & mask32;
     if (_endian == Endian.big) {
       byteData.setUint32(offset, highBits, _endian);
