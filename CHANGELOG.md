@@ -1,4 +1,4 @@
-## 3.0.2-dev
+## 3.0.2
 
 * Require Dart 2.14.0.
 * Fix bug calculating hashes for content larger than 512MB when compiled to JS.
