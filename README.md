@@ -1,6 +1,8 @@
-# Cryptographic hashing functions for Dart
+[![Dart CI](https://github.com/dart-lang/crypto/actions/workflows/test-package.yml/badge.svg)](https://github.com/dart-lang/crypto/actions/workflows/test-package.yml)
+[![pub package](https://img.shields.io/pub/v/crypto.svg)](https://pub.dev/packages/crypto)
+[![package publisher](https://img.shields.io/pub/publisher/crypto.svg)](https://pub.dev/packages/crypto/publisher)
 
-A set of cryptographic hashing functions implemented in pure Dart
+A set of cryptographic hashing functions for Dart.
 
 The following hashing algorithms are supported:
 
@@ -49,6 +51,7 @@ from the `Sink<Digest>` used to create the input data sink.
 
 ```dart
 import 'dart:convert';
+
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 
