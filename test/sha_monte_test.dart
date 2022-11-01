@@ -1,3 +1,7 @@
+// Copyright (c) 2019, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
@@ -92,9 +96,9 @@ void monteTest(String name, Hash hash, String seed, List<String> expected) {
       var _seed = bytesFromHexString(seed);
       for (var j = 0; j < expected.length; j++) {
         Uint8List md0, md1, md2;
-        md0 = (Uint8List.fromList(_seed));
-        md1 = (Uint8List.fromList(_seed));
-        md2 = (Uint8List.fromList(_seed));
+        md0 = Uint8List.fromList(_seed);
+        md1 = Uint8List.fromList(_seed);
+        md2 = Uint8List.fromList(_seed);
         late Digest mdI;
         for (var i = 3; i < 1003; i++) {
           var mI = [...md0, ...md1, ...md2];
