@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -32,9 +34,10 @@ void main() {
             expectAsync1((accumulated) {
           expect(accumulated.length, equals(1));
           expect(
-              accumulated.first.toString(),
-              equals(
-                  '38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b'));
+            accumulated.first.toString(),
+            equals(
+                '38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b'),
+          );
         }));
 
         var outer = sha384.startChunkedConversion(inner);

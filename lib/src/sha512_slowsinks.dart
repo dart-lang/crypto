@@ -79,7 +79,7 @@ abstract class _Sha64BitSink extends HashSink {
   void _shr(
       int bits, Uint32List word, int offset, Uint32List ret, int offsetR) {
     ret[0 + offsetR] =
-        ((bits < 32) && (bits >= 0)) ? (word[0 + offset] >> (bits)) : 0;
+        ((bits < 32) && (bits >= 0)) ? (word[0 + offset] >> bits) : 0;
     ret[1 + offsetR] = (bits > 32)
         ? (word[0 + offset] >> (bits - 32))
         : (bits == 32)
@@ -118,18 +118,17 @@ abstract class _Sha64BitSink extends HashSink {
 
   void _add(Uint32List word1, int offset1, Uint32List word2, int offset2,
       Uint32List ret, int offsetR) {
-    ret[1 + offsetR] = (word1[1 + offset1] + word2[1 + offset2]);
+    ret[1 + offsetR] = word1[1 + offset1] + word2[1 + offset2];
     ret[0 + offsetR] = word1[0 + offset1] +
         word2[0 + offset2] +
         (ret[1 + offsetR] < word1[1 + offset1] ? 1 : 0);
   }
 
   void _addTo2(Uint32List word1, int offset1, Uint32List word2, int offset2) {
-    int _addTemp;
-    _addTemp = word1[1 + offset1];
+    var addTemp = word1[1 + offset1];
     word1[1 + offset1] += word2[1 + offset2];
     word1[0 + offset1] +=
-        word2[0 + offset2] + (word1[1 + offset1] < _addTemp ? 1 : 0);
+        word2[0 + offset2] + (word1[1 + offset1] < addTemp ? 1 : 0);
   }
 
   static const _rotrIndex1 = 0;
@@ -196,17 +195,17 @@ abstract class _Sha64BitSink extends HashSink {
   void _ch(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
       int offsetZ, Uint32List ret, int offsetR) {
     ret[0 + offsetR] =
-        ((x[0 + offsetX] & (y[0 + offsetY] ^ z[0 + offsetZ])) ^ z[0 + offsetZ]);
+        (x[0 + offsetX] & (y[0 + offsetY] ^ z[0 + offsetZ])) ^ z[0 + offsetZ];
     ret[1 + offsetR] =
-        ((x[1 + offsetX] & (y[1 + offsetY] ^ z[1 + offsetZ])) ^ z[1 + offsetZ]);
+        (x[1 + offsetX] & (y[1 + offsetY] ^ z[1 + offsetZ])) ^ z[1 + offsetZ];
   }
 
   void _maj(Uint32List x, int offsetX, Uint32List y, int offsetY, Uint32List z,
       int offsetZ, Uint32List ret, int offsetR) {
-    ret[0 + offsetR] = ((x[0 + offsetX] & (y[0 + offsetY] | z[0 + offsetZ])) |
-        (y[0 + offsetY] & z[0 + offsetZ]));
-    ret[1 + offsetR] = ((x[1 + offsetX] & (y[1 + offsetY] | z[1 + offsetZ])) |
-        (y[1 + offsetY] & z[1 + offsetZ]));
+    ret[0 + offsetR] = (x[0 + offsetX] & (y[0 + offsetY] | z[0 + offsetZ])) |
+        (y[0 + offsetY] & z[0 + offsetZ]);
+    ret[1 + offsetR] = (x[1 + offsetX] & (y[1 + offsetY] | z[1 + offsetZ])) |
+        (y[1 + offsetY] & z[1 + offsetZ]);
   }
 
   @override
@@ -313,19 +312,20 @@ class Sha512Sink extends _Sha64BitSink {
 
   Sha512Sink(Sink<Digest> sink)
       : super(
-            sink,
-            Uint32List.fromList([
-              // Initial value of the hash parts. First 64 bits of the fractional
-              // parts of the square roots of the first eight prime numbers.
-              0x6a09e667, 0xf3bcc908,
-              0xbb67ae85, 0x84caa73b,
-              0x3c6ef372, 0xfe94f82b,
-              0xa54ff53a, 0x5f1d36f1,
-              0x510e527f, 0xade682d1,
-              0x9b05688c, 0x2b3e6c1f,
-              0x1f83d9ab, 0xfb41bd6b,
-              0x5be0cd19, 0x137e2179,
-            ]));
+          sink,
+          Uint32List.fromList([
+            // Initial value of the hash parts. First 64 bits of the fractional
+            // parts of the square roots of the first eight prime numbers.
+            0x6a09e667, 0xf3bcc908,
+            0xbb67ae85, 0x84caa73b,
+            0x3c6ef372, 0xfe94f82b,
+            0xa54ff53a, 0x5f1d36f1,
+            0x510e527f, 0xade682d1,
+            0x9b05688c, 0x2b3e6c1f,
+            0x1f83d9ab, 0xfb41bd6b,
+            0x5be0cd19, 0x137e2179,
+          ]),
+        );
 }
 
 /// The concrete implementation of [Sha512/224].

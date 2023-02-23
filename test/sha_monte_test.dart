@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
@@ -93,12 +95,12 @@ void main() {
 void monteTest(String name, Hash hash, String seed, List<String> expected) {
   test(name, () {
     Iterable<String> run() sync* {
-      var _seed = bytesFromHexString(seed);
+      var seedBytes = bytesFromHexString(seed);
       for (var j = 0; j < expected.length; j++) {
         Uint8List md0, md1, md2;
-        md0 = Uint8List.fromList(_seed);
-        md1 = Uint8List.fromList(_seed);
-        md2 = Uint8List.fromList(_seed);
+        md0 = Uint8List.fromList(seedBytes);
+        md1 = Uint8List.fromList(seedBytes);
+        md2 = Uint8List.fromList(seedBytes);
         late Digest mdI;
         for (var i = 3; i < 1003; i++) {
           var mI = [...md0, ...md1, ...md2];
@@ -108,7 +110,7 @@ void monteTest(String name, Hash hash, String seed, List<String> expected) {
           md2.setAll(0, mdI.bytes);
         }
         yield '$mdI';
-        _seed.setAll(0, md2);
+        seedBytes.setAll(0, md2);
       }
     }
 

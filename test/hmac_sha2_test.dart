@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 
@@ -112,16 +114,16 @@ void testCase({
   bool truncation = false,
 }) {
   test(name, () {
-    final _key = bytesFromHexString(key);
-    final _data = bytesFromHexString(data);
+    final keyBytes = bytesFromHexString(key);
+    final dataBytes = bytesFromHexString(data);
 
-    expect(Hmac(sha224, _key).convert(_data).toString(),
+    expect(Hmac(sha224, keyBytes).convert(dataBytes).toString(),
         truncation ? startsWith(hmacSha224) : hmacSha224);
-    expect(Hmac(sha256, _key).convert(_data).toString(),
+    expect(Hmac(sha256, keyBytes).convert(dataBytes).toString(),
         truncation ? startsWith(hmacSha256) : hmacSha256);
-    expect(Hmac(sha384, _key).convert(_data).toString(),
+    expect(Hmac(sha384, keyBytes).convert(dataBytes).toString(),
         truncation ? startsWith(hmacSha384) : hmacSha384);
-    expect(Hmac(sha512, _key).convert(_data).toString(),
+    expect(Hmac(sha512, keyBytes).convert(dataBytes).toString(),
         truncation ? startsWith(hmacSha512) : hmacSha512);
   });
 }
