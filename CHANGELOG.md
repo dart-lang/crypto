@@ -1,5 +1,7 @@
 ## 3.0.3-dev
 
+* Require Dart 2.19.0.
+
 ## 3.0.2
 
 * Require Dart 2.14.0.
@@ -12,13 +14,7 @@
 ## 3.0.0
 
 * Stable release for null safety.
-
-## 3.0.0-nullsafety.0
-
-Null safety migration of this package.
-
 * Adds SHA-2 512/224 and SHA-2 512/256 from FIPS 180-4
-
 * Removes `newInstance` instance members on some classes
   and updates documentation.
 

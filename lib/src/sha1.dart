@@ -79,7 +79,7 @@ class _Sha1Sink extends HashSink {
       if (i < 20) {
         newA = add32(add32(newA, (b & c) | (~b & d)), 0x5A827999);
       } else if (i < 40) {
-        newA = add32(add32(newA, (b ^ c ^ d)), 0x6ED9EBA1);
+        newA = add32(add32(newA, b ^ c ^ d), 0x6ED9EBA1);
       } else if (i < 60) {
         newA = add32(add32(newA, (b & c) | (b & d) | (c & d)), 0x8F1BBCDC);
       } else {
