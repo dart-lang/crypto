@@ -5,7 +5,7 @@
 import 'digest.dart';
 
 /// A sink used to get a digest value out of `Hash.startChunkedConversion`.
-class DigestSink extends Sink<Digest> {
+class DigestSink implements Sink<Digest> {
   /// The value added to the sink.
   ///
   /// A value must have been added using [add] before reading the `value`.
