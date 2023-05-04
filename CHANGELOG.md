@@ -1,6 +1,7 @@
-## 3.0.3-dev
+## 3.0.3
 
 * Require Dart 2.19.0.
+* Add topics to `pubspec.yaml`.
 
 ## 3.0.2
 
