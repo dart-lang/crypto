@@ -61,7 +61,7 @@ const _shiftAmounts = [
   10, 15, 21, 06, 10, 15, 21
 ];
 
-/// The concrete implementation of [MD5].
+/// The concrete implementation of `MD5`.
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.

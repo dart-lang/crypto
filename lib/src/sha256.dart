@@ -139,7 +139,7 @@ abstract class _Sha32BitSink extends HashSink {
   }
 }
 
-/// The concrete implementation of [Sha256].
+/// The concrete implementation of `Sha256`.
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
@@ -164,7 +164,7 @@ class _Sha256Sink extends _Sha32BitSink {
             ]));
 }
 
-/// The concrete implementation of [Sha224].
+/// The concrete implementation of `Sha224`.
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.

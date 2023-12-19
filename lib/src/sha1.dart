@@ -29,7 +29,7 @@ class _Sha1 extends Hash {
       ByteConversionSink.from(_Sha1Sink(sink));
 }
 
-/// The concrete implementation of [Sha1].
+/// The concrete implementation of `Sha1`.
 ///
 /// This is separate so that it can extend [HashSink] without leaking additional
 /// public members.
