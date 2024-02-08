@@ -62,3 +62,8 @@ jobs:
       - name: Run Chrome tests
         run: dart test --platform chrome
         if: always() && steps.install.outcome == 'success'
+      - name: Run Chrome tests - wasm
+        # TODO: investigate why we get hangs when concurrency is > 1
+        run: dart test --platform chrome --compiler dart2wasm -j 1
+        # TODO: drop `dev` filter when dart2wasm is working on stable
+        if: always() && steps.install.outcome == 'success' && matrix.sdk == 'dev'
