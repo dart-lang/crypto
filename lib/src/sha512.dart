@@ -7,7 +7,8 @@ import 'dart:convert';
 import 'digest.dart';
 import 'hash.dart';
 // ignore: uri_does_not_exist
-import 'sha512_fastsinks.dart' if (dart.library.js_interop) 'sha512_slowsinks.dart';
+import 'sha512_fastsinks.dart'
+    if (dart.library.js_interop) 'sha512_slowsinks.dart';
 import 'utils.dart';
 
 /// An implementation of the [SHA-384][rfc] hash function.
