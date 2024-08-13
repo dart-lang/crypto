@@ -1,5 +1,6 @@
-## 3.0.4-wip
+## 3.0.4
 
+* Fix WebAssembly support.
 * Require Dart 3.4
 
 ## 3.0.3
