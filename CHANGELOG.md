@@ -1,3 +1,8 @@
+## 3.0.5
+
+* Revert switch to enable fast "sinks" on Wasm because it breaks `dart2js` with
+  server mode.
+
 ## 3.0.4
 
 * Fix WebAssembly support.

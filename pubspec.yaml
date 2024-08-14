@@ -1,5 +1,5 @@
 name: crypto
-version: 3.0.4
+version: 3.0.5
 description: Implementations of SHA, MD5, and HMAC cryptographic functions.
 repository: https://github.com/dart-lang/crypto
 topics:
